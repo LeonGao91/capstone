@@ -1,0 +1,19 @@
+.navigation-bar{
+	background:rgb(0, 113, 197);
+	height: 175px;
+}
+
+#header{
+	width: 100px;
+  	height: 100px;
+ 	margin: 25px 100px 0px 200px;
+}
+
+.user{
+	float: right;
+}
+
+#file-input{
+	margin-top:  10%;
+	margin-left: 25%;
+}
