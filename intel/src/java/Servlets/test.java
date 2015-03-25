@@ -13,8 +13,7 @@ import test.SoapService_Service;
 import test.SoapService;
 
 /**
- * 
- * @author leon
+ * This is the first testing servlet for mit-term presentation.
  */
 @WebServlet("/testing")
 public class test extends HttpServlet {
