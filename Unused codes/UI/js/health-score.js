@@ -1,0 +1,10 @@
+$(function(){
+		$('.dash').click(function(){
+			$('.bg').fadeIn(200);
+			$('.health-score').fadeIn(400);
+		});
+		$('.bg').click(function(){
+			$('.bg').fadeOut(200);
+			$('.health-score').fadeOut(200);
+		});
+});
