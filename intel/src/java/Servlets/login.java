@@ -1,7 +1,13 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
 package Servlets;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.ArrayList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,8 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
-*This Servlet controls the activities of login module
-**/
+ *
+ * @author leon
+ */
 @WebServlet(name = "login", urlPatterns = {"/userLogin"})
 public class login extends HttpServlet {
 
@@ -33,6 +40,7 @@ public class login extends HttpServlet {
         if(validateUser(userName, pw)){
             //Set session for the valid user
             request.getSession().setAttribute("validUser", userName);
+            request.getSession().setAttribute("folders", validateFolders("id"));
             response.sendRedirect("index.jsp");
         }
         else {
@@ -44,7 +52,17 @@ public class login extends HttpServlet {
     }
 
     /**
-     * Dummy validation function, waiting for database design.
+     * Get the contents from related folders
+     * @throws ServletException
+     * @throws IOException 
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        
+    }
+    
+    /**
+     * 
      * @param id User id
      * @param pw password
      * @return 
@@ -54,6 +72,15 @@ public class login extends HttpServlet {
             return true;
         }
         return false;
+    }
+    
+    public String validateFolders(String id) {
+        String folder = null;
+        if(id.equals("id")) {
+            System.out.println(id);
+            folder = "userFolder1";
+        }
+        return folder;
     }
 
 }

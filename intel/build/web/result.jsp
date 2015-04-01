@@ -49,9 +49,11 @@
                 <div class="panel-body">
                     <%
                         if(request.getAttribute("error")!=null || request.getAttribute("average")==null){
+                            out.print(request.getAttribute("userFolder") + ": ");
                             out.print("Empty");
                         }
                         else{
+                            out.print(request.getAttribute("userFolder") + ": ");
                             out.print(request.getAttribute("average"));
                         }
                     %>

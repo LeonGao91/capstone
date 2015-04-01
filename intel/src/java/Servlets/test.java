@@ -13,7 +13,8 @@ import test.SoapService_Service;
 import test.SoapService;
 
 /**
- * This is the first testing servlet for mit-term presentation.
+ * 
+ * @author leon
  */
 @WebServlet("/testing")
 public class test extends HttpServlet {
@@ -37,6 +38,7 @@ public class test extends HttpServlet {
     protected void doPost(HttpServletRequest request,
         HttpServletResponse response) throws ServletException, IOException {
         request.setAttribute("average", getResult(request.getParameter("file_name")));
+        request.setAttribute("userFolder", request.getSession().getAttribute("folders"));
         RequestDispatcher view = request.getRequestDispatcher("result.jsp");
         view.forward(request, response);
     }
