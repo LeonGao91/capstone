@@ -37,7 +37,19 @@
                             <li class="active"><a href="#">Result</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
-                            <li><a id="user" href="">Welcome,User</a><li>
+                            <li>
+                                <a id="user" href="">
+                                <%
+                                    String user = (String) userObj;
+                                    out.print("Welcome " + user);
+                                %>
+                                </a>
+                            <li>
+                            <form id="logout_panel" class="navbar-form navbar-right" action="logout.jsp" method="post">
+                                    <button id="logout_button" class="btn btn-success" type="submit" type="button" class="btn btn-default btn-lg" >
+                                        Logout
+                                    </button>
+                            </form>
                         </ul>
                     </div>
                 </div>

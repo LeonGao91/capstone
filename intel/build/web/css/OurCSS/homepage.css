@@ -17,3 +17,8 @@
 	margin-top:  10%;
 	margin-left: 25%;
 }
+
+#logout_button {
+        background: rgb(0, 113, 197);
+        border-color: rgb(0, 113, 197);
+}
