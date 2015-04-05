@@ -1,0 +1,43 @@
+**************************************
+Welcome to data analytics model
+**************************************
+
+If you downloaded the codes in Zip, please first unzip it and then import this as a project into Eclipse.
+
+-'src'
+	This folder contains all Java codes. 
+
+Within this folder:
+
+-External libraries:
+	commons-math3-3.4.1.jar
+	commons-math3-3.4.1-javadoc.jar
+	These libraries are used for computing statistics. If the imported project has errors, you may want to configure the build path of the project and check whether these jar files have been included.
+
+-'dataAnalyticsModel'
+	This folder contains all classes
+ 
+Within this folder
+-DataAnalyticsModel.java
+	used for testing the model, now useless
+
+-Stats.java
+	used for storing statistics data
+
+-Test.java
+	represents a validation test
+
+-TestDirection
+	represents a direction of a test
+
+-TestRepeat
+	represents a repeat of a system of a test
+
+-TestSystem
+	represents a system of a test
+
+The expected input data of a validation test is a four-dimensional array. The meaning of the dimensions are: direction, system, repeat and lane. Other dimensions between lane and repeat should have been flattened to corresponding numbers of lanes.
+
+Codes were generated and maintained by Yan and Lucy.
+
+04/05/2015
