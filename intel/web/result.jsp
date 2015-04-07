@@ -22,6 +22,10 @@
         <link href="css/boostrap/bootstrap.min.css" rel="stylesheet">
         <link href="css/OurCSS/homepage.css" rel="stylesheet">
         <link href="css/OurCSS/resultpage.css" rel="stylesheet">
+        <script src="js/library/justGauge/justgage.1.0.1.min.js"></script>
+        <script src="js/library/justGauge/raphael.2.1.0.min.js"></script>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script src="js/OurJS/lineChart.js"></script>
     </head>
 
     <body>
@@ -55,6 +59,7 @@
                 </div>
             </nav>
         </div>
+        <!--
         <div id="result_div">
             <div class="panel panel-default">
                 <div class="panel-heading">Average</div>
@@ -72,5 +77,50 @@
                 </div>
             </div>
         </div>
+        -->
+        <h3 id="title">DELL XPS 13 - 04/07/2015  <span class="label label-success">PASS!</span></h3>
+        <div class="panel panel-primary main_panel" style="margin-top: 2%">
+            <div class="panel-heading">
+                <h3 class="panel-title" align="center">Scores</h3>
+            </div>
+            <div id="trust" class="gauge"></div>
+            <div id="health" class="gauge"></div>
+            <script>
+                var g = new JustGage({
+                  id: "trust",
+                  value: 32,
+                  min: 0,
+                  max: 100,
+                  title: "Trust",
+                  label: "SCORE",
+                  levelColors: ["D00000","00CC33"],
+                  startAnimationTime : 2000
+                });
+                var g2 = new JustGage({
+                  id: "health",
+                  value: 91,
+                  min: 0,
+                  max: 100,
+                  title: "Health",
+                  label: "SCORE",
+                  levelColors: ["D00000","00CC33"],
+                  startAnimationTime : 2000
+                });
+            </script>
+        </div>
+        <div class="panel panel-danger main_panel">
+            <div class="panel-heading">
+                <h3 class="panel-title" align="center">Messages</h3>
+            </div>
+            <div class="panel-body">Trust score is too low</div>
+        </div>
+        <div class="panel panel-primary main_panel">
+            <div class="panel-heading">
+                <h3 class="panel-title" align="center">Incremental Chart</h3>
+            </div>
+            <div id="linechart_material"></div>
+        </div>
+        
+
     </body>
 </html>
