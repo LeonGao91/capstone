@@ -64,37 +64,37 @@
                 <tbody>
                     <tr>
                         <th scope="row">1</th>
-                        <td>xxx xxx xxx</td>
-                        <td>xx-xx-xxxx</td>
-                        <td>xxxx</td>
+                        <td>DELL XPS 13</td>
+                        <td>04/07/2015</td>
+                        <td>PASS</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr>
                         <th scope="row">2</th>
-                        <td>xxx xxx xxx</td>
-                        <td>xx-xx-xxxx</td>
-                        <td>xxxx</td>
+                        <td>DELL XPS 13</td>
+                        <td>04/06/2015</td>
+                        <td>FAIL</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr>
                         <th scope="row">3</th>
-                        <td>xxx xxx xxx</td>
-                        <td>xx-xx-xxxx</td>
-                        <td>xxxx</td>
+                        <td>DELL XPS 13</td>
+                        <td>04/05/2015</td>
+                        <td>PASS</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr>
                         <th scope="row">4</th>
-                        <td>xxx xxx xxx</td>
-                        <td>xx-xx-xxxx</td>
-                        <td>xxxx</td>
+                        <td>xDELL XPS 13</td>
+                        <td>04/04/2015</td>
+                        <td>PASS</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr>
                         <th scope="row">5</th>
-                        <td>xxx xxx xxx</td>
-                        <td>xx-xx-xxxx</td>
-                        <td>xxxx</td>
+                        <td>DELL XPS 13</td>
+                        <td>03/30/2015</td>
+                        <td>PASS</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                 </tbody>
