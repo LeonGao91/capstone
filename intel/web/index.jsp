@@ -50,17 +50,56 @@
                 </div>
             </nav>
         </div>
-        <div>
-            <div id="file-input"> 
-                <form class="form-inline" action="testing" method="POST">
-                    <div class="form-group">
-                        <div class="input-group">
-                            <input type="text" name="file_name" class="form-control" id="exampleInputAmount" placeholder="Filename">
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Run test</button>
-                </form>
-            </div>
-        </div>
+        <div id="records"> 
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Product <span class="glyphicon glyphicon-collapse-down"></span></th>
+                        <th>Date <span class="glyphicon glyphicon-collapse-down"></span></th>
+                        <th>Result <span class="glyphicon glyphicon-collapse-down"></span></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>xxx xxx xxx</td>
+                        <td>xx-xx-xxxx</td>
+                        <td>xxxx</td>
+                        <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">2</th>
+                        <td>xxx xxx xxx</td>
+                        <td>xx-xx-xxxx</td>
+                        <td>xxxx</td>
+                        <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">3</th>
+                        <td>xxx xxx xxx</td>
+                        <td>xx-xx-xxxx</td>
+                        <td>xxxx</td>
+                        <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">4</th>
+                        <td>xxx xxx xxx</td>
+                        <td>xx-xx-xxxx</td>
+                        <td>xxxx</td>
+                        <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">5</th>
+                        <td>xxx xxx xxx</td>
+                        <td>xx-xx-xxxx</td>
+                        <td>xxxx</td>
+                        <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
+                    </tr>
+                </tbody>
+            </table>
+ 	</div>
+ 
     </body>
 </html>

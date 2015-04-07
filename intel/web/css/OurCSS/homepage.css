@@ -14,11 +14,15 @@
 }
 
 #file-input{
-	margin-top:  10%;
-	margin-left: 25%;
+	margin-top:  150px;
+	margin-left: 400px;
 }
 
-#logout_button {
-        background: rgb(0, 113, 197);
-        border-color: rgb(0, 113, 197);
+#records{
+	padding: 20px 150px;
+	margin: 10px;
+}
+
+tr:nth-child(even){
+	background-color:rgb(174, 217, 255);	
 }

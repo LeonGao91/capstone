@@ -24,22 +24,14 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _HelloResponse_QNAME = new QName("http://Service/", "helloResponse");
     private final static QName _Hello_QNAME = new QName("http://Service/", "hello");
+    private final static QName _HelloResponse_QNAME = new QName("http://Service/", "helloResponse");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: ServiceClients
      * 
      */
     public ObjectFactory() {
-    }
-
-    /**
-     * Create an instance of {@link Hello }
-     * 
-     */
-    public Hello createHello() {
-        return new Hello();
     }
 
     /**
@@ -51,12 +43,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link HelloResponse }{@code >}}
+     * Create an instance of {@link Hello }
      * 
      */
-    @XmlElementDecl(namespace = "http://Service/", name = "helloResponse")
-    public JAXBElement<HelloResponse> createHelloResponse(HelloResponse value) {
-        return new JAXBElement<HelloResponse>(_HelloResponse_QNAME, HelloResponse.class, null, value);
+    public Hello createHello() {
+        return new Hello();
     }
 
     /**
@@ -66,6 +57,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://Service/", name = "hello")
     public JAXBElement<Hello> createHello(Hello value) {
         return new JAXBElement<Hello>(_Hello_QNAME, Hello.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link HelloResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://Service/", name = "helloResponse")
+    public JAXBElement<HelloResponse> createHelloResponse(HelloResponse value) {
+        return new JAXBElement<HelloResponse>(_HelloResponse_QNAME, HelloResponse.class, null, value);
     }
 
 }
