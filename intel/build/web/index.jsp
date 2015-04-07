@@ -85,7 +85,7 @@
                     </tr>
                     <tr>
                         <th scope="row">4</th>
-                        <td>xDELL XPS 13</td>
+                        <td>DELL XPS 13</td>
                         <td>04/04/2015</td>
                         <td>PASS</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
