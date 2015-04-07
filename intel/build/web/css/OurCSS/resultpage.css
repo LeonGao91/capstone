@@ -8,13 +8,35 @@ and open the template in the editor.
     Author     : leon
 */
 
+#title {
+    margin-left:10%;
+}
+
 #result_div{
-	margin-top:  10%;
-	margin-left: 25%;
-        width: 25%;
+    margin-top:  10%;
+    margin-left: 25%;
+    width: 25%;
 }
 
 #logout_button {
         background: rgb(0, 113, 197);
         border-color: rgb(0, 113, 197);
+}
+
+.main_panel {
+    margin-top: 2%;
+    margin-bottom: 3%;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+}
+
+.gauge{
+    width:49.5%; 
+    height:95%;
+    display: inline-block;
+}
+
+#linechart_material {
+    margin-top: 5%;
 }
