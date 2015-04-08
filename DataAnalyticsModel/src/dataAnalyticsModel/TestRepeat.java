@@ -13,7 +13,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 public class TestRepeat {
 	public static boolean VALID = true;
 	public static boolean INVALID = false;
-	private int[] margins; // margins of all lanes within this repeat
+	private TestLane[] lanes; // margins of all lanes within this repeat
 	private Stats basicStats; // basic statistics
 	private int size; // number of lanes of this repeat
 	private boolean status; // whether this repeat is an outlier
@@ -31,23 +31,40 @@ public class TestRepeat {
 	 *            an array storing all data of one repeat.
 	 */
 	public TestRepeat(int[] dataInput) {
-		margins = dataInput;
 		size = dataInput.length;
+		lanes = new TestLane[size];
+		for (int i=0; i< dataInput.length; i++){
+			lanes[i] = new TestLane(dataInput[i]);
+		}
 		status = TestRepeat.VALID;
 		basicStats = new Stats();
 		findStats();
 	}
-
+	
+	/**
+	 * Constructor with one TestLane array argument.
+	 *
+	 * @param lanes
+	 *            an array of TestLane representing all lanes of one repeat.
+	 */
+	public TestRepeat(TestLane[] lanes){
+		size = lanes.length;
+		lanes = lanes;
+		status = TestRepeat.VALID;
+		basicStats = new Stats();
+		findStats();
+	}
+	
 	/**
 	 * Calculate stats within one repeat.
 	 */
 	private void findStats() {
 		DescriptiveStatistics ds = new DescriptiveStatistics();
 		// Traverse each lane
-		for (int i = 0; i < margins.length; i++) {
+		for (int i = 0; i < lanes.length; i++) {
 			// Only include valid values (NaN values were converted as -1)
-			if (margins[i] != -1) {
-				ds.addValue(margins[i]);
+			if (lanes[i].isValid()) {
+				ds.addValue(lanes[i].getMargin());
 			}
 		}
 		// Store computed stats
@@ -93,6 +110,14 @@ public class TestRepeat {
 	 */
 	public void setStatus(boolean status) {
 		this.status = status;
+	}
+	
+	public TestLane getLaneByIndex(int index){
+		return lanes[index];
+	}
+	
+	public TestLane[] getLanes(){
+		return lanes;
 	}
 
 }

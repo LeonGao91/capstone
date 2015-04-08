@@ -38,7 +38,21 @@ public class TestSystem {
 		for (int i = 0; i < size; i++) {
 			repeats[i] = new TestRepeat(dataInput[i]);
 		}
-		findStats(Test.NOTCHECKOUTLIER);
+		findStats(TestDirection.NOTCHECKOUTLIER);
+	}
+	
+	/**
+	 * Constructor with one TestRepeat array argument.
+	 *
+	 * @param repeats
+	 *            an array of TestRepeat representing all repeats of one system.
+	 */
+	public TestSystem(TestRepeat[] repeats){
+		size = repeats.length;
+		this.repeats = repeats;
+		basicStats = new Stats();
+		noOutlierStats = new Stats();
+		findStats(TestDirection.NOTCHECKOUTLIER);
 	}
 
 	/**
@@ -55,7 +69,7 @@ public class TestSystem {
 
 		for (int i = 0; i < repeats.length; i++) {
 			// Ignore outliers or remove ourliers
-			if (checkOutlier == Test.NOTCHECKOUTLIER || (checkOutlier == Test.CHECKOUTLIER && repeats[i].isNotOutlier())) {
+			if (checkOutlier == TestDirection.NOTCHECKOUTLIER || (checkOutlier == TestDirection.CHECKOUTLIER && repeats[i].isNotOutlier())) {
 				ssMin.addValue(repeats[i].getBasicStats().getMin());
 				ssMin.addValue(repeats[i].getBasicStats().getMean());
 			}

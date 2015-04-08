@@ -11,13 +11,10 @@ package dataAnalyticsModel;
  *
  */
 public class Test {
-	public static boolean CHECKOUTLIER = true;
-	public static boolean NOTCHECKOUTLIER = false;
-	private double threshold1 = 6; // for detecting system outlier
-	private double threshold2 = 6; // for detecting system outlier
-	private double threshold3 = 6; // for detecting lane2lane outlier
-	private double threshold4 = 6; // for detecting lane2lane outlier
+
+
 	private TestDirection[] directions;
+	private TestDirection[] pairedDirections;
 	private int size; // number of directions
 	private int outlierCount; // number of outliers
 
@@ -42,79 +39,30 @@ public class Test {
 			directions[i] = new TestDirection(dataInput[i]);
 		}
 		outlierCount = 0;
-		findOutlier();
+		pairDirections();
 	}
 
+	
 	/**
-	 * Find outliers based on basic statistics.
+	 * Constructor with one Testdirection array argument.
+	 *
+	 * @param directions
+	 *            an array TestDirection representing all directions of one test.
 	 */
-	private void findOutlier() {
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < directions[i].getSize(); j++) {
-				for (int k = 0; k < directions[i].getSystemByIndex(j).getSize(); k++) {
-					// System outlier 1
-					if (Math.abs(getDirectionByIndex(i).getBasicStats().getMean() - getRepeatByIndexes(i, j, k).getBasicStats().getMin()) > threshold1) {
-						getRepeatByIndexes(i, j, k).setStatus(TestRepeat.INVALID);
-						// Message
-						outlierCount++;
-					}
-					// System outlier 2
-					if (Math.abs(getSystemByIndexes(i, j).getBasicStats().getMean() - getRepeatByIndexes(i, j, k).getBasicStats().getMin()) > threshold2) {
-						getRepeatByIndexes(i, j, k).setStatus(TestRepeat.INVALID);
-						// Message
-						outlierCount++;
-					}
-					// Lane2lane outlier 1
-					if (Math.abs(getRepeatByIndexes(i, j, k).getBasicStats().getMedian() - getRepeatByIndexes(i, j, k).getBasicStats().getMin()) > threshold3) {
-						getRepeatByIndexes(i, j, k).setStatus(TestRepeat.INVALID);
-						// Message
-						outlierCount++;
-					}
-					// Lane2lane outlier 2?
-
-				}
-				// Compute statistics withour outliers
-				getSystemByIndexes(i, j).findStats(CHECKOUTLIER); 
-			}
-			// Compute statistics withour outliers
-			getDirectionByIndex(i).findStats(CHECKOUTLIER); 
+	public Test(TestDirection[] directions) {
+		size = directions.length;
+		this.directions = directions;
+		outlierCount = 0;
+		pairDirections();
+	}
+	
+	private void pairDirections(){
+		for (int i = 0; i < size/2; i++){
+			pairedDirections[i*2] = directions[i].add(directions[i*2+1]);
 		}
-		// Output outlier message
-		if (outlierCount > 1) {
-			// Message
-		}
-
 	}
 
-	/**
-	 * Get certain repeat according to indexes
-	 * 
-	 * @param directionIndex
-	 *            direction index
-	 * @param systemIndex
-	 *            system index
-	 * @param repeatIndex
-	 *            repeat index
-	 * @return TestRepeat object
-	 */
-	private TestRepeat getRepeatByIndexes(int directionIndex, int systemIndex,
-			int repeatIndex) {
-		return directions[directionIndex].getSystemByIndex(systemIndex).getRepeatByIndex(
-				repeatIndex);
-	}
 
-	/**
-	 * Get certain system according to indexes
-	 * 
-	 * @param directionIndex
-	 *            direction index
-	 * @param systemIndex
-	 *            system index
-	 * @return TestSystem object
-	 */
-	private TestSystem getSystemByIndexes(int directionIndex, int systemIndex) {
-		return directions[directionIndex].getSystemByIndex(systemIndex);
-	}
 
 	/**
 	 * Get certain direction according to index
@@ -125,82 +73,6 @@ public class Test {
 	 */
 	public TestDirection getDirectionByIndex(int index) {
 		return directions[index];
-	}
-
-	/**
-	 * Get threshold1 value
-	 * 
-	 * @return threshold1 value
-	 */
-	public double getThreshold1() {
-		return threshold1;
-	}
-
-	/**
-	 * Set threshold1 value
-	 * 
-	 * @param threshold1
-	 *            new threshold1 value
-	 */
-	public void setThreshold1(double threshold1) {
-		this.threshold1 = threshold1;
-	}
-
-	/**
-	 * Get threshold2 value
-	 * 
-	 * @return threshold2 value
-	 */
-	public double getThreshold2() {
-		return threshold2;
-	}
-
-	/**
-	 * Set threshold2 value
-	 * 
-	 * @param threshold2
-	 *            new threshold1 value
-	 */
-	public void setThreshold2(double threshold2) {
-		this.threshold2 = threshold2;
-	}
-
-	/**
-	 * Get threshold3 value
-	 * 
-	 * @return threshold3 value
-	 */
-	public double getThreshold3() {
-		return threshold3;
-	}
-
-	/**
-	 * Set threshold3 value
-	 * 
-	 * @param threshold3
-	 *            new threshold1 value
-	 */
-	public void setThreshold3(double threshold3) {
-		this.threshold3 = threshold3;
-	}
-
-	/**
-	 * Get threshold4 value
-	 * 
-	 * @return threshold4 value
-	 */
-	public double getThreshold4() {
-		return threshold4;
-	}
-
-	/**
-	 * Set threshold4 value
-	 * 
-	 * @param threshold4
-	 *            new threshold1 value
-	 */
-	public void setThreshold4(double threshold4) {
-		this.threshold4 = threshold4;
 	}
 
 	/**
