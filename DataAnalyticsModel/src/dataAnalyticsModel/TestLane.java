@@ -7,17 +7,17 @@ import java.util.HashMap;
  * one lanes of one repeat as well as additional lane information, such as which
  * channel or rank this lane margin value belongs to.
  * 
- * @author Yan 04/07/2015
+ * @author Yan 04/08/2015
  * @version 1.0
  *
  */
 
 public class TestLane {
-	public static boolean VALID = true;
-	public static boolean NOTVALID = false;
+	public static boolean VALID = true; //the margin value is valid
+	public static boolean NOTVALID = false; //the margin value is not valid
 	private int margin; // margin value of the lane
 	private HashMap<String, String> attributes; // lane attributes
-	private boolean state;
+	private boolean state; //true for valid, false otherwise
 
 	/**
 	 * Constructor with no argument.
@@ -34,20 +34,29 @@ public class TestLane {
 	public TestLane(int dataInput) {
 		margin = dataInput;
 		attributes = new HashMap<>();
-		state = this.VALID;
+		state = true;
 	}
 	
+	/**
+	 * Constructor to clone a lane.
+	 * 
+	 * @param lane
+	 *            a TestLane object
+	 */
 	public TestLane(TestLane lane){
 		this.margin = lane.getMargin();
 		this.attributes = lane.getAttributes();
-		this.state = lane.getState();
+		this.state = lane.isValid();
 	}
 
 
 	/**
 	 * Constructor with two arguments: margin value and lane state.
-	 * @param dataInput an array storing all data of one repeat.
-	 * @param isValid a boolean indicating whether this lane is valid.
+	 * 
+	 * @param dataInput
+	 *            an array storing all data of one repeat.
+	 * @param isValid
+	 *            a boolean indicating whether this lane is valid.
 	 */
 
 	public TestLane(int dataInput, boolean isValid) {
@@ -55,11 +64,16 @@ public class TestLane {
 		attributes = new HashMap<>();
 		state = isValid;
 	}
-
 	
+	/**
+	 * Get the attributes of the lane.
+	 * 
+	 * @return a HashMap of attribute names and values
+	 */
 	public HashMap<String, String> getAttributes(){
 		return attributes;
 	}
+	
 	/**
 	 * Add one attribute pair of the lane. Such as channel no. and rank no.
 	 * 
@@ -73,7 +87,7 @@ public class TestLane {
 	}
 
 	/**
-	 * Get the attribute value according to attribute name
+	 * Get the attribute value according to attribute name.
 	 * 
 	 * @param attriName
 	 *            the name of the attribute
@@ -85,7 +99,7 @@ public class TestLane {
 
 	/**
 	 * Get whether the lane margin is a valid value (invalid: NA in original
-	 * data)
+	 * data).
 	 * 
 	 * @return true if valid, false otherwise
 	 */
@@ -94,7 +108,7 @@ public class TestLane {
 	}
 
 	/**
-	 * Get the margin value
+	 * Get the margin value.
 	 * 
 	 * @return the margin value
 	 */
@@ -102,19 +116,33 @@ public class TestLane {
 		return margin;
 	}
 	
-	public void setMargin(int margin){
+	/**
+	 * Set the margin value of the lane.
+	 * 
+	 * @param margin
+	 *            margin value
+	 */
+	public void setMargin(int margin) {
 		this.margin = margin;
 	}
 	
-	public void setState(boolean state){
+	/**
+	 * Set the state of the lane.
+	 * 
+	 * @param state
+	 *            true if the lane is valid, false otherwise
+	 */
+	public void setState(boolean state) {
 		this.state = state;
 	}
 	
-	public boolean getState(){
-		return state;
-	}
-	
-	public void setAttributs(HashMap<String, String> attributes){
+	/**
+	 * Set the attributes of the lane
+	 * 
+	 * @param attributes
+	 *            an HashMap of attributes names and values
+	 */
+	public void setAttributs(HashMap<String, String> attributes) {
 		this.attributes = attributes;
 	}
 

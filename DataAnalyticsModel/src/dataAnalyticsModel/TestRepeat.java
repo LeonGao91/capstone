@@ -4,15 +4,15 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 /**
  * This class represents a repeat of a validation test which contain margin data
- * of all lanes of that repeat. Statistics accross lanes are computed here.
+ * of all lanes of that repeat. Statistics across lanes are computed here.
  * 
- * @author Yan, Lucy 04/04/2015
+ * @author Yan, Lucy 04/08/2015
  * @version 1.0
  *
  */
 public class TestRepeat {
-	public static boolean VALID = true;
-	public static boolean INVALID = false;
+	public static boolean VALID = true; //this lane is not an outlier
+	public static boolean INVALID = false; //this lane is an outlier
 	private TestLane[] lanes; // margins of all lanes within this repeat
 	private Stats basicStats; // basic statistics
 	private int size; // number of lanes of this repeat
@@ -55,10 +55,16 @@ public class TestRepeat {
 		findStats();
 	}
 	
-	public TestRepeat(TestRepeat repeat){
+	/**
+	 * Constructor to clone a repeat.
+	 * 
+	 * @param repeat
+	 *            a TestRepeat object
+	 */
+	public TestRepeat(TestRepeat repeat) {
 		size = repeat.getSize();
 		this.lanes = new TestLane[size];
-		for (int i = 0; i < size; i++){
+		for (int i = 0; i < size; i++) {
 			lanes[i] = new TestLane(repeat.getLaneByIndex(i));
 		}
 		status = TestRepeat.VALID;
@@ -123,10 +129,21 @@ public class TestRepeat {
 		this.status = status;
 	}
 	
-	public TestLane getLaneByIndex(int index){
+	/**
+	 * Get certain lane within the repeat by index
+	 * 
+	 * @param index
+	 *            the index of the lane
+	 * @return a TestLane object corresponds to the index
+	 */
+	public TestLane getLaneByIndex(int index) {
 		return lanes[index];
 	}
 	
+	/**
+	 * Get the lanes of this repeat
+	 * @return all the TestLane objects of this repeat
+	 */
 	public TestLane[] getLanes(){
 		return lanes;
 	}

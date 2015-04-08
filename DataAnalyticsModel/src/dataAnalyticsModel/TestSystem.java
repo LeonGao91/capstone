@@ -6,7 +6,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
  * This class represents a system of the validation test. Statistics across
  * repeats are computed here.
  * 
- * @author Yan, Lucy 04/04/2015
+ * @author Yan, Lucy 04/08/2015
  * @version 1.0
  *
  */
@@ -55,6 +55,12 @@ public class TestSystem {
 		findStats(TestDirection.NOTCHECKOUTLIER);
 	}
 	
+	/**
+	 * Constructor to clone a system.
+	 * 
+	 * @param system
+	 *            a TestSystem object
+	 */
 	public TestSystem(TestSystem system){
 		size = system.getSize();
 		this.repeats = new TestRepeat[size];
