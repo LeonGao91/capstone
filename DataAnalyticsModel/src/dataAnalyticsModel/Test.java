@@ -56,9 +56,13 @@ public class Test {
 		pairDirections();
 	}
 	
+	/**
+	 * Pair up/down, right/left directions together
+	 */
 	private void pairDirections(){
-		for (int i = 0; i < size/2; i++){
-			pairedDirections[i*2] = directions[i].add(directions[i*2+1]);
+		pairedDirections = new TestDirection[size/2];
+		for (int i = 0; i < pairedDirections.length; i++){
+			pairedDirections[i] = directions[i*2].add(directions[i*2+1]);
 		}
 	}
 

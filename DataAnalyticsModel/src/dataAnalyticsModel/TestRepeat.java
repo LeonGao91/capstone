@@ -49,7 +49,18 @@ public class TestRepeat {
 	 */
 	public TestRepeat(TestLane[] lanes){
 		size = lanes.length;
-		lanes = lanes;
+		this.lanes = lanes;
+		status = TestRepeat.VALID;
+		basicStats = new Stats();
+		findStats();
+	}
+	
+	public TestRepeat(TestRepeat repeat){
+		size = repeat.getSize();
+		this.lanes = new TestLane[size];
+		for (int i = 0; i < size; i++){
+			lanes[i] = new TestLane(repeat.getLaneByIndex(i));
+		}
 		status = TestRepeat.VALID;
 		basicStats = new Stats();
 		findStats();

@@ -54,6 +54,17 @@ public class TestSystem {
 		noOutlierStats = new Stats();
 		findStats(TestDirection.NOTCHECKOUTLIER);
 	}
+	
+	public TestSystem(TestSystem system){
+		size = system.getSize();
+		this.repeats = new TestRepeat[size];
+		for (int i = 0; i < size; i++){
+			repeats[i] = new TestRepeat(system.getRepeatByIndex(i));
+		}
+		basicStats = new Stats();
+		noOutlierStats = new Stats();
+		findStats(TestDirection.NOTCHECKOUTLIER);
+	}
 
 	/**
 	 * Calculate statistics within this system.
@@ -119,5 +130,7 @@ public class TestSystem {
 	public Stats getBasicStats() {
 		return basicStats;
 	}
+	
+
 
 }

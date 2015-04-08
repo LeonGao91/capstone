@@ -36,6 +36,12 @@ public class TestLane {
 		attributes = new HashMap<>();
 		state = this.VALID;
 	}
+	
+	public TestLane(TestLane lane){
+		this.margin = lane.getMargin();
+		this.attributes = lane.getAttributes();
+		this.state = lane.getState();
+	}
 
 
 	/**
@@ -102,6 +108,14 @@ public class TestLane {
 	
 	public void setState(boolean state){
 		this.state = state;
+	}
+	
+	public boolean getState(){
+		return state;
+	}
+	
+	public void setAttributs(HashMap<String, String> attributes){
+		this.attributes = attributes;
 	}
 
 }
