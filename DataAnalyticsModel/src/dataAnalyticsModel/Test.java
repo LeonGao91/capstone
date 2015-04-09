@@ -1,5 +1,7 @@
 package dataAnalyticsModel;
 
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+
 /**
  * This class represents a validation test composing directions, systems,
  * repeats and lanes. Methods include detecting outliers, worst cases and
@@ -21,26 +23,36 @@ public class Test {
 	
 	private double[] thresholds;
 	private double[] highThresholds;
+	private double[] repeatNoiseThresholds;
 	private double sigmaThreshold;
 	private double sigmaThreshold2;
+	private double corrThreshold;
 	
 	private boolean basicMeanCheck = true;
 	private boolean outlierMeanCheck = true;
 	private boolean basicMinCheck = true;
 	private boolean outlierMinCheck = true;
 	
-	private boolean basicMeanCheckHT = true; // high thresh
-	private boolean basicMinCheckHT = true; // high thresh
+	private boolean basicMeanCheckH = true; // high thresh
+	private boolean basicMinCheckH = true; // high thresh
 	
 	private boolean basicSigmaMeanCheck = true;
 	private boolean outlierSigmaMeanCheck = true;
 	private boolean basicSigmaMinCheck = true;
 	private boolean outlierSigmaMinCheck = true;
+	private boolean outlierSigmaMinCheckT2 = true; // compare to sigmaThreshold2
 	
-	private boolean outlierSigmaMinCheckT2 = true;
+	private boolean outlierMeanCheckH2 = true; // mean check 3
+	private boolean outlierMeanCheckH3 = true; // mean check 4
 	
-	private boolean outlierMeanCheckHT2 = true; // mean check 3
-	private boolean outlierMeanCheckHT3 = true; // mean check 4
+	private boolean windowCheck;
+	private boolean outlierWindowCheck;
+	
+	private boolean outlierNoiseCheck;
+	
+	private double udCorr;
+	private double winCorr;
+	private PearsonsCorrelation pearsons = new PearsonsCorrelation();
 	
 	/**
 	 * Constructor with no argument.
@@ -64,6 +76,22 @@ public class Test {
 		}
 		outlierCount = 0;
 		pairDirections();
+		initializeThresholds();
+		basicChecks();
+	}
+	
+	/**
+	 * Constructor with one Testdirection array argument.
+	 *
+	 * @param directions
+	 *            an array TestDirection representing all directions of one test.
+	 */
+	public Test(TestDirection[] directions) {
+		size = directions.length;
+		this.directions = directions;
+		outlierCount = 0;
+		pairDirections();		
+		initializeThresholds();
 		basicChecks();
 	}
 	
@@ -74,9 +102,11 @@ public class Test {
 		for (int i = 0; i < 4; i++){
 			thresholds[i] = 6;
 			highThresholds[i] = 10;
+			repeatNoiseThresholds[i] = 0.5;
 		}
 		sigmaThreshold = 2;
 		sigmaThreshold = 0.2;
+		corrThreshold = 0.8;
 	}
 	
 	public void initializeThresholds(String filePath){
@@ -95,50 +125,71 @@ public class Test {
 					&& directions[2 * i + 1].getBasicStats().getMin() > thresholds[i];
 			outlierMeanCheck = outlierMeanCheck && directions[2 * i].getNoOutlierStats().getMin() > thresholds[i]
 					&& directions[2 * i + 1].getNoOutlierStats().getMin() > thresholds[i];
-			// basic mean check high threshold
-			basicMeanCheckHT = basicMeanCheckHT && directions[2 * i].getBasicStats().getMeanMin() > highThresholds[i]
+			// basic mean & min check high threshold
+			basicMeanCheckH = basicMeanCheckH && directions[2 * i].getBasicStats().getMeanMin() > highThresholds[i]
 					&& directions[2 * i + 1].getBasicStats().getMeanMin() > highThresholds[i];			
-			basicMinCheckHT = basicMinCheckHT && directions[2 * i].getBasicStats().getMin() > highThresholds[i]
+			basicMinCheckH = basicMinCheckH && directions[2 * i].getBasicStats().getMin() > highThresholds[i]
 					&& directions[2 * i + 1].getBasicStats().getMin() > highThresholds[i];
+			
 			// basic sigma mean check
-			basicSigmaMeanCheck = basicSigmaMeanCheck && directions[2 * i].getBasicStats().getSigmaMean() > sigmaThreshold
-					&& directions[2 * i + 1].getBasicStats().getSigmaMean() > sigmaThreshold;
-			outlierSigmaMeanCheck = outlierSigmaMeanCheck && directions[2 * i].getNoOutlierStats().getSigmaMean() > sigmaThreshold
-					&& directions[2 * i + 1].getNoOutlierStats().getSigmaMean() > sigmaThreshold;
+			basicSigmaMeanCheck = basicSigmaMeanCheck && directions[2 * i].getBasicStats().getSigmaMean() < sigmaThreshold
+					&& directions[2 * i + 1].getBasicStats().getSigmaMean() < sigmaThreshold;
+			outlierSigmaMeanCheck = outlierSigmaMeanCheck && directions[2 * i].getNoOutlierStats().getSigmaMean() < sigmaThreshold
+					&& directions[2 * i + 1].getNoOutlierStats().getSigmaMean() < sigmaThreshold;
 			// basic sigma min check
-			basicSigmaMinCheck = basicSigmaMinCheck && directions[2 * i].getBasicStats().getSigmaMin() > sigmaThreshold
-					&& directions[2 * i + 1].getBasicStats().getSigmaMin() > sigmaThreshold;
-			outlierSigmaMinCheck = outlierSigmaMinCheck && directions[2 * i].getNoOutlierStats().getSigmaMin() > sigmaThreshold
-					&& directions[2 * i + 1].getNoOutlierStats().getSigmaMin() > sigmaThreshold;
+			basicSigmaMinCheck = basicSigmaMinCheck && directions[2 * i].getBasicStats().getSigmaMin() < sigmaThreshold
+					&& directions[2 * i + 1].getBasicStats().getSigmaMin() < sigmaThreshold;
+			outlierSigmaMinCheck = outlierSigmaMinCheck && directions[2 * i].getNoOutlierStats().getSigmaMin() < sigmaThreshold
+					&& directions[2 * i + 1].getNoOutlierStats().getSigmaMin() < sigmaThreshold;
 			// basic sigma min check threshold 2
-			outlierSigmaMinCheckT2 = outlierSigmaMinCheckT2 && directions[2 * i].getNoOutlierStats().getSigmaMin() > sigmaThreshold2
-					&& directions[2 * i + 1].getNoOutlierStats().getSigmaMin() > sigmaThreshold2;
+			outlierSigmaMinCheckT2 = outlierSigmaMinCheckT2 && directions[2 * i].getNoOutlierStats().getSigmaMin() < sigmaThreshold2
+					&& directions[2 * i + 1].getNoOutlierStats().getSigmaMin() < sigmaThreshold2;
+			
 			// mean check 3
-			outlierMeanCheckHT2 = outlierMeanCheckHT2 && directions[2 * i].getNoOutlierStats().getMean() > highThresholds[i]
+			outlierMeanCheckH2 = outlierMeanCheckH2 && directions[2 * i].getNoOutlierStats().getMean() > highThresholds[i]
 					&& directions[2 * i + 1].getNoOutlierStats().getMean() > highThresholds[i];
 			// mean check 4
-			outlierMeanCheckHT3 = outlierMeanCheckHT3 && directions[2 * i].getNoOutlierStats().getMinMean() > highThresholds[i]
+			outlierMeanCheckH3 = outlierMeanCheckH3 && directions[2 * i].getNoOutlierStats().getMinMean() > highThresholds[i]
 					&& directions[2 * i + 1].getNoOutlierStats().getMinMean() > highThresholds[i];
 
 			// outlier count
 			outlierCount = directions[2 * i].getOutlierCount() + directions[2 * i + 1].getOutlierCount();
-					
+			
+			// window check
+			windowCheck = windowCheck && pairedDirections[i].getBasicStats().getMeanMin() > 2 * thresholds[i];
+			outlierWindowCheck = outlierWindowCheck && pairedDirections[i].getNoOutlierStats().getMeanMin() > 2 * thresholds[i];
+			
+			// noise check
+			outlierNoiseCheck = outlierNoiseCheck && directions[2 * i].getNoOutlierStats().getP2pNoise1() > repeatNoiseThresholds[i]
+					&& directions[2 * i + 1].getNoOutlierStats().getP2pNoise1() > repeatNoiseThresholds[i];
+			// correlation check
+			udCorr = pearsons.correlation(directions[2 * i].getAllMarginMean(), directions[2 * i + 1].getAllMarginMean());
+			if (udCorr > corrThreshold) {
+				health +=1.5;
+				trust += 2.5;
+			}
+			winCorr = pearsons.correlation(pairedDirections[i].getAllMarginMean(), pairedDirections[i + 1].getAllMarginMean());
+			if (winCorr > corrThreshold) {
+				health += 3;
+				trust +=5;
+			}
+			
 		}
 		// mean check 1
 		health += 20 * (basicMeanCheck || outlierMeanCheck ? 1:0);
 		if (outlierMeanCheck == basicMeanCheck) {
 			trust += 5;
-		}		
+		}
 		// mean check 2 (high threshold)
-		health += 5 * (basicMeanCheckHT ? 1:0);
+		health += 5 * (basicMeanCheckH ? 1:0);
 		
 		// min check 1
 		health += 20 * (basicMinCheck || outlierMinCheck ? 1:0);
 		if (outlierMinCheck == basicMinCheck) {
 			trust += 5;
-		}		
+		}
 		// min check 2 (high threshold)
-		health += 5 * (basicMinCheckHT ? 1:0);
+		health += 5 * (basicMinCheckH ? 1:0);
 		
 		// sigma check (mean)
 		health += 5 * (basicSigmaMeanCheck || outlierSigmaMeanCheck ? 1:0);
@@ -154,33 +205,22 @@ public class Test {
 		trust -= 2 * (outlierSigmaMinCheckT2 ? 1:0);
 		
 		// mean check 3 (high threshold)
-		health += 5 * (outlierMeanCheckHT2 ? 1:0);
+		health += 5 * (outlierMeanCheckH2 ? 1:0);
 		// mean check 4 (high threshold)
-		health += 5 * (outlierMeanCheckHT3 ? 1:0);
+		health += 5 * (outlierMeanCheckH3 ? 1:0);
 		
 		// outlier count
 		health -= outlierCount;
 		trust -= outlierCount;
 		
-		// window
+		// window check
+		health += 5 * (windowCheck || outlierWindowCheck ? 1:0);
+
+		// repeatability noise
+		health += 5 * (outlierNoiseCheck ? 1:0);
+
 	}
 
-	/**
-	 * Constructor with one Testdirection array argument.
-	 *
-	 * @param directions
-	 *            an array TestDirection representing all directions of one test.
-	 */
-	public Test(TestDirection[] directions) {
-		size = directions.length;
-		this.directions = directions;
-		outlierCount = 0;
-		pairDirections();
-	}
-	
-	
-	
-	
 	/**
 	 * Pair up/down, right/left directions together
 	 */
