@@ -7,7 +7,8 @@ package dataAnalyticsModel;
  * 
  * Fields: 
  * mean, min, max, median 
- * sigma: standard deviation meanMin: mean of min values 
+ * sigma: standard deviation 
+ * meanMin: mean of min values 
  * sigmaMin: standard deviation of min values 
  * sigmaMean: standard deviation of mean values 
  * repeatNoise1: mean of standard deviations of min values 

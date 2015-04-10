@@ -27,6 +27,7 @@ public class Test {
 	private double sigmaThreshold;
 	private double sigmaThreshold2;
 	private double corrThreshold;
+	private double[] lane2LaneCorrThresholds;
 	
 	private boolean basicMeanCheck = true;
 	private boolean outlierMeanCheck = true;
@@ -53,6 +54,7 @@ public class Test {
 	private double udCorr;
 	private double winCorr;
 	private PearsonsCorrelation pearsons = new PearsonsCorrelation();
+	private double lane2LaneCorr;
 	
 	/**
 	 * Constructor with no argument.
@@ -60,28 +62,28 @@ public class Test {
 	public Test() {
 	}
 
-	/**
-	 * Constructor with one int array argument.
-	 *
-	 * @param dataInput
-	 *            a three-dimensional array storing all data of one direction.
-	 */
-
-	public Test(int[][][][] dataInput) {
-		size = dataInput.length;
-		directions = new TestDirection[size];
-		//Construct each direction
-		for (int i = 0; i < size; i++) {
-			directions[i] = new TestDirection(dataInput[i]);
-		}
-		outlierCount = 0;
-		pairDirections();
-		initializeThresholds();
-		basicChecks();
-	}
+//	/**
+//	 * Constructor with one int array argument.
+//	 *
+//	 * @param dataInput
+//	 *            a three-dimensional array storing all data of one direction.
+//	 */
+//
+//	public Test(int[][][][] dataInput) {
+//		size = dataInput.length;
+//		directions = new TestDirection[size];
+//		//Construct each direction
+//		for (int i = 0; i < size; i++) {
+//			directions[i] = new TestDirection(dataInput[i]);
+//		}
+//		outlierCount = 0;
+//		pairDirections();
+//		initializeThresholds();
+//		basicChecks();
+//	}
 	
 	/**
-	 * Constructor with one Testdirection array argument.
+	 * Constructor with one TestDirection array argument.
 	 *
 	 * @param directions
 	 *            an array TestDirection representing all directions of one test.
@@ -98,6 +100,7 @@ public class Test {
 	public void initializeThresholds(){
 		thresholds = new double[4];
 		highThresholds = new double[4];
+		lane2LaneCorrThresholds = new double[8];
 		
 		for (int i = 0; i < 4; i++){
 			thresholds[i] = 6;
@@ -107,6 +110,10 @@ public class Test {
 		sigmaThreshold = 2;
 		sigmaThreshold = 0.2;
 		corrThreshold = 0.8;
+		for (int i = 0; i < 8; i++){
+			lane2LaneCorrThresholds[i] = 0.8;
+		}
+		
 	}
 	
 	public void initializeThresholds(String filePath){
@@ -114,7 +121,7 @@ public class Test {
 	}
 
 	private void basicChecks() {
-		for (int i = 0; i < thresholds[i]; i++) {
+		for (int i = 0; i < thresholds[i]; i++) {  //?
 			// basic mean check
 			basicMeanCheck = basicMeanCheck && directions[2 * i].getBasicStats().getMeanMin() > thresholds[i]
 					&& directions[2 * i + 1].getBasicStats().getMeanMin() > thresholds[i];
@@ -173,6 +180,10 @@ public class Test {
 				health += 3;
 				trust +=5;
 			}
+			//lane2Lane correlation check
+			if (directions[2 * i].getLane2LaneCorr() > lane2LaneCorrThresholds[2 * i] && directions[2 * i + 1].getLane2LaneCorr() > lane2LaneCorrThresholds[2 * i + 1])
+				health +=1.5;
+				trust += 2.5;
 			
 		}
 		// mean check 1
@@ -260,5 +271,11 @@ public class Test {
 		return outlierCount;
 	}
 
-	
+	public double getHealth() {
+		return health;
+	}
+
+	public double getTrust() {
+		return trust;
+	}
 }

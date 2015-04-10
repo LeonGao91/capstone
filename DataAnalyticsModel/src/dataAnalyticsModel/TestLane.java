@@ -1,6 +1,7 @@
 package dataAnalyticsModel;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class represents a lane of a validation test which contain the margin of
@@ -14,7 +15,7 @@ import java.util.HashMap;
 
 public class TestLane {
 	public static boolean VALID = true; //the margin value is valid
-	public static boolean NOTVALID = false; //the margin value is not valid
+	public static boolean INVALID = false; //the margin value is invalid
 	private int margin; // margin value of the lane
 	private HashMap<String, String> attributes; // lane attributes
 	private boolean state; //true for valid, false otherwise
@@ -83,7 +84,7 @@ public class TestLane {
 	 *            the value of the attribute
 	 */
 	public void setLaneAttribute(String attriName, String attriValue) {
-		attributes.put(attriName, attriName);
+		attributes.put(attriName, attriValue);
 	}
 
 	/**
@@ -137,6 +138,19 @@ public class TestLane {
 	}
 	
 	/**
+	 * Get String of all attributes and values.
+	 *  
+	 * @return a String representing lane attributes
+	 */
+	public String printAttributes(){
+		String forReturn = "";
+		for (Map.Entry<String, String> entry: attributes.entrySet()){
+			forReturn = forReturn + entry.getKey() + ": " + entry.getValue() + "\n";
+		}
+		return forReturn;
+	}
+	
+	/**
 	 * Set the attributes of the lane
 	 * 
 	 * @param attributes
@@ -144,6 +158,27 @@ public class TestLane {
 	 */
 	public void setAttributs(HashMap<String, String> attributes) {
 		this.attributes = attributes;
+	}
+	
+	/**
+	 * Get a String of the margin value 
+	 */
+	public String toString(){
+		return "" + margin;
+	}
+	
+	/**
+	 * Tester of class.
+	 * 
+	 * @param args no args
+	 */
+	public static void main(String[] args){
+		TestLane lane = new TestLane(5);
+		System.out.println(lane);
+		System.out.println(lane.isValid());
+		lane.setLaneAttribute("channel", "0");
+		lane.setLaneAttribute("rank", "0");
+		System.out.println(lane.printAttributes());
 	}
 
 }

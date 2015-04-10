@@ -24,22 +24,22 @@ public class TestSystem {
 	public TestSystem() {
 	}
 
-	/**
-	 * Constructor with one int array argument.
-	 *
-	 * @param dataInput
-	 *            a two-dimensional array storing all data of one system.
-	 */
-	public TestSystem(int[][] dataInput) {
-		size = dataInput.length;
-		repeats = new TestRepeat[size];
-		basicStats = new Stats();
-		noOutlierStats = new Stats();
-		for (int i = 0; i < size; i++) {
-			repeats[i] = new TestRepeat(dataInput[i]);
-		}
-		findStats(TestDirection.NOTCHECKOUTLIER);
-	}
+//	/**
+//	 * Constructor with one int array argument.
+//	 *
+//	 * @param dataInput
+//	 *            a two-dimensional array storing all data of one system.
+//	 */
+//	public TestSystem(int[][] dataInput) {
+//		size = dataInput.length;
+//		repeats = new TestRepeat[size];
+//		basicStats = new Stats();
+//		noOutlierStats = new Stats();
+//		for (int i = 0; i < size; i++) {
+//			repeats[i] = new TestRepeat(dataInput[i]);
+//		}
+//		findStats(TestDirection.NOTCHECKOUTLIER);
+//	}
 	
 	/**
 	 * Constructor with one TestRepeat array argument.
@@ -55,22 +55,22 @@ public class TestSystem {
 		findStats(TestDirection.NOTCHECKOUTLIER);
 	}
 	
-	/**
-	 * Constructor to clone a system.
-	 * 
-	 * @param system
-	 *            a TestSystem object
-	 */
-	public TestSystem(TestSystem system){
-		size = system.getSize();
-		this.repeats = new TestRepeat[size];
-		for (int i = 0; i < size; i++){
-			repeats[i] = new TestRepeat(system.getRepeatByIndex(i));
-		}
-		basicStats = new Stats();
-		noOutlierStats = new Stats();
-		findStats(TestDirection.NOTCHECKOUTLIER);
-	}
+//	/**
+//	 * Constructor to clone a system.
+//	 * 
+//	 * @param system
+//	 *            a TestSystem object
+//	 */
+//	public TestSystem(TestSystem system){
+//		size = system.getSize();
+//		this.repeats = new TestRepeat[size];
+//		for (int i = 0; i < size; i++){
+//			repeats[i] = new TestRepeat(system.getRepeatByIndex(i));
+//		}
+//		basicStats = new Stats();
+//		noOutlierStats = new Stats();
+//		findStats(TestDirection.NOTCHECKOUTLIER);
+//	}
 
 	/**
 	 * Calculate statistics within this system.
@@ -83,13 +83,15 @@ public class TestSystem {
 		SummaryStatistics ssMean = new SummaryStatistics();
 		// Assign an output Stats object according to outlier indicator
 		Stats outputStats = checkOutlier ? noOutlierStats : basicStats;
+		Stats tempRepeatStats;
 
 		for (int i = 0; i < repeats.length; i++) {
 			// Ignore outliers or remove ourliers
-			if (checkOutlier == TestDirection.NOTCHECKOUTLIER || (checkOutlier == TestDirection.CHECKOUTLIER && repeats[i].isNotOutlier())) {
-				ssMin.addValue(repeats[i].getBasicStats().getMin());
-				ssMin.addValue(repeats[i].getBasicStats().getMean());
-			}
+			tempRepeatStats = checkOutlier ? repeats[i].getNoOutlierStats() : repeats[i].getBasicStats();
+//			if (checkOutlier == TestDirection.NOTCHECKOUTLIER || (checkOutlier == TestDirection.CHECKOUTLIER && repeats[i].isNotOutlier())) {
+				ssMin.addValue(tempRepeatStats.getMin());
+				ssMin.addValue(tempRepeatStats.getMean());
+//			}
 			// Store computed stats
 			outputStats.setSigmaMin(ssMin.getStandardDeviation());
 			outputStats.setMeanMin(ssMin.getMean());
@@ -136,7 +138,5 @@ public class TestSystem {
 	public Stats getBasicStats() {
 		return basicStats;
 	}
-	
-
 
 }

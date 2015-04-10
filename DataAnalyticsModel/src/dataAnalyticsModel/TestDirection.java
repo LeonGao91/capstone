@@ -26,7 +26,7 @@ public class TestDirection {
 	private double[] outlierThresholds; //thresholds for detecting outliers
 	private double byLaneThreshold; //threshold for determining near worst case lane
 	private double[] meanEachLane; //mean of each lane across systems and repeats
-	private double[] medianEachLane; //median of each lane across systems and repeats
+//	private double[] medianEachLane; //median of each lane across systems and repeats
 	
 
 	/**
@@ -35,27 +35,27 @@ public class TestDirection {
 	public TestDirection() {
 	}
 
-	/**
-	 * Constructor with one int array argument.
-	 *
-	 * @param dataInput
-	 *            a three-dimensional array storing all data of one direction.
-	 */
-	public TestDirection(int[][][] dataInput) {
-		size = dataInput.length;
-		systems = new TestSystem[size];
-		basicStats = new Stats();
-		noOutlierStats = new Stats();
-		// Construct each system
-		for (int i = 0; i < size; i++) {
-			systems[i] = new TestSystem(dataInput[i]);
-		}
-		initializeThresholds();
-		findStats(NOTCHECKOUTLIER);
-		findOutlier();
-		findStats(CHECKOUTLIER);
-		findWorstCase();
-	}
+//	/**
+//	 * Constructor with one int array argument.
+//	 *
+//	 * @param dataInput
+//	 *            a three-dimensional array storing all data of one direction.
+//	 */
+//	public TestDirection(int[][][] dataInput) {
+//		size = dataInput.length;
+//		systems = new TestSystem[size];
+//		basicStats = new Stats();
+//		noOutlierStats = new Stats();
+//		// Construct each system
+//		for (int i = 0; i < size; i++) {
+//			systems[i] = new TestSystem(dataInput[i]);
+//		}
+//		initializeThresholds();
+//		findStats(NOTCHECKOUTLIER);
+//		findOutlier();
+//		findStats(CHECKOUTLIER);
+//		findWorstCase();
+//	}
 	
 	/**
 	 * Constructor with one TestSystem array argument.
@@ -72,29 +72,28 @@ public class TestDirection {
 		findStats(NOTCHECKOUTLIER);
 		findOutlier();
 		findStats(CHECKOUTLIER);
-		findWorstCase();
 	}
 	
-	/**
-	 * Constructor to clone a direction.
-	 * 
-	 * @param direction
-	 *            a TestDirection object
-	 */
-	public TestDirection(TestDirection direction){
-		size = direction.getSize();
-		this.systems = new TestSystem[size];
-		for (int i = 0; i < size; i++){
-			systems[i] = new TestSystem(direction.getSystemByIndex(i));
-		}
-		basicStats = new Stats();
-		noOutlierStats = new Stats();
-		initializeThresholds();
-		findStats(NOTCHECKOUTLIER);
-		findOutlier();
-		findStats(CHECKOUTLIER);
-		findWorstCase();
-	}
+//	/**
+//	 * Constructor to clone a direction.
+//	 * 
+//	 * @param direction
+//	 *            a TestDirection object
+//	 */
+//	public TestDirection(TestDirection direction){
+//		size = direction.getSize();
+//		this.systems = new TestSystem[size];
+//		for (int i = 0; i < size; i++){
+//			systems[i] = new TestSystem(direction.getSystemByIndex(i));
+//		}
+//		basicStats = new Stats();
+//		noOutlierStats = new Stats();
+//		initializeThresholds();
+//		findStats(NOTCHECKOUTLIER);
+//		findOutlier();
+//		findStats(CHECKOUTLIER);
+//		findWorstCase();
+//	}
 
 	/**
 	 * Initial thresholds with default numbers.
@@ -132,21 +131,24 @@ public class TestDirection {
 		SummaryStatistics ssAllMean = new SummaryStatistics();
 		// Assign an output Stats object according to outlier indicator
 		Stats outputStats = checkOutlier ? noOutlierStats : basicStats;
+		Stats tempSystemStats;
+		Stats tempRepeatStats;
 
 		for (int i = 0; i < systems.length; i++) {
 			// Assign an input Stats object of each system according to outlier indicator
-			Stats tempStats = checkOutlier ? systems[i].getNoOutlierStats()
+			 tempSystemStats= checkOutlier ? systems[i].getNoOutlierStats()
 					: systems[i].getBasicStats();
-			ssSigmaMin.addValue(tempStats.getSigmaMin());
-			ssSigmaMean.addValue(tempStats.getSigmaMean());
-			ssMeanMin.addValue(tempStats.getMeanMin());
-			ssMeanMean.addValue(tempStats.getMean());
+			ssSigmaMin.addValue(tempSystemStats.getSigmaMin());
+			ssSigmaMean.addValue(tempSystemStats.getSigmaMean());
+			ssMeanMin.addValue(tempSystemStats.getMeanMin());
+			ssMeanMean.addValue(tempSystemStats.getMean());
 			for (int j = 0; j < systems[i].getSize(); j++) {
-				//Ignore outliers or remove ourliers
-				if (checkOutlier == NOTCHECKOUTLIER || (checkOutlier == CHECKOUTLIER && systems[i].getRepeatByIndex(j).isNotOutlier())){
-					ssAllMin.addValue(systems[i].getRepeatByIndex(j).getBasicStats().getMin());
-					ssAllMean.addValue(systems[i].getRepeatByIndex(j).getBasicStats().getMean());
-				}
+				tempRepeatStats= checkOutlier ? systems[i].getRepeatByIndex(j).getNoOutlierStats()
+						: systems[i].getRepeatByIndex(j).getBasicStats();
+				//if (checkOutlier == NOTCHECKOUTLIER || (checkOutlier == CHECKOUTLIER && systems[i].getRepeatByIndex(j).isNotOutlier())){
+					ssAllMin.addValue(tempRepeatStats.getMin());
+					ssAllMean.addValue(tempRepeatStats.getMean());
+				//}
 			}
 			// Store computed stats
 			outputStats.setRepeatNoise1(ssSigmaMin.getMean());
@@ -166,78 +168,115 @@ public class TestDirection {
 	 * Find outliers based on basic statistics.
 	 */
 	private void findOutlier() {
-			for (int i = 0; i < size; i++) {
-				for (int j = 0; j < getSystemByIndex(1).getSize(); j++) {
-					// System outlier 1
-					if (Math.abs(basicStats.getMean() - getRepeatByIndexes(i, j).getBasicStats().getMin()) > outlierThresholds[1]) {
-						getRepeatByIndexes(i, j).setStatus(TestRepeat.INVALID);
-						// Message
-						outlierCount++;
-					}
-					// System outlier 2
-					if (Math.abs(getSystemByIndex(i).getBasicStats().getMean() - getRepeatByIndexes(i, j).getBasicStats().getMin()) > outlierThresholds[2]) {
-						getRepeatByIndexes(i, j).setStatus(TestRepeat.INVALID);
-						// Message
-						outlierCount++;
-					}
-					// Lane2lane outlier 1
-					if (Math.abs(getRepeatByIndexes(i, j).getBasicStats().getMedian() - getRepeatByIndexes(i, j).getBasicStats().getMin()) > outlierThresholds[3]) {
-						getRepeatByIndexes(i, j).setStatus(TestRepeat.INVALID);
-						// Message
-						outlierCount++;
-					}
-					
-					if (Math.abs(getRepeatByIndexes(i, j).getBasicStats().getMean() - getRepeatByIndexes(i, j).getBasicStats().getMin()) > outlierThresholds[4]) {
-						getRepeatByIndexes(i, j).setStatus(TestRepeat.INVALID);
-						// Message
-						outlierCount++;
-					}
-					findMeanMedianEachLane();
-					// ToDo: Lane2lane outlier 3&4?
-					
-				}
-				// Compute statistics without outliers
-				getSystemByIndex(i).findStats(CHECKOUTLIER); 
+		TestRepeat tempRepeat;
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < getSystemByIndex(0).getSize(); j++) {
+				// System outlier 1
+				tempRepeat = getRepeatByIndexes(i, j);
+				outlierCount = outlierCount
+						+ tempRepeat.findSystemOutliers(basicStats.getMean(),
+								outlierThresholds[0]);
+				// if (Math.abs(basicStats.getMean() - getRepeatByIndexes(i,
+				// j).getBasicStats().getMin()) > outlierThresholds[0]) {
+				// getRepeatByIndexes(i, j).setStatus(TestRepeat.INVALID);
+				// // Message
+				// outlierCount++;
+				// }
+				// System outlier 2
+				outlierCount = outlierCount
+						+ tempRepeat.findSystemOutliers(getSystemByIndex(i)
+								.getBasicStats().getMean(),
+								outlierThresholds[1]);
+				// if (Math.abs(getSystemByIndex(i).getBasicStats().getMean() -
+				// getRepeatByIndexes(i, j).getBasicStats().getMin()) >
+				// outlierThresholds[1]) {
+				// getRepeatByIndexes(i, j).setStatus(TestRepeat.INVALID);
+				// // Message
+				// outlierCount++;
+				// }
+				// Lane2lane outlier 1
+				outlierCount = outlierCount
+						+ tempRepeat.findLaneOutliers(outlierThresholds[2],
+								outlierThresholds[4]);
+				// if (Math.abs(getRepeatByIndexes(i,
+				// j).getBasicStats().getMedian() - getRepeatByIndexes(i,
+				// j).getBasicStats().getMin()) > outlierThresholds[2]) {
+				// getRepeatByIndexes(i, j).setStatus(TestRepeat.INVALID);
+				// // Message
+				// outlierCount++;
+				// }
+				//
+				// if (Math.abs(getRepeatByIndexes(i,
+				// j).getBasicStats().getMean() - getRepeatByIndexes(i,
+				// j).getBasicStats().getMin()) > outlierThresholds[3]) {
+				// getRepeatByIndexes(i, j).setStatus(TestRepeat.INVALID);
+				// // Message
+				// outlierCount++;
+				// }
+
 			}
-			// Compute statistics withour outliers
-			findStats(CHECKOUTLIER);
+			// Compute statistics without outliers
+			getSystemByIndex(i).findStats(CHECKOUTLIER);
+		}
+		// Lane2lane outlier 3&4?
+		findByLaneMean();
+		boolean meanOutlier = false;
+		boolean medianOutlier = false;
+		DescriptiveStatistics ds = new DescriptiveStatistics();
+		for (int i = 0; i < meanEachLane.length; i++) {
+			ds.addValue(meanEachLane[i]);
+		}
+		meanOutlier = (ds.getMean() - ds.getMin()) > outlierThresholds[4];
+		medianOutlier = (ds.getPercentile(50) - ds.getMin()) > outlierThresholds[5];
+		if (meanOutlier && medianOutlier) {
+			outlierCount = outlierCount + 2;
+		} else if (meanOutlier || medianOutlier) {
+			outlierCount++;
+			markOutlierByLane(minLaneNo);
+		}
+		// Compute statistics withour outliers
+		for (int i = 0; i < size; i++){
+			for (int j = 0; j < systems[0].getSize(); j++){
+				getRepeatByIndexes(i, j).findStats(CHECKOUTLIER);
+			}
+			systems[i].findStats(CHECKOUTLIER);
+		}
+		findStats(CHECKOUTLIER);
 		// Output outlier message
-		if (outlierCount > 1) 
-		{
+		if (outlierCount > 1) {
 			// Message
 		}
-
 	}
 	
 	/**
 	 * Compute mean and median across systems and repeats for each line.
 	 */
-	private void findMeanMedianEachLane(){
-		int numberOfLanes = getRepeatByIndexes(1,1).getSize();
+	private void findByLaneMean(){
+		int numberOfLanes = getRepeatByIndexes(0,0).getByLaneNumber();
 		meanEachLane = new double[numberOfLanes];
-		medianEachLane = new double[numberOfLanes];
+//		medianEachLane = new double[numberOfLanes];
+		TestRepeat tempRepeat;
 		//Used for get statistics
-		DescriptiveStatistics[] ds = new DescriptiveStatistics[numberOfLanes];
-		for (int i = 0; i < numberOfLanes; i++){
-			ds[i] = new DescriptiveStatistics();
-		}
+		SummaryStatistics[] ss = new SummaryStatistics[numberOfLanes];
 		//Loop to add margins
 		for (int i = 0; i < size; i++){
+			ss[i] = new SummaryStatistics();
 			for (int j = 0; j < systems[1].getSize(); j++){
-				for (int k = 0; k < numberOfLanes; k++){
-					if (getLaneByIndexes(i, j, k).isValid()){
-					ds[k].addValue(getLaneByIndexes(i, j, k).getMargin());
-					}
-				}
+				tempRepeat = getRepeatByIndexes(i, j);
+				tempRepeat.addValuesByLane(ss);
 			}
 		}
 		//Get statistics and store
 		for (int i = 0; i < numberOfLanes; i++){
-			meanEachLane[i] = ds[i].getMean();
-			medianEachLane[i] = ds[i].getPercentile(50);
+			meanEachLane[i] = ss[i].getMean();
+//			medianEachLane[i] = ds[i].getPercentile(50);
 		}
+		findWorstCase(ss);
 	}
 	
+	private void markOutlierByLane(int laneIndex){
+		//ToDo
+	}
 	
 	/**
 	 * Get certain repeat according to indexes
@@ -252,25 +291,25 @@ public class TestDirection {
 		return systems[systemIndex].getRepeatByIndex(repeatIndex);
 	}
 	
-	/**
-	 * Get certain lane according to indexes
-	 * 
-	 * @param systemIndex
-	 *            system index
-	 * @param repeatIndex
-	 *            repeat index
-	 * @param laneIndex
-	 *            lane index 
-	 * @return TestSystem object
-	 */
-	private TestLane getLaneByIndexes(int systemIndex, int repeatIndex, int laneIndex) {
-		return systems[systemIndex].getRepeatByIndex(repeatIndex).getLaneByIndex(laneIndex);
-	}
+//	/**
+//	 * Get certain lane according to indexes
+//	 * 
+//	 * @param systemIndex
+//	 *            system index
+//	 * @param repeatIndex
+//	 *            repeat index
+//	 * @param laneIndex
+//	 *            lane index 
+//	 * @return TestSystem object
+//	 */
+//	private TestLane getLaneByIndexes(int systemIndex, int repeatIndex, int laneIndex) {
+//		return systems[systemIndex].getRepeatByIndex(repeatIndex).getLaneByIndex(laneIndex);
+//	}
 	
 	/**
 	 * Find the worst case lane and number of lanes close to the worst lane
 	 */
-	private void findWorstCase(){
+	private void findWorstCase(SummaryStatistics[] ss){
 		double worstCase = Integer.MAX_VALUE;
 		minLaneNo = 0;
 		//find worst case lane from by lane means
@@ -285,23 +324,8 @@ public class TestDirection {
 			}
 		}
 		//get worst case lane statistics
-		findWorstCaseStats();
-	}
-	
-	/**
-	 * Find statistics for worst case lane
-	 */
-	private void findWorstCaseStats(){
-		SummaryStatistics wc = new SummaryStatistics();
-		//Add valid margins
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < getSystemByIndex(1).getSize(); j++) {
-				wc.addValue(getLaneByIndexes(i, j, minLaneNo).getMargin());
-			}
-			//Store statistics to Stat object
-			wcStats.setMean(wc.getMean());
-			wcStats.setMin(wc.getMin());
-		}
+		wcStats.setMean(ss[minLaneNo].getMean());
+		wcStats.setMin(ss[minLaneNo].getMin());
 	}
 	
 	/**
@@ -325,34 +349,40 @@ public class TestDirection {
 	 * Get lane2Lane correlation matrix.
 	 * @return a two-dimensional array representing the correlation matrix
 	 */
-	public double[][] getLane2LaneCorrceof(){
-		double[][] byLaneMeanAcrossRepeat = new double[getRepeatByIndexes(1,1).getSize()][size];
-		//Compute across repeat statistics
-		SummaryStatistics[][] acrossRepeat = new SummaryStatistics[getRepeatByIndexes(1,1).getSize()][size];
-		for (int i = 0; i < getRepeatByIndexes(1,1).getSize(); i++){
-			for (int j = 0; j < size; j++){
-				acrossRepeat[i][j] = new SummaryStatistics();
-			}
-		}
+	private double[][] getLane2LaneCorrceof(){
+		TestRepeat tempRepeat;
+		int laneNum = getRepeatByIndexes(1,1).getAcrossLaneNumber();
+		double[][] byLaneMeanAcrossRepeat = new double[size][laneNum];
+		SummaryStatistics[][] acrossRepeat = new SummaryStatistics[size][laneNum];
 		//add margin values
 		for (int i = 0; i < size; i++){
-			for (int j = 0; j < systems[1].getSize(); j++){
-				for (int k = 0; k < getRepeatByIndexes(1,1).getSize(); k++){
-					if (getLaneByIndexes(i, j, k).isValid()){
-						acrossRepeat[k][i].addValue(getLaneByIndexes(i, j, k).getMargin());
-					}
-				}
+			for (int j = 0; j < laneNum; j++){
+				acrossRepeat[i][j] = new SummaryStatistics();
+			}
+			for (int j = 0; j < laneNum; j++){
+				tempRepeat = getRepeatByIndexes(i, j);
+				tempRepeat.addValuesByLane2Lane(acrossRepeat[i]);
 			}
 		}
 		//get statistics
-		for (int i = 0; i < getRepeatByIndexes(1,1).getSize(); i++){
-			for (int j = 0; j < size; j++){
+		for (int i = 0; i < size; i++){
+			for (int j = 0; j < laneNum; j++){
 				byLaneMeanAcrossRepeat[i][j] = acrossRepeat[i][j].getMean();
 			}
 		}
 		//get correlation matrix
 		PearsonsCorrelation pc = new PearsonsCorrelation(byLaneMeanAcrossRepeat);
 		return pc.getCorrelationMatrix().getData();
+	}
+	
+	public double getLane2LaneCorr(){
+		double[][] correlationMatrix = getLane2LaneCorrceof();
+		double[] maxCorrelation = new double[correlationMatrix.length];
+		for (int i = 0; i < correlationMatrix.length; i++){
+			maxCorrelation[i] = Util.getArrayMax(correlationMatrix[i]);
+		}
+		return Util.getArrayMean(maxCorrelation);
+		
 	}
 	
 	/**
@@ -365,8 +395,6 @@ public class TestDirection {
 	 *         objects
 	 */
 	public TestDirection add(TestDirection direction){
-		int margin;
-		TestLane[] newLanes;
 		TestRepeat[] newRepeats;
 		TestSystem[] newTestSystems;
 		TestDirection newDirection;
@@ -375,14 +403,7 @@ public class TestDirection {
 		for (int i = 0; i < size; i++){
 			newRepeats = new TestRepeat[systems[1].getSize()];
 			for (int j = 0; j < systems[1].getSize(); j++){
-				newLanes = new TestLane[getRepeatByIndexes(i,j).getSize()];
-				for (int k = 0; k < getRepeatByIndexes(i,j).getSize(); k++){
-					margin = direction.getLaneByIndexes(i, j, k).getMargin()+ this.getLaneByIndexes(i, j, k).getMargin();
-					newLanes[k] = new TestLane(margin);
-					newLanes[k].setAttributs(getLaneByIndexes(i, j, k).getAttributes());
-					newLanes[k].setState(direction.getLaneByIndexes(i, j, k).isValid() || this.getLaneByIndexes(i, j, k).isValid());
-				}
-				newRepeats[j] = new TestRepeat(newLanes);
+				newRepeats[j]= this.getRepeatByIndexes(i, j).add(direction.getRepeatByIndexes(i, j));
 			}
 			newTestSystems[i] = new TestSystem(newRepeats);
 		}
