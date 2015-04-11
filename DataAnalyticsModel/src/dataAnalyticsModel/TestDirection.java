@@ -69,32 +69,14 @@ public class TestDirection {
 		basicStats = new Stats();
 		noOutlierStats = new Stats();
 		wcStats = new Stats();
+		outlierCount = 0;
+		nearWcCount = 0;
 		initializeThresholds();
 		findStats(NOTCHECKOUTLIER);
 		findOutlier();
 		findStats(CHECKOUTLIER);
+		
 	}
-	
-//	/**
-//	 * Constructor to clone a direction.
-//	 * 
-//	 * @param direction
-//	 *            a TestDirection object
-//	 */
-//	public TestDirection(TestDirection direction){
-//		size = direction.getSize();
-//		this.systems = new TestSystem[size];
-//		for (int i = 0; i < size; i++){
-//			systems[i] = new TestSystem(direction.getSystemByIndex(i));
-//		}
-//		basicStats = new Stats();
-//		noOutlierStats = new Stats();
-//		initializeThresholds();
-//		findStats(NOTCHECKOUTLIER);
-//		findOutlier();
-//		findStats(CHECKOUTLIER);
-//		findWorstCase();
-//	}
 
 	/**
 	 * Initial thresholds with default numbers.
@@ -102,9 +84,19 @@ public class TestDirection {
 	private void initializeThresholds() {
 		outlierThresholds = new double[6];
 		for (int i = 0; i < 6; i++) {
-			outlierThresholds[i] = 6;
+			outlierThresholds[i] = 4;
 		}
 		byLaneThreshold = 0.5;
+	}
+	
+	/**
+	 * Initial thresholds with default numbers.
+	 */
+	public void doubleThresholds() {
+		for (int i = 0; i < 6; i++) {
+			outlierThresholds[i] = outlierThresholds[i] * 2;
+		}
+		byLaneThreshold = byLaneThreshold * 2;
 	}
 
 	/**
@@ -114,7 +106,7 @@ public class TestDirection {
 	 *            the path to the thresholds configuration file
 	 */
 	public void initializeThresholds(String filePath) {
-		// ToDo
+		// TODO
 	}
 	
 	/**
@@ -153,7 +145,7 @@ public class TestDirection {
 			}
 			// Store computed stats
 			outputStats.setRepeatNoise1(ssSigmaMin.getMean());
-			outputStats.setP2pNoise2(ssSigmaMean.getMean());
+			outputStats.setRepeatNoise2(ssSigmaMean.getMean());
 			outputStats.setP2pNoise1(ssMeanMin.getStandardDeviation());
 			outputStats.setP2pNoise2(ssMeanMean.getStandardDeviation());
 			outputStats.setMin(ssAllMin.getMin());
@@ -169,57 +161,28 @@ public class TestDirection {
 	 * Find outliers based on basic statistics.
 	 */
 	private void findOutlier() {
+		//TODO window thresholds
 		TestRepeat tempRepeat;
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < getSystemByIndex(0).getSize(); j++) {
-				// System outlier 1
+				System.out.println("System" + i + "Repeat" + j + " outlier check: ");
 				tempRepeat = getRepeatByIndexes(i, j);
+				// System outlier 1
 				outlierCount = outlierCount
 						+ tempRepeat.findSystemOutliers(basicStats.getMean(),
 								outlierThresholds[0]);
-				// if (Math.abs(basicStats.getMean() - getRepeatByIndexes(i,
-				// j).getBasicStats().getMin()) > outlierThresholds[0]) {
-				// getRepeatByIndexes(i, j).setStatus(TestRepeat.INVALID);
-				// // Message
-				// outlierCount++;
-				// }
 				// System outlier 2
 				outlierCount = outlierCount
 						+ tempRepeat.findSystemOutliers(getSystemByIndex(i)
 								.getBasicStats().getMean(),
 								outlierThresholds[1]);
-				// if (Math.abs(getSystemByIndex(i).getBasicStats().getMean() -
-				// getRepeatByIndexes(i, j).getBasicStats().getMin()) >
-				// outlierThresholds[1]) {
-				// getRepeatByIndexes(i, j).setStatus(TestRepeat.INVALID);
-				// // Message
-				// outlierCount++;
-				// }
 				// Lane2lane outlier 1
 				outlierCount = outlierCount
 						+ tempRepeat.findLaneOutliers(outlierThresholds[2],
 								outlierThresholds[4]);
-				// if (Math.abs(getRepeatByIndexes(i,
-				// j).getBasicStats().getMedian() - getRepeatByIndexes(i,
-				// j).getBasicStats().getMin()) > outlierThresholds[2]) {
-				// getRepeatByIndexes(i, j).setStatus(TestRepeat.INVALID);
-				// // Message
-				// outlierCount++;
-				// }
-				//
-				// if (Math.abs(getRepeatByIndexes(i,
-				// j).getBasicStats().getMean() - getRepeatByIndexes(i,
-				// j).getBasicStats().getMin()) > outlierThresholds[3]) {
-				// getRepeatByIndexes(i, j).setStatus(TestRepeat.INVALID);
-				// // Message
-				// outlierCount++;
-				// }
-
 			}
-			// Compute statistics without outliers
-			getSystemByIndex(i).findStats(CHECKOUTLIER);
 		}
-		// Lane2lane outlier 3&4?
+		// Lane2lane outlier 2
 		findByLaneMean();
 		boolean meanOutlier = false;
 		boolean medianOutlier = false;
@@ -233,9 +196,10 @@ public class TestDirection {
 			outlierCount = outlierCount + 2;
 		} else if (meanOutlier || medianOutlier) {
 			outlierCount++;
+			System.out.println("Lane2lane outlier found in lane" + minLaneNo);
 			markOutlierByLane(minLaneNo);
 		}
-		// Compute statistics withour outliers
+		// Compute statistics without outliers
 		for (int i = 0; i < size; i++){
 			for (int j = 0; j < systems[0].getSize(); j++){
 				getRepeatByIndexes(i, j).findStats(CHECKOUTLIER);
@@ -245,7 +209,7 @@ public class TestDirection {
 		findStats(CHECKOUTLIER);
 		// Output outlier message
 		if (outlierCount > 1) {
-			// Message
+			System.out.println("Warning: " + outlierCount + " outliers");
 		}
 	}
 	
@@ -278,7 +242,14 @@ public class TestDirection {
 	}
 	
 	private void markOutlierByLane(int laneIndex){
-		//ToDo
+		//TODO
+		TestRepeat tempRepeat;
+		for (int i = 0; i < size; i++){
+			for (int j = 0; j < systems[1].getSize(); j++){
+				tempRepeat = getRepeatByIndexes(i, j);
+				tempRepeat.markOutlierByLane(laneIndex);
+			}
+		}
 	}
 	
 	/**
@@ -411,6 +382,7 @@ public class TestDirection {
 			newTestSystems[i] = new TestSystem(newRepeats);
 		}
 		newDirection = new TestDirection(newTestSystems);
+		newDirection.doubleThresholds();
 		return newDirection;
 	}
 
@@ -490,10 +462,17 @@ public class TestDirection {
 	
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
+		sb.append("outlierCount: " + outlierCount + "\n");
 		for (int i = 0; i < size; i++){
 			sb.append("system" + i + " ");
 			sb.append(systems[i].toString());
 		}
+		sb.append("direction basic stats: \n");
+		sb.append(basicStats.toString());
+		sb.append("direction no outlier stats: \n");
+		sb.append(noOutlierStats.toString());
+		sb.append("direction worst case stats: \n");
+		sb.append(wcStats.toString());
 		return sb.toString();
 	}
 }

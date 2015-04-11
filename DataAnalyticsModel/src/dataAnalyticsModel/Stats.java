@@ -282,5 +282,46 @@ public class Stats {
 	public void setMinMean(double minMean) {
 		this.minMean = minMean;
 	}
+	
+	public String toString(){
+		String forReturn = "";
+		if (mean != 0){
+			forReturn = forReturn + "mean: " + mean + "\n";
+		};
+		if (min != 0){
+			forReturn = forReturn + "min: " + min + "\n";
+		};
+		if (median != 0){
+			forReturn = forReturn + "median: " + median + "\n";
+		};
+		if (sigma != 0){
+			forReturn = forReturn + "sigma: " + sigma + "\n";
+		};
+		if (meanMin != 0){
+			forReturn = forReturn + "meanMin: " + meanMin + "\n";
+		};
+		if (minMean != 0){
+			forReturn = forReturn + "minMean: " + minMean + "\n";
+		};
+		if (sigmaMin != 0){
+			forReturn = forReturn + "sigmaMin: " + sigmaMin + "\n";
+		};
+		if (sigmaMean != 0){
+			forReturn = forReturn + "sigmaMean: " + sigmaMean + "\n";
+		};
+		if (repeatNoise1 != 0){
+			forReturn = forReturn + "repeatNoise1: " + repeatNoise1 + "\n";
+		};
+		if (repeatNoise2 != 0){
+			forReturn = forReturn + "repeatNoise2: " + repeatNoise2 + "\n";
+		};
+		if (p2pNoise1 != 0){
+			forReturn = forReturn + "p2pNoise1: " + p2pNoise1 + "\n";
+		};
+		if (p2pNoise2 != 0){
+			forReturn = forReturn + "p2pNoise2: " + p2pNoise2 + "\n";
+		};
+		return forReturn;
+	}
 
 }

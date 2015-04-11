@@ -36,7 +36,7 @@ public class DataAnalyticsModel {
         lanes[0][1][2] = new TestLane(12);
         lanes[0][1][3] = new TestLane(11);
         
-        lanes[1][0][0] = new TestLane(7);
+        lanes[1][0][0] = new TestLane(8);
         lanes[1][0][1] = new TestLane(8);
         lanes[1][0][2] = new TestLane(9);
         lanes[1][0][3] = new TestLane(10);
@@ -88,7 +88,7 @@ public class DataAnalyticsModel {
         lanes[0][1][0] = new TestLane(7);
         lanes[0][1][1] = new TestLane(8);
         lanes[0][1][2] = new TestLane(9);
-        lanes[0][1][3] = new TestLane(10);
+        lanes[0][1][3] = new TestLane(6);
         
         lanes[1][0][0] = new TestLane(8);
         lanes[1][0][1] = new TestLane(9);
@@ -121,7 +121,7 @@ public class DataAnalyticsModel {
         
         lanes[1][1][0] = new TestLane(8);
         lanes[1][1][1] = new TestLane(9);
-        lanes[1][1][2] = new TestLane(10);
+        lanes[1][1][2] = new TestLane(7);
         lanes[1][1][3] = new TestLane(9);
         
         margins = new TestMarginsDDR(lanes);
@@ -172,7 +172,7 @@ public class DataAnalyticsModel {
         lanes[0][1][0] = new TestLane(9);
         lanes[0][1][1] = new TestLane(10);
         lanes[0][1][2] = new TestLane(8);
-        lanes[0][1][3] = new TestLane(7);
+        lanes[0][1][3] = new TestLane(8);
         
         lanes[1][0][0] = new TestLane(8);
         lanes[1][0][1] = new TestLane(11);
@@ -205,7 +205,7 @@ public class DataAnalyticsModel {
         lanes[0][1][3] = new TestLane(8);
         
         lanes[1][0][0] = new TestLane(7);
-        lanes[1][0][1] = new TestLane(10);
+        lanes[1][0][1] = new TestLane(6);
         lanes[1][0][2] = new TestLane(8);
         lanes[1][0][3] = new TestLane(7);
         

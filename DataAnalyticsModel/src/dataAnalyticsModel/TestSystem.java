@@ -55,23 +55,6 @@ public class TestSystem {
 		findStats(TestDirection.NOTCHECKOUTLIER);
 	}
 	
-//	/**
-//	 * Constructor to clone a system.
-//	 * 
-//	 * @param system
-//	 *            a TestSystem object
-//	 */
-//	public TestSystem(TestSystem system){
-//		size = system.getSize();
-//		this.repeats = new TestRepeat[size];
-//		for (int i = 0; i < size; i++){
-//			repeats[i] = new TestRepeat(system.getRepeatByIndex(i));
-//		}
-//		basicStats = new Stats();
-//		noOutlierStats = new Stats();
-//		findStats(TestDirection.NOTCHECKOUTLIER);
-//	}
-
 	/**
 	 * Calculate statistics within this system.
 	 * 
@@ -90,7 +73,7 @@ public class TestSystem {
 			tempRepeatStats = checkOutlier ? repeats[i].getNoOutlierStats() : repeats[i].getBasicStats();
 //			if (checkOutlier == TestDirection.NOTCHECKOUTLIER || (checkOutlier == TestDirection.CHECKOUTLIER && repeats[i].isNotOutlier())) {
 				ssMin.addValue(tempRepeatStats.getMin());
-				ssMin.addValue(tempRepeatStats.getMean());
+				ssMean.addValue(tempRepeatStats.getMean());
 //			}
 			// Store computed stats
 			outputStats.setSigmaMin(ssMin.getStandardDeviation());
@@ -145,6 +128,10 @@ public class TestSystem {
 			sb.append("repeat" + i + ": \n");
 			sb.append(repeats[i].toString());
 		}
+		sb.append("system basic stats: \n");
+		sb.append(basicStats.toString());
+		sb.append("system no outlier stats: \n");
+		sb.append(noOutlierStats.toString());
 		return sb.toString();
 	}
 

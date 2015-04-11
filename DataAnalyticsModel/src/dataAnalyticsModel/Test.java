@@ -118,7 +118,7 @@ public class Test {
 	}
 	
 	public void initializeThresholds(String filePath){
-		//ToDo
+		//TODO
 	}
 
 	private void basicChecks() {
@@ -290,6 +290,10 @@ public class Test {
 		for (int i = 0; i < size; i++){
 			sb.append("direction" + i + " \n");
 			sb.append(directions[i].toString());
+		}
+		for (int i = 0; i < size/2; i++){
+			sb.append("pairedDirection" + i + " \n");
+			sb.append(pairedDirections[i].toString());
 		}
 		return sb.toString();
 	}

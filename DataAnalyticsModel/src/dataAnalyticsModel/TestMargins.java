@@ -107,5 +107,8 @@ public abstract class TestMargins {
 	 * @return a new TestMargins object represending the addition result
 	 */
 	public abstract TestMargins add(TestMargins tm);
+	
+	
+	public abstract void markOutlierByLane(int laneIndex);
 
 }
