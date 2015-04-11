@@ -94,7 +94,7 @@ public class Test {
 		outlierCount = 0;
 		pairDirections();		
 		initializeThresholds();
-		//basicChecks();
+		basicChecks();
 	}
 	
 	public void initializeThresholds(){
@@ -122,7 +122,7 @@ public class Test {
 	}
 
 	private void basicChecks() {
-		for (int i = 0; i < thresholds[i]; i++) {  //?
+		for (int i = 0; i < thresholds.length; i++) {
 			// basic mean check
 			basicMeanCheck = basicMeanCheck && directions[2 * i].getBasicStats().getMeanMin() > thresholds[i]
 					&& directions[2 * i + 1].getBasicStats().getMeanMin() > thresholds[i];
@@ -138,21 +138,7 @@ public class Test {
 					&& directions[2 * i + 1].getBasicStats().getMeanMin() > highThresholds[i];			
 			basicMinCheckH = basicMinCheckH && directions[2 * i].getBasicStats().getMin() > highThresholds[i]
 					&& directions[2 * i + 1].getBasicStats().getMin() > highThresholds[i];
-			
-			// basic sigma mean check
-			basicSigmaMeanCheck = basicSigmaMeanCheck && directions[2 * i].getBasicStats().getSigmaMean() < sigmaThreshold
-					&& directions[2 * i + 1].getBasicStats().getSigmaMean() < sigmaThreshold;
-			outlierSigmaMeanCheck = outlierSigmaMeanCheck && directions[2 * i].getNoOutlierStats().getSigmaMean() < sigmaThreshold
-					&& directions[2 * i + 1].getNoOutlierStats().getSigmaMean() < sigmaThreshold;
-			// basic sigma min check
-			basicSigmaMinCheck = basicSigmaMinCheck && directions[2 * i].getBasicStats().getSigmaMin() < sigmaThreshold
-					&& directions[2 * i + 1].getBasicStats().getSigmaMin() < sigmaThreshold;
-			outlierSigmaMinCheck = outlierSigmaMinCheck && directions[2 * i].getNoOutlierStats().getSigmaMin() < sigmaThreshold
-					&& directions[2 * i + 1].getNoOutlierStats().getSigmaMin() < sigmaThreshold;
-			// basic sigma min check threshold 2
-			outlierSigmaMinCheckT2 = outlierSigmaMinCheckT2 && directions[2 * i].getNoOutlierStats().getSigmaMin() < sigmaThreshold2
-					&& directions[2 * i + 1].getNoOutlierStats().getSigmaMin() < sigmaThreshold2;
-			
+
 			// mean check 3
 			outlierMeanCheckH2 = outlierMeanCheckH2 && directions[2 * i].getNoOutlierStats().getMean() > highThresholds[i]
 					&& directions[2 * i + 1].getNoOutlierStats().getMean() > highThresholds[i];
@@ -160,32 +146,13 @@ public class Test {
 			outlierMeanCheckH3 = outlierMeanCheckH3 && directions[2 * i].getNoOutlierStats().getMinMean() > highThresholds[i]
 					&& directions[2 * i + 1].getNoOutlierStats().getMinMean() > highThresholds[i];
 
-			// outlier count
-			outlierCount = directions[2 * i].getOutlierCount() + directions[2 * i + 1].getOutlierCount();
-			
 			// window check
 			windowCheck = windowCheck && pairedDirections[i].getBasicStats().getMeanMin() > 2 * thresholds[i];
 			outlierWindowCheck = outlierWindowCheck && pairedDirections[i].getNoOutlierStats().getMeanMin() > 2 * thresholds[i];
 			
 			// noise check
 			outlierNoiseCheck = outlierNoiseCheck && directions[2 * i].getNoOutlierStats().getP2pNoise1() > repeatNoiseThresholds[i]
-					&& directions[2 * i + 1].getNoOutlierStats().getP2pNoise1() > repeatNoiseThresholds[i];
-			// correlation check
-			udCorr = pearsons.correlation(directions[2 * i].getAllMarginMean(), directions[2 * i + 1].getAllMarginMean());
-			if (udCorr > corrThreshold) {
-				health +=1.5;
-				trust += 2.5;
-			}
-			winCorr = pearsons.correlation(pairedDirections[i].getAllMarginMean(), pairedDirections[i + 1].getAllMarginMean());
-			if (winCorr > corrThreshold) {
-				health += 3;
-				trust +=5;
-			}
-			//lane2Lane correlation check
-			if (directions[2 * i].getLane2LaneCorr() > lane2LaneCorrThresholds[2 * i] && directions[2 * i + 1].getLane2LaneCorr() > lane2LaneCorrThresholds[2 * i + 1])
-				health +=1.5;
-				trust += 2.5;
-			
+					&& directions[2 * i + 1].getNoOutlierStats().getP2pNoise1() > repeatNoiseThresholds[i];	
 		}
 		// mean check 1
 		health += 20 * (basicMeanCheck || outlierMeanCheck ? 1:0);
@@ -203,6 +170,24 @@ public class Test {
 		// min check 2 (high threshold)
 		health += 5 * (basicMinCheckH ? 1:0);
 		
+		for (int i = 0; i + 1 < directions.length; i++) {
+			// basic sigma mean check
+			basicSigmaMeanCheck = basicSigmaMeanCheck && directions[i].getBasicStats().getSigmaMean() < sigmaThreshold
+					&& directions[i + 1].getBasicStats().getSigmaMean() < sigmaThreshold;
+			outlierSigmaMeanCheck = outlierSigmaMeanCheck && directions[i].getNoOutlierStats().getSigmaMean() < sigmaThreshold
+					&& directions[i + 1].getNoOutlierStats().getSigmaMean() < sigmaThreshold;
+			// basic sigma min check
+			basicSigmaMinCheck = basicSigmaMinCheck && directions[i].getBasicStats().getSigmaMin() < sigmaThreshold
+					&& directions[i + 1].getBasicStats().getSigmaMin() < sigmaThreshold;
+			outlierSigmaMinCheck = outlierSigmaMinCheck && directions[i].getNoOutlierStats().getSigmaMin() < sigmaThreshold
+					&& directions[i + 1].getNoOutlierStats().getSigmaMin() < sigmaThreshold;
+			// basic sigma min check threshold 2
+			outlierSigmaMinCheckT2 = outlierSigmaMinCheckT2 && directions[i].getNoOutlierStats().getSigmaMin() < sigmaThreshold2
+					&& directions[i + 1].getNoOutlierStats().getSigmaMin() < sigmaThreshold2;
+			
+			// outlier count
+			outlierCount += directions[i].getOutlierCount() + directions[i + 1].getOutlierCount();
+		}
 		// sigma check (mean)
 		health += 5 * (basicSigmaMeanCheck || outlierSigmaMeanCheck ? 1:0);
 		if (outlierMeanCheck == basicMeanCheck) {
@@ -229,8 +214,28 @@ public class Test {
 		health += 5 * (windowCheck || outlierWindowCheck ? 1:0);
 
 		// repeatability noise
-		health += 5 * (outlierNoiseCheck ? 1:0);
-
+		health += 5 * (outlierNoiseCheck ? 1:0);		
+		// correlation check
+		for (int i = 0; i + 1 < directions.length; i++) {
+ 			udCorr = pearsons.correlation(directions[i].getAllMarginMean(), directions[i + 1].getAllMarginMean());
+			if (udCorr > corrThreshold) {
+				health +=1.5;
+				trust += 2.5;
+			}
+		}
+		for (int i = 0; i + 1 < pairedDirections.length; i++) {
+			winCorr = pearsons.correlation(pairedDirections[i].getAllMarginMean(), pairedDirections[i + 1].getAllMarginMean());
+			if (winCorr > corrThreshold) {
+				health += 3;
+				trust +=5;
+			}
+		}
+//		for (int i = 0; i < directions.length; i++) {
+//			if (directions[i].getLane2LaneCorr() > lane2LaneCorrThresholds[i]) {
+//				health +=1.5;
+//				trust += 2.5;
+//			}
+//		}
 	}
 
 	/**
