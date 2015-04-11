@@ -54,7 +54,6 @@ public class Test {
 	private double udCorr;
 	private double winCorr;
 	private PearsonsCorrelation pearsons = new PearsonsCorrelation();
-	private double lane2LaneCorr;
 	
 	/**
 	 * Constructor with no argument.
@@ -114,7 +113,6 @@ public class Test {
 		for (int i = 0; i < 8; i++){
 			lane2LaneCorrThresholds[i] = 0.8;
 		}
-		
 	}
 	
 	public void initializeThresholds(String filePath){
@@ -122,7 +120,7 @@ public class Test {
 	}
 
 	private void basicChecks() {
-		for (int i = 0; i < thresholds.length; i++) {
+		for (int i = 0; i < thresholds.length && 2 * i + 1 < directions.length; i++) {
 			// basic mean check
 			basicMeanCheck = basicMeanCheck && directions[2 * i].getBasicStats().getMeanMin() > thresholds[i]
 					&& directions[2 * i + 1].getBasicStats().getMeanMin() > thresholds[i];
@@ -153,6 +151,12 @@ public class Test {
 			// noise check
 			outlierNoiseCheck = outlierNoiseCheck && directions[2 * i].getNoOutlierStats().getP2pNoise1() > repeatNoiseThresholds[i]
 					&& directions[2 * i + 1].getNoOutlierStats().getP2pNoise1() > repeatNoiseThresholds[i];	
+			
+			// lane2lane check
+//			if (directions[2 * i].getLane2LaneCorr() > lane2LaneCorrThresholds[2 * i] && directions[2 * i + 1].getLane2LaneCorr() > lane2LaneCorrThresholds[2 * i + 1]) {
+//				health +=1.5;
+//				trust += 2.5;
+//			}
 		}
 		// mean check 1
 		health += 20 * (basicMeanCheck || outlierMeanCheck ? 1:0);
@@ -230,12 +234,6 @@ public class Test {
 				trust +=5;
 			}
 		}
-//		for (int i = 0; i < directions.length; i++) {
-//			if (directions[i].getLane2LaneCorr() > lane2LaneCorrThresholds[i]) {
-//				health +=1.5;
-//				trust += 2.5;
-//			}
-//		}
 	}
 
 	/**
