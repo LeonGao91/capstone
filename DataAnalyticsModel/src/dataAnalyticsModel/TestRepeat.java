@@ -1,6 +1,5 @@
 package dataAnalyticsModel;
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 /**
@@ -173,6 +172,9 @@ public class TestRepeat {
 		margins.findAcrossLaneStats(checkOutlier);
 	}
 
+	public String toString(){
+		return margins.toString();
+	}
 //	/**
 //	 * Set the outlier status of this repeat
 //	 * 

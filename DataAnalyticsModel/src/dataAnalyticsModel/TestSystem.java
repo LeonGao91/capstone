@@ -138,5 +138,14 @@ public class TestSystem {
 	public Stats getBasicStats() {
 		return basicStats;
 	}
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < size; i++){
+			sb.append("repeat" + i + ": \n");
+			sb.append(repeats[i].toString());
+		}
+		return sb.toString();
+	}
 
 }

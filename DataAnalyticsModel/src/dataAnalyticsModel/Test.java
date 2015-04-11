@@ -94,12 +94,13 @@ public class Test {
 		outlierCount = 0;
 		pairDirections();		
 		initializeThresholds();
-		basicChecks();
+		//basicChecks();
 	}
 	
 	public void initializeThresholds(){
 		thresholds = new double[4];
 		highThresholds = new double[4];
+		repeatNoiseThresholds = new double[4];
 		lane2LaneCorrThresholds = new double[8];
 		
 		for (int i = 0; i < 4; i++){
@@ -277,5 +278,14 @@ public class Test {
 
 	public double getTrust() {
 		return trust;
+	}
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < size; i++){
+			sb.append("direction" + i + " \n");
+			sb.append(directions[i].toString());
+		}
+		return sb.toString();
 	}
 }

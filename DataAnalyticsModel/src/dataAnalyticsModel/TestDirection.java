@@ -68,6 +68,7 @@ public class TestDirection {
 		this.systems = systems;
 		basicStats = new Stats();
 		noOutlierStats = new Stats();
+		wcStats = new Stats();
 		initializeThresholds();
 		findStats(NOTCHECKOUTLIER);
 		findOutlier();
@@ -259,8 +260,10 @@ public class TestDirection {
 		//Used for get statistics
 		SummaryStatistics[] ss = new SummaryStatistics[numberOfLanes];
 		//Loop to add margins
-		for (int i = 0; i < size; i++){
+		for (int i = 0; i < numberOfLanes ; i++){
 			ss[i] = new SummaryStatistics();
+		}
+		for (int i = 0; i < size; i++){
 			for (int j = 0; j < systems[1].getSize(); j++){
 				tempRepeat = getRepeatByIndexes(i, j);
 				tempRepeat.addValuesByLane(ss);
@@ -483,5 +486,14 @@ public class TestDirection {
 	 */
 	public int getOutlierCount() {
 		return outlierCount;
+	}
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < size; i++){
+			sb.append("system" + i + " ");
+			sb.append(systems[i].toString());
+		}
+		return sb.toString();
 	}
 }
