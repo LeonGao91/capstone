@@ -22,6 +22,18 @@
 	  margin: 2% 12%;
 }
 
-tr:nth-child(even){
-	background-color:rgb(174, 217, 255);	
+table, tr, td, th
+{
+
+    border-collapse:collapse;
+}
+
+tr.expandable
+{
+    cursor:pointer;
+    font-weight: bold;
+}
+
+tr.odd {
+    background-color: rgb(174, 217, 255);
 }

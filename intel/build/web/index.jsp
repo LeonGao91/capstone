@@ -54,52 +54,92 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>No.</th>
-                        <th>Product <span class="glyphicon glyphicon-collapse-down"></span></th>
-                        <th>Date <span class="glyphicon glyphicon-collapse-down"></span></th>
-                        <th>Result <span class="glyphicon glyphicon-collapse-down"></span></th>
+                        <th>Product</th>
+                        <th>Date</th>
+                        <th>Result</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <th scope="row">1</th>
+                    <tr class="expandable" color="">
                         <td>DELL XPS 13</td>
                         <td>04/07/2015</td>
                         <td>PASS</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr>
-                        <th scope="row">2</th>
                         <td>DELL XPS 13</td>
+                        <td>04/06/2015</td>
+                        <td>PASS</td>
+                        <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
+                    </tr>
+                    <tr>
+                        <td>DELL XPS 13</td>
+                        <td>04/05/2015</td>
+                        <td>FAIL</td>
+                        <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
+                    </tr>
+                    <tr class="expandable" color="">
+                        <td>DELL XPS 14</td>
                         <td>04/06/2015</td>
                         <td>FAIL</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr>
-                        <th scope="row">3</th>
-                        <td>DELL XPS 13</td>
+                        <td>DELL XPS 14</td>
                         <td>04/05/2015</td>
+                        <td>FAIL</td>
+                        <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
+                    </tr>
+                    <tr class="expandable" color="">
+                        <td>DELL XPS 15</td>
+                        <td>04/06/2015</td>
                         <td>PASS</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr>
-                        <th scope="row">4</th>
-                        <td>DELL XPS 13</td>
-                        <td>04/04/2015</td>
+                        <td>DELL XPS 15</td>
+                        <td>04/03/2015</td>
                         <td>PASS</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr>
-                        <th scope="row">5</th>
-                        <td>DELL XPS 13</td>
+                        <td>DELL XPS 15</td>
                         <td>03/30/2015</td>
-                        <td>PASS</td>
+                        <td>FAIL</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                 </tbody>
             </table>
  	</div>
- 
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('tr.expandable:even').addClass('odd');
+                $('.expandable').click(function () {
+                    var color = $(this).css("background-color");
+                    $(this).nextAll('tr').each( function() {
+                        if($(this).is('.expandable')) {
+                            return false;
+                        }
+                        $(this).toggle(350);
+                        $(this).css("background-color",color);
+                    });
+                    /**if ($(this).attr('color')===""){
+                        $(this).css("background-color","rgb(174, 217, 255)");
+                        $(this).attr('color',"yes");
+                    }
+                    else{
+                        $(this).css("background-color","#FFF");
+                        $(this).attr('color',"");
+                    }
+                    **/
+                });
+
+                $('.expandable').nextAll('tr').each( function() {
+                    if(!($(this).is('.expandable'))) $(this).hide();
+                });
+            });
+        </script>
     </body>
 </html>
