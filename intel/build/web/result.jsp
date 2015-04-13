@@ -84,7 +84,7 @@
         -->
         <div id="title-wraper">
                 <button id="title" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                <h3 id="title_head">DELL XPS 13 - 04/07/2015  </h3>
+                    <h3 id="title_head">DELL XPS 13 - 04/07/2015 <span class="caret"></span> </h3>
                 </button>
                 <ul id="test-menu" class="dropdown-menu" role="menu">
                     <li><a href="#"><h4>DELL XPS 13 - 04/08/2015  </h4></a></li>
@@ -132,7 +132,7 @@
         <div class="panel panel-primary main_panel">
             <div class="panel-heading">
                 <button id="chart-title" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                <h3 id="chart_header" class="panel-title" align="center">Helth/Trust</h3>
+                <h3 id="chart_header" class="panel-title" align="center">Health/Trust <span class="caret"></span></h3>
                 </button>
                 <ul id="chart-menu" class="dropdown-menu" role="menu">
                     <li><a href="#"><h4>Increment Chart  </h4></a></li>

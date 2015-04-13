@@ -23,6 +23,7 @@
         <div class="navigation-bar">
             <div class = "nav-header">
                 <img id="header" src="media/logo.png">
+                <h2 id="head-title">INTELligence</h2>
             </div>
             <nav class="navbar navbar-default">
                 <div class="container">
@@ -117,13 +118,11 @@
             $(document).ready(function() {
                 $('tr.expandable:even').addClass('odd');
                 $('.expandable').click(function () {
-                    var color = $(this).css("background-color");
                     $(this).nextAll('tr').each( function() {
                         if($(this).is('.expandable')) {
                             return false;
                         }
                         $(this).toggle(350);
-                        $(this).css("background-color",color);
                     });
                     /**if ($(this).attr('color')===""){
                         $(this).css("background-color","rgb(174, 217, 255)");
