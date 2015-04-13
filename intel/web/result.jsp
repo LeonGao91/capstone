@@ -22,6 +22,8 @@
         <link href="css/boostrap/bootstrap.min.css" rel="stylesheet">
         <link href="css/OurCSS/homepage.css" rel="stylesheet">
         <link href="css/OurCSS/resultpage.css" rel="stylesheet">
+        <script src="js/library/jquery-1.11.2.js"></script>
+        <script src="js/library/bootstrap.min.js"></script>
         <script src="js/library/justGauge/justgage.1.0.1.min.js"></script>
         <script src="js/library/justGauge/raphael.2.1.0.min.js"></script>
         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -32,7 +34,9 @@
         <div class="navigation-bar">
             <div class = "nav-header">
                 <img id="header" src="media/logo.png">
+                <h2 id="head-title">INTELligence</h2>
             </div>
+            
             <nav class="navbar navbar-default">
                 <div class="container">
                     <div id="navbar">
@@ -78,7 +82,18 @@
             </div>
         </div>
         -->
-        <h3 id="title">DELL XPS 13 - 04/07/2015  <span class="label label-success">PASS!</span></h3>
+        <div id="title-wraper">
+                <button id="title" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <h3 id="title_head">DELL XPS 13 - 04/07/2015  </h3>
+                </button>
+                <ul id="test-menu" class="dropdown-menu" role="menu">
+                    <li><a href="#"><h4>DELL XPS 13 - 04/08/2015  </h4></a></li>
+                    <li><a href="#"><h4>DELL XPS 13 - 04/09/2015  </h4></a></li>
+                    <li><a href="#"><h4>DELL XPS 13 - 04/10/2015  </h4></a></li>
+                </ul>
+                <span id="passfail" class="label label-success" style="font-size:15px">PASS!</span>
+        </div>
+        
         <div class="panel panel-primary main_panel" style="margin-top: 2%">
             <div class="panel-heading">
                 <h3 class="panel-title" align="center">Scores</h3>
@@ -116,11 +131,15 @@
         </div>
         <div class="panel panel-primary main_panel">
             <div class="panel-heading">
-                <h3 class="panel-title" align="center">Incremental Chart</h3>
+                <button id="chart-title" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <h3 id="chart_header" class="panel-title" align="center">Helth/Trust</h3>
+                </button>
+                <ul id="chart-menu" class="dropdown-menu" role="menu">
+                    <li><a href="#"><h4>Increment Chart  </h4></a></li>
+                    <li><a href="#"><h4>Eye Diagram  </h4></a></li>
+                </ul>
             </div>
             <div id="linechart_material"></div>
         </div>
-        
-
     </body>
 </html>

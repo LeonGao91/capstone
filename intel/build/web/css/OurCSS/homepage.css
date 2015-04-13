@@ -1,25 +1,30 @@
 .navigation-bar{
-	background:rgb(0, 113, 197);
-	height: 175px;
+    background:rgb(0, 113, 197);
+    height: 175px;
 }
 
 #header{
-	width: 100px;
-  	height: 100px;
- 	margin: 25px 100px 0px 200px;
+    width: 100px;
+    height: 100px;
+    margin: 0px 10px 0px 10%;
+}
+
+
+
+#head-title {
+    margin-top: 50px;
+    color: white;
+    display: inline-block;
+    position: relative;
+    top: 10px;
 }
 
 .user{
-	float: right;
-}
-
-#file-input{
-	margin-top:  150px;
-	margin-left: 400px;
+    float: right;
 }
 
 #records{
-	  margin: 2% 12%;
+    margin: 2% 12%;
 }
 
 table, tr, td, th
@@ -36,4 +41,8 @@ tr.expandable
 
 tr.odd {
     background-color: rgb(174, 217, 255);
+}
+
+tr:nth-child(even){
+    background-color:rgb(174, 217, 255);	
 }

@@ -3,6 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< Updated upstream
             <file>file:/C:/Users/Junying/Documents/GitHub/intel/capstone/intel/src/java/Servlets/test.java</file>
             <file>file:/C:/Users/Junying/Documents/GitHub/intel/capstone/intel/web/index.jsp</file>
             <file>file:/C:/Users/Junying/Documents/GitHub/intel/capstone/intel/web/css/OurCSS/homepage.css</file>
@@ -11,6 +12,10 @@
             <file>file:/C:/Users/Junying/Documents/GitHub/intel/capstone/intel/web/login.jsp</file>
             <file>file:/C:/Users/Junying/Documents/GitHub/intel/capstone/intel/src/java/Servlets/login.java</file>
             <file>file:/C:/Users/Junying/Documents/GitHub/intel/capstone/intel/src/java/Service/DataWebService.java</file>
+=======
+            <file>file:/Users/leon/Desktop/Capstone/capstone/intel/web/result.jsp</file>
+            <file>file:/Users/leon/Desktop/Capstone/capstone/intel/web/css/OurCSS/resultpage.css</file>
+>>>>>>> Stashed changes
         </group>
     </open-files>
 </project-private>

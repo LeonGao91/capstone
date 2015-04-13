@@ -24,15 +24,23 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _GetResultResponse_QNAME = new QName("http://test/", "getResultResponse");
-    private final static QName _GetFilePath_QNAME = new QName("http://test/", "getFilePath");
     private final static QName _GetResult_QNAME = new QName("http://test/", "getResult");
+    private final static QName _GetFilePath_QNAME = new QName("http://test/", "getFilePath");
+    private final static QName _GetResultResponse_QNAME = new QName("http://test/", "getResultResponse");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: test
      * 
      */
     public ObjectFactory() {
+    }
+
+    /**
+     * Create an instance of {@link GetResultResponse }
+     * 
+     */
+    public GetResultResponse createGetResultResponse() {
+        return new GetResultResponse();
     }
 
     /**
@@ -52,20 +60,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetResultResponse }
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetResult }{@code >}}
      * 
      */
-    public GetResultResponse createGetResultResponse() {
-        return new GetResultResponse();
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetResultResponse }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://test/", name = "getResultResponse")
-    public JAXBElement<GetResultResponse> createGetResultResponse(GetResultResponse value) {
-        return new JAXBElement<GetResultResponse>(_GetResultResponse_QNAME, GetResultResponse.class, null, value);
+    @XmlElementDecl(namespace = "http://test/", name = "getResult")
+    public JAXBElement<GetResult> createGetResult(GetResult value) {
+        return new JAXBElement<GetResult>(_GetResult_QNAME, GetResult.class, null, value);
     }
 
     /**
@@ -78,12 +78,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetResult }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetResultResponse }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://test/", name = "getResult")
-    public JAXBElement<GetResult> createGetResult(GetResult value) {
-        return new JAXBElement<GetResult>(_GetResult_QNAME, GetResult.class, null, value);
+    @XmlElementDecl(namespace = "http://test/", name = "getResultResponse")
+    public JAXBElement<GetResultResponse> createGetResultResponse(GetResultResponse value) {
+        return new JAXBElement<GetResultResponse>(_GetResultResponse_QNAME, GetResultResponse.class, null, value);
     }
 
 }

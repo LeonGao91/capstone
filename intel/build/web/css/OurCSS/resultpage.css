@@ -8,8 +8,27 @@ and open the template in the editor.
     Author     : leon
 */
 
+#title-wraper {
+    margin-top: 10px;
+}
+
 #title {
     margin-left:10%;
+    border: 0;
+}
+
+#passfail {
+    margin-top: 12px;
+}
+
+#test-menu {
+    top: auto;
+    left: 10%;
+}
+
+#title_head {
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 #result_div{
@@ -37,6 +56,23 @@ and open the template in the editor.
     display: inline-block;
 }
 
+#chart-title {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    background-color: #337ab7;
+    border: 0;
+}
+
 #linechart_material {
     margin-top: 5%;
+}
+
+#chart_header {
+    color: white;
+}
+
+#chart-menu {
+    top: auto;
+    left: 41.5%;
 }
