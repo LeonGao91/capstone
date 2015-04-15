@@ -40,13 +40,13 @@ tr.expandable
 }
 
 tr.odd {
-    background-color: white;
+    background-color: rgb(174, 217, 255);
 }
 
-tr:nth-child(even){
-    background-color:white;	
+th.arrow_col {
+    width: 5%;
 }
 
-tr.expandable {
-    background-color: rgb(174, 217, 255)
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    vertical-align: middle;
 }

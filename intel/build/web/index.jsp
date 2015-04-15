@@ -56,56 +56,67 @@
                 <thead>
                     <tr>
                         <th>Product</th>
+                        <th class="arrow_col"></th>
                         <th>Date</th>
                         <th>Result</th>
                         <th></th>
+                        
                     </tr>
                 </thead>
                 <tbody>
                     <tr class="expandable" color="">
-                        <td>DELL XPS 13</td>
+                        <td  style="width: 15%">DELL XPS 13</td>
+                        <td><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></td>
                         <td>04/07/2015</td>
                         <td>PASS</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
+                        
                     </tr>
                     <tr>
                         <td>DELL XPS 13</td>
+                        <td></td>
                         <td>04/06/2015</td>
                         <td>PASS</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr>
                         <td>DELL XPS 13</td>
+                        <td></td>
                         <td>04/05/2015</td>
                         <td>FAIL</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr class="expandable" color="">
                         <td>DELL XPS 14</td>
+                        <td><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></td>
                         <td>04/06/2015</td>
                         <td>FAIL</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr>
                         <td>DELL XPS 14</td>
+                        <td></td>
                         <td>04/05/2015</td>
                         <td>FAIL</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr class="expandable" color="">
                         <td>DELL XPS 15</td>
+                        <td><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></td>
                         <td>04/06/2015</td>
                         <td>PASS</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr>
                         <td>DELL XPS 15</td>
+                        <td></td>
                         <td>04/03/2015</td>
                         <td>PASS</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr>
                         <td>DELL XPS 15</td>
+                        <td></td>
                         <td>03/30/2015</td>
                         <td>FAIL</td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
@@ -118,11 +129,13 @@
             $(document).ready(function() {
                 $('tr.expandable:even').addClass('odd');
                 $('.expandable').click(function () {
+                    var color = $(this).css("background-color");
                     $(this).nextAll('tr').each( function() {
                         if($(this).is('.expandable')) {
                             return false;
                         }
                         $(this).toggle(350);
+                        $(this).css("background-color",color);
                     });
                     /**if ($(this).attr('color')===""){
                         $(this).css("background-color","rgb(174, 217, 255)");
