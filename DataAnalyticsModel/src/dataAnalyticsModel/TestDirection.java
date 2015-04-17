@@ -84,7 +84,7 @@ public class TestDirection {
 	private void initializeThresholds() {
 		outlierThresholds = new double[6];
 		for (int i = 0; i < 6; i++) {
-			outlierThresholds[i] = 4;
+			outlierThresholds[i] = 6;
 		}
 		byLaneThreshold = 0.5;
 	}
@@ -312,7 +312,7 @@ public class TestDirection {
 		//Loop to get the mean across lanes of each repeat
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < systems[1].getSize(); j++) {
-				allMarginMean[i] = getRepeatByIndexes(i, j).getBasicStats()
+				allMarginMean[i * size + j] = getRepeatByIndexes(i, j).getBasicStats()
 						.getMean();
 			}
 		}
@@ -323,9 +323,11 @@ public class TestDirection {
 	 * Get lane2Lane correlation matrix.
 	 * @return a two-dimensional array representing the correlation matrix
 	 */
-	private double[][] getLane2LaneCorrceof(){
+	public double[][] getLane2LaneCorrceof(){
+		
 		TestRepeat tempRepeat;
 		int laneNum = getRepeatByIndexes(1,1).getAcrossLaneNumber();
+		//System.out.println("" + size + " " + laneNum);
 		double[][] byLaneMeanAcrossRepeat = new double[size][laneNum];
 		SummaryStatistics[][] acrossRepeat = new SummaryStatistics[size][laneNum];
 		//add margin values
@@ -333,7 +335,8 @@ public class TestDirection {
 			for (int j = 0; j < laneNum; j++){
 				acrossRepeat[i][j] = new SummaryStatistics();
 			}
-			for (int j = 0; j < laneNum; j++){
+			for (int j = 0; j < systems[0].getSize(); j++){
+				//System.out.println("i= " + i + " j= " + j);
 				tempRepeat = getRepeatByIndexes(i, j);
 				tempRepeat.addValuesByLane2Lane(acrossRepeat[i]);
 			}
@@ -345,12 +348,15 @@ public class TestDirection {
 			}
 		}
 		//get correlation matrix
+		//System.out.println("print matrix");
+		//System.out.println(Util.arrayToString(byLaneMeanAcrossRepeat));
 		PearsonsCorrelation pc = new PearsonsCorrelation(byLaneMeanAcrossRepeat);
 		return pc.getCorrelationMatrix().getData();
 	}
 	
 	public double getLane2LaneCorr(){
-		double[][] correlationMatrix = getLane2LaneCorrceof();
+		double[][] correlationMatrix = Util.removeEye(getLane2LaneCorrceof());
+		//System.out.println(Util.arrayToString(correlationMatrix));
 		double[] maxCorrelation = new double[correlationMatrix.length];
 		for (int i = 0; i < correlationMatrix.length; i++){
 			maxCorrelation[i] = Util.getArrayMax(correlationMatrix[i]);

@@ -152,11 +152,12 @@ public class Test {
 			outlierNoiseCheck = outlierNoiseCheck && directions[2 * i].getNoOutlierStats().getP2pNoise1() > repeatNoiseThresholds[i]
 					&& directions[2 * i + 1].getNoOutlierStats().getP2pNoise1() > repeatNoiseThresholds[i];	
 			
+			
 			// lane2lane check
-//			if (directions[2 * i].getLane2LaneCorr() > lane2LaneCorrThresholds[2 * i] && directions[2 * i + 1].getLane2LaneCorr() > lane2LaneCorrThresholds[2 * i + 1]) {
-//				health +=1.5;
-//				trust += 2.5;
-//			}
+			if (directions[2 * i].getLane2LaneCorr() > lane2LaneCorrThresholds[2 * i] && directions[2 * i + 1].getLane2LaneCorr() > lane2LaneCorrThresholds[2 * i + 1]) {
+				health +=1.5;
+				trust += 2.5;
+			}
 		}
 		// mean check 1
 		health += 20 * (basicMeanCheck || outlierMeanCheck ? 1:0);

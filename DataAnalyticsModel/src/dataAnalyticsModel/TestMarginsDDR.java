@@ -43,6 +43,7 @@ public class TestMarginsDDR extends TestMargins {
 		channelNum = lanes.length;
 		rankNum = lanes[0].length;
 		laneNum = lanes[0][0].length;
+		//System.out.println(channelNum + " " + rankNum + " " + laneNum);
 		acrossLaneMeans = new double[channelNum][rankNum];
 		acrossLaneMins = new double[channelNum][rankNum];
 		acrossLaneMedians = new double[channelNum][rankNum];

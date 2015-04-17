@@ -13,7 +13,7 @@ public class Util {
 	}
 	
 	public static double getArrayMin(double[][] input){
-		double min = Double.MIN_VALUE;
+		double min = Double.MAX_VALUE;
 		for (int i = 0; i < input.length; i++){
 			for (int j = 0; j < input[0].length; j++){
 				min = min < input[i][j] ? min : input[i][j];
@@ -22,8 +22,15 @@ public class Util {
 		return min;
 	}
 	
+	public static double[][] removeEye(double[][] input){
+		for (int i = 0; i < input.length; i++){
+				input[i][i] = 0;
+		}
+		return input;
+	}
+	
 	public static double getArrayMax(double[] input) {
-		double max = Double.MAX_VALUE;
+		double max = Double.MIN_VALUE;
 		for (int i = 0; i < input.length; i++) {
 			max = max < input[i] ? input[i] : max;
 		}
@@ -38,6 +45,26 @@ public class Util {
 		}
 		return total/number;
 	}
+	
+	public static String arrayToString(double[][] input){
+		String forReturn = "";
+		for (int i = 0; i < input.length; i++){
+			for (int j = 0; j < input[0].length; j++){
+				forReturn = forReturn + input[i][j] + "  ";
+			}
+			forReturn = forReturn + "\n";
+		}
+		return forReturn;
+	}
+	
+	public static String arrayToString(double[] input) {
+		String forReturn = "";
+		for (int i = 0; i < input.length; i++) {
+			forReturn = forReturn + input[i] + "  ";
+		}
+		return forReturn;
+	}
+	
 }
 
 
