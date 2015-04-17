@@ -28,6 +28,9 @@
         <script src="js/library/justGauge/raphael.2.1.0.min.js"></script>
         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         <script src="js/OurJS/lineChart.js"></script>
+        <script src="js/library/eye/Chart.js"></script>
+        <script src="js/OurJS/eyeChart.js"></script>
+        
     </head>
 
     <body>
@@ -132,14 +135,82 @@
         <div class="panel panel-primary main_panel">
             <div class="panel-heading">
                 <button id="chart-title" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                <h3 id="chart_header" class="panel-title" align="center">Health/Trust <span class="caret"></span></h3>
+                <h3 id="chart_header" class="panel-title" align="center">Eye Diagram <span class="caret"></span></h3>
                 </button>
                 <ul id="chart-menu" class="dropdown-menu" role="menu">
                     <li><a href="#"><h4>Increment Chart  </h4></a></li>
                     <li><a href="#"><h4>Eye Diagram  </h4></a></li>
                 </ul>
             </div>
-            <div id="linechart_material"></div>
+            <!--<div id="linechart_material"></div>-->
+            <br>
+            <br>
+            <canvas id="eyeChartRead" width="600" height="350"></canvas>
+            <canvas id="eyeChartWrite" width="600" height="350"></canvas>
+            <script>
+                var ctx1 = document.getElementById("eyeChartRead").getContext("2d");
+                var ctx2 = document.getElementById("eyeChartWrite").getContext("2d");
+                var data1 = {
+    labels: ["Voltage", "Timing", "Voltage", "Timing"],
+    datasets: [
+        {
+            label: "Average",
+            fillColor: "rgba(51, 122, 183,0.3)",
+            strokeColor: "rgba(51, 122, 183,1)",
+            pointColor: "rgba(51, 122, 183,1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(51, 122, 183,1)",
+            data: [11,8,16,9]
+        },
+        {
+            label: "Minimum",
+            fillColor: "rgba(237,29,65,0.2)",
+            strokeColor: "rgba(237,29,65,0.6)",
+            pointColor: "rgba(237,29,65,0.6)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(237,29,65,0.6)",
+            data: [1,1,5,4]
+        }
+    ]
+};
+    var data2 = {
+    labels: ["Voltage", "Timing", "Voltage", "Timing"],
+    datasets: [
+        {
+            label: "Average",
+            fillColor: "rgba(51, 122, 183,0.3)",
+            strokeColor: "rgba(51, 122, 183,1)",
+            pointColor: "rgba(51, 122, 183,1)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(51, 122, 183,1)",
+            data: [9,10,12,11]
+        },
+        {
+            label: "Minimum",
+            fillColor: "rgba(237,29,65,0.2)",
+            strokeColor: "rgba(237,29,65,0.6)",
+            pointColor: "rgba(237,29,65,0.6)",
+            pointStrokeColor: "#fff",
+            pointHighlightFill: "#fff",
+            pointHighlightStroke: "rgba(237,29,65,0.6)",
+            data: [5,3,2,6]
+        }
+    ]
+};
+    var option = {
+    
+
+    //Number - Point label font size in pixels
+    pointLabelFontSize : 15,
+
+    
+};
+var read = new Chart(ctx1).Radar(data1,option);
+var write = new Chart(ctx2).Radar(data2,option);
+            </script>
         </div>
     </body>
 </html>
