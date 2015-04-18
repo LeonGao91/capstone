@@ -122,7 +122,7 @@ HEALTH=HEALTH+20*(basic_mean_check | outlier_mean_check);
 
 if outlier_mean_check==basic_mean_check
     TRUST=TRUST+5;
-end    
+end
 % MEAN CHECK 2 ( High Thresh)
 HEALTH=HEALTH+5*(WrV_up_sys.all.result_min.sample_mean>T1H & WrV_dn_sys.all.result_min.sample_mean>T1H & WrT_up_sys.all.result_min.sample_mean>T2H & WrT_dn_sys.all.result_min.sample_mean>T2H);
 
@@ -146,13 +146,13 @@ if outlier_sigma_check==basic_sigma_check
 end    
 
 
-% SIGMA CHECK  (MIN)
+% SIGMA CHECK (MIN)
 basic_sigma_check=(WrV_up_sys.all.result_min.total_sigma<2 & WrV_dn_sys.all.result_min.total_sigma<2 & WrT_up_sys.all.result_min.total_sigma<2 & WrT_dn_sys.all.result_min.total_sigma<2);
 outlier_sigma_check=(WrV_up_sys.out.result_min.total_sigma<2 & WrV_dn_sys.out.result_min.total_sigma<2 & WrT_up_sys.out.result_min.total_sigma<2 & WrT_dn_sys.out.result_min.total_sigma<2);
 HEALTH=HEALTH+5*(basic_sigma_check|outlier_sigma_check);
 if outlier_sigma_check==basic_sigma_check
     TRUST=TRUST+5;
-end    
+end
 
 % SIGMA CHECK2
 sigma_check2=(WrV_up_sys.out.result_min.total_sigma<.2 & WrV_dn_sys.out.result_min.total_sigma<.2 & WrT_up_sys.out.result_min.total_sigma<.2 & WrT_dn_sys.out.result_min.total_sigma<.2);

@@ -24,7 +24,7 @@ public class Test {
 	public static String SIGMAMINCHECK = "Sigma of Min Check";
 	public static String HIGHMEANMEANCHECK = "Mean of Mean Check (High)";
 	public static String HIGHMINMEANCHECK = "Min of Mean Check (High)";
-	public static String OUTLIERHEALTH = "Outlier Count for Health"; 
+	public static String OUTLIERHEALTH = "Outlier Count for Health";
 	public static String WINDOWMEANCHECK = "Window Mean Check";
 	public static String REPEATNOISECHECK = "Repeat Noise Check";
 	public static String HIGHTOLOWCORRCHECKHEALTH = "High to Low Correlation Check for Health";
@@ -36,13 +36,13 @@ public class Test {
 	public static String REPEATCOUNT = "Repeat Count";
 	public static String MEANCHECK = "Mean Check";
 	public static String MINCHECK = "Min Check";
-	public static String SIGMACHECK = "Sigma Check";
+	public static String SIGMAMEANCHECKTRUST = "Sigma of Mean Check";
+	public static String SIGMAMINCHECKTRUST = "Sigma of Min Check";
 	public static String TOTALSIGMACHECK = "Total Sigma Check";
 	public static String OUTLIERTRUST = "Outlier Count for Trust";
 	public static String HIGHTOLOWCORRCHECKTRUST = "High to Low Correlation Check for Trust";
 	public static String WINDOWCORRCHECKTRUST = "Window Correlation Check for Trust";
 	public static String LANE2LANECORRCHECKTRUST = "Lane2Lane Correlation Check for Trust";
-	
 	
 	private double health;
 	private double trust;
@@ -50,7 +50,7 @@ public class Test {
 	private TestDirection[] directions;
 	private TestDirection[] pairedDirections;
 	private int size; // number of directions
-	private int outlierCount; // number of outliers
+	private double outlierCount; // number of outliers
 	private HashMap<String, Double> HealthItems;
 	private HashMap<String, Double> TrustItems;
 	
@@ -156,11 +156,13 @@ public class Test {
 					&& directions[2 * i + 1].getBasicStats().getMeanMin() > thresholds[i];
 			outlierMeanCheck = outlierMeanCheck && directions[2 * i].getNoOutlierStats().getMeanMin() > thresholds[i]
 					&& directions[2 * i + 1].getNoOutlierStats().getMeanMin() > thresholds[i];
+
 			// basic min check
 			basicMinCheck = basicMinCheck && directions[2 * i].getBasicStats().getMin() > thresholds[i]
 					&& directions[2 * i + 1].getBasicStats().getMin() > thresholds[i];
 			outlierMeanCheck = outlierMeanCheck && directions[2 * i].getNoOutlierStats().getMin() > thresholds[i]
 					&& directions[2 * i + 1].getNoOutlierStats().getMin() > thresholds[i];
+
 			// basic mean & min check high threshold
 			basicMeanCheckH = basicMeanCheckH && directions[2 * i].getBasicStats().getMeanMin() > highThresholds[i]
 					&& directions[2 * i + 1].getBasicStats().getMeanMin() > highThresholds[i];			
@@ -182,15 +184,22 @@ public class Test {
 			outlierNoiseCheck = outlierNoiseCheck && directions[2 * i].getNoOutlierStats().getRepeatNoise1() > repeatNoiseThresholds[i]
 					&& directions[2 * i + 1].getNoOutlierStats().getRepeatNoise1() > repeatNoiseThresholds[i];	
 			
-			// lane2lane check
-			lane2LaneCorr = lane2LaneCorr && directions[2 * i].getLane2LaneCorr() > lane2LaneCorrThresholds[2 * i] && directions[2 * i + 1].getLane2LaneCorr() > lane2LaneCorrThresholds[2 * i + 1]; 
-//				health +=1.5;
-//				trust += 2.5;
 			//high to low correlation check
 			udCorr = udCorr && pearsons.correlation(directions[i].getAllMarginMean(), directions[i + 1].getAllMarginMean())> corrThreshold;
+			if (udCorr) {
+				HealthItems.put(HIGHTOLOWCORRCHECKHEALTH, 1.5);
+				TrustItems.put(HIGHTOLOWCORRCHECKTRUST, 2.5);
+			}
+			
+			// lane2lane check
+			lane2LaneCorr = lane2LaneCorr && directions[2 * i].getLane2LaneCorr() > lane2LaneCorrThresholds[2 * i] && directions[2 * i + 1].getLane2LaneCorr() > lane2LaneCorrThresholds[2 * i + 1];
+			if (lane2LaneCorr) {
+				HealthItems.put(LANE2LANECORRCHECKHEALTH, 1.5);
+				TrustItems.put(LANE2LANECORRCHECKTRUST, 2.5);
+			}
 		}
 		
-		for (int i = 0; i + 1 < directions.length; i++) {
+		for (int i = 0; i < directions.length; i++) {
 			// basic sigma mean check
 			basicSigmaMeanCheck = basicSigmaMeanCheck && directions[i].getBasicStats().getSigmaMean() < sigmaThreshold;
 			outlierSigmaMeanCheck = outlierSigmaMeanCheck && directions[i].getNoOutlierStats().getSigmaMean() < sigmaThreshold;
@@ -201,65 +210,91 @@ public class Test {
 			outlierSigmaMinCheckT2 = outlierSigmaMinCheckT2 && directions[i].getNoOutlierStats().getSigmaMin() < sigmaThreshold2;
 			
 			// outlier count
-			outlierCount += directions[i].getOutlierCount() + directions[i + 1].getOutlierCount();
+			outlierCount += directions[i].getOutlierCount();
 		}
 		
- 			//System.out.println("ud corr: " + udCorr);
-				//health +=1.5;
-				//trust += 2.5;
+		//window correlation check
 		for (int i = 0; i + 1 < pairedDirections.length; i++) {
 			winCorr = winCorr && pearsons.correlation(pairedDirections[i].getAllMarginMean(), pairedDirections[i + 1].getAllMarginMean()) > corrThreshold;
-			//System.out.println("win corr: " + winCorr);
-				//health += 3;
-				//trust +=5;
+		}
+		if (winCorr) {
+			HealthItems.put(WINDOWCORRCHECKHEALTH, 3.0);
+			TrustItems.put(WINDOWCORRCHECKTRUST, 5.0);
 		}
 		
 		// mean check 1
-		health += 20 * (basicMeanCheck || outlierMeanCheck ? 1:0);
-		if (outlierMeanCheck == basicMeanCheck) {
-			trust += 5;
+		if (basicMeanCheck || outlierMeanCheck) {
+			HealthItems.put(MEANMINCHECK, 20.0);
 		}
+		if (outlierMeanCheck == basicMeanCheck) {
+			TrustItems.put(MEANCHECK, 5.0);
+		}	
 		// mean check 2 (high threshold)
-		health += 5 * (basicMeanCheckH ? 1:0);
+		if (basicMeanCheckH) {
+			HealthItems.put(HIGHMEANMINCHECK, 5.0);
+		}
 		
 		// min check 1
-		health += 20 * (basicMinCheck || outlierMinCheck ? 1:0);
-		if (outlierMinCheck == basicMinCheck) {
-			trust += 5;
+		if (basicMinCheck || outlierMinCheck) {
+			HealthItems.put(MINMINCHECK, 20.0);
 		}
+		if (outlierMinCheck == basicMinCheck) {
+			TrustItems.put(MINCHECK, 5.0);
+		}		
 		// min check 2 (high threshold)
-		health += 5 * (basicMinCheckH ? 1:0);
-		
+		if (basicMinCheckH) {
+			HealthItems.put(HIGHMINMINCHECK, 5.0);
+		}		
 		
 		// sigma check (mean)
-		health += 5 * (basicSigmaMeanCheck || outlierSigmaMeanCheck ? 1:0);
+		if (basicSigmaMeanCheck || outlierSigmaMeanCheck) {
+			HealthItems.put(SIGMAMEANCHECK, 5.0);
+		}
 		if (outlierMeanCheck == basicMeanCheck) {
-			trust += 5;
+			TrustItems.put(SIGMAMEANCHECKTRUST, 5.0);
 		}
 		// sigma check (min)
-		health += 5 * (basicSigmaMinCheck || outlierSigmaMinCheck ? 1:0);
+		if (basicSigmaMinCheck || outlierSigmaMinCheck) {
+			HealthItems.put(SIGMAMINCHECK, 5.0);
+		}		
 		if (outlierMinCheck == basicMinCheck) {
-			trust += 5;
+			TrustItems.put(SIGMAMINCHECKTRUST, 5.0);
 		}
 		// sigma check 2
-		trust -= 2 * (outlierSigmaMinCheckT2 ? 1:0);
+		if (outlierSigmaMinCheckT2) {
+			TrustItems.put(TOTALSIGMACHECK, -2.0);
+		}
 		
 		// mean check 3 (high threshold)
-		health += 5 * (outlierMeanCheckH2 ? 1:0);
+		if (outlierMeanCheckH2) {
+			HealthItems.put(HIGHMEANMEANCHECK, 5.0);
+		}		
 		// mean check 4 (high threshold)
-		health += 5 * (outlierMeanCheckH3 ? 1:0);
-		
+		if (outlierMeanCheckH3) {
+			HealthItems.put(HIGHMINMEANCHECK, 5.0);
+		}
+				
 		// outlier count
-		health -= outlierCount;
-		trust -= outlierCount;
+		HealthItems.put(OUTLIERHEALTH, -outlierCount);
+		TrustItems.put(OUTLIERTRUST, -outlierCount);
 		
 		// window check
-		health += 5 * (windowCheck || outlierWindowCheck ? 1:0);
+		if (windowCheck || outlierWindowCheck) {
+			HealthItems.put(WINDOWMEANCHECK, 5.0);
+		}
 
 		// repeatability noise
-		health += 5 * (outlierNoiseCheck ? 1:0);		
-		// correlation check
+		if (outlierNoiseCheck) {
+			HealthItems.put(REPEATNOISECHECK, 5.0);
+		}
 		
+		for (double value : HealthItems.values()) {
+			health += value;
+		}
+		
+		for (double value : TrustItems.values()) {
+			trust += value;
+		}
 	}
 
 	/**
@@ -297,7 +332,7 @@ public class Test {
 	 * 
 	 * @return number of outliers
 	 */
-	public int getOutlierCount() {
+	public double getOutlierCount() {
 		return outlierCount;
 	}
 
