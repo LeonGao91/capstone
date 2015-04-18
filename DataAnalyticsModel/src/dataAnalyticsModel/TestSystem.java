@@ -66,22 +66,33 @@ public class TestSystem {
 		SummaryStatistics ssMean = new SummaryStatistics();
 		// Assign an output Stats object according to outlier indicator
 		Stats outputStats = checkOutlier ? noOutlierStats : basicStats;
+		//System.out.println(checkOutlier);
 		Stats tempRepeatStats;
 
 		for (int i = 0; i < repeats.length; i++) {
 			// Ignore outliers or remove ourliers
 			tempRepeatStats = checkOutlier ? repeats[i].getNoOutlierStats() : repeats[i].getBasicStats();
-//			if (checkOutlier == TestDirection.NOTCHECKOUTLIER || (checkOutlier == TestDirection.CHECKOUTLIER && repeats[i].isNotOutlier())) {
+			// if (checkOutlier == TestDirection.NOTCHECKOUTLIER ||
+			// (checkOutlier == TestDirection.CHECKOUTLIER &&
+			// repeats[i].isNotOutlier())) {
+				//System.out.println("repeat" + i + " min nan" );
+			if (Double.compare(tempRepeatStats.getMin(), Double.NaN) != 0) {
 				ssMin.addValue(tempRepeatStats.getMin());
+			}
+			// System.out.println("repeat" + i + " mean nan" );
+			if (Double.compare(tempRepeatStats.getMean(), Double.NaN) != 0) {
 				ssMean.addValue(tempRepeatStats.getMean());
-//			}
+			}
+		}
+			// }
 			// Store computed stats
 			outputStats.setSigmaMin(ssMin.getStandardDeviation());
 			outputStats.setMeanMin(ssMin.getMean());
 			outputStats.setSigmaMean(ssMean.getStandardDeviation());
 			outputStats.setMean(ssMean.getMean());
 			outputStats.setMin(ssMin.getMin());
-		}
+			//System.out.println(ssMin.getMin());
+			//System.out.println(ssMean.getN());
 	}
 
 	/**

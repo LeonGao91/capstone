@@ -12,310 +12,76 @@ public class DataAnalyticsModel {
 	 */
 	public static void main(String[] args) {
 
-		String fileName = "margins.csv";
-		TestLane[][][] lanes;
-		TestMarginsDDR margins;
-		TestRepeat[] repeats = new TestRepeat[5];
-		TestSystem[] systems = new TestSystem[5];
-		TestDirection[] directions = new TestDirection[1];
+		String fileName1 = "margins-high.csv";
+		TestLane[][][] lanes1;
+		TestMarginsDDR margins1;
+		TestRepeat[] repeats1 = new TestRepeat[5];
+		TestSystem[] systems1 = new TestSystem[5];
+		TestDirection[] directions = new TestDirection[2];
 		Test test;
 
+		String fileName2 = "margins-low.csv";
+		TestLane[][][] lanes2;
+		TestMarginsDDR margins2;
+		TestRepeat[] repeats2 = new TestRepeat[5];
+		TestSystem[] systems2 = new TestSystem[5];
+		
 		try {
-			File file = new File(fileName);
-			FileInputStream fis = new FileInputStream(file);
-			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-			String line = null;
+			File file1 = new File(fileName1);
+			FileInputStream fis1 = new FileInputStream(file1);
+			BufferedReader br1 = new BufferedReader(new InputStreamReader(fis1));
+			String line1 = null;
+			
+			File file2 = new File(fileName2);
+			FileInputStream fis2 = new FileInputStream(file2);
+			BufferedReader br2 = new BufferedReader(new InputStreamReader(fis2));
+			String line2 = null;
 			// while ((line = br.readLine()) != null) {
 			// System.out.println(line);
-			systems = new TestSystem[5];
+			systems1 = new TestSystem[5];
+			systems2 = new TestSystem[5];
 			for (int i = 0; i < 5; i++) {
-				repeats = new TestRepeat[5];
+				repeats1 = new TestRepeat[5];
+				repeats2 = new TestRepeat[5];
 				for (int j = 0; j < 5; j++) {
-					lanes = new TestLane[1][1][64];
+					lanes1 = new TestLane[1][1][64];
+					lanes2 = new TestLane[1][1][64];
 					// System.out.println(numbers.length);
-					if ((line = br.readLine()) != null) {
+					if ((line1 = br1.readLine()) != null && (line2 = br2.readLine()) != null) {
 						//System.out.println(line);
-						String[] numbers = line.split(",");
+						String[] numbers1 = line1.split(",");
+						String[] numbers2 = line2.split(",");
 						for (int k = 0; k < 64; k++) {
 							// System.out.println("i: " + i + " j: " + j +
 							// " k: " + k);
 							// System.out.println(numbers[k]);
-							lanes[0][0][k] = new TestLane(
-									Integer.parseInt(numbers[k]));
+							lanes1[0][0][k] = new TestLane(
+									Integer.parseInt(numbers1[k]));
 							// System.out.println(lanes[0][0][k].toString());
+							lanes2[0][0][k] = new TestLane(
+									Integer.parseInt(numbers2[k]));
 						}
 					}
-					margins = new TestMarginsDDR(lanes);
+					margins1 = new TestMarginsDDR(lanes1);
+					margins2 = new TestMarginsDDR(lanes2);
 					//System.out.println(margins.toString());
-					repeats[j] = new TestRepeat(margins);
+					repeats1[j] = new TestRepeat(margins1);
+					repeats2[j] = new TestRepeat(margins2);
 				}
-				systems[i] = new TestSystem(repeats);
+				systems1[i] = new TestSystem(repeats1);
+				systems2[i] = new TestSystem(repeats2);
 			}
 			// }
-			directions[0] = new TestDirection(systems);
+			directions[0] = new TestDirection(systems1);
+			directions[1] = new TestDirection(systems2);
 			test = new Test(directions);
-			br.close();
-			System.out.println(test.getDirectionByIndex(0).getLane2LaneCorr());
+			br1.close();
+			br2.close();
+			System.out.println(test.toString());
 			//System.out.println(test.getHealth());
 			//System.out.println(test.getTrust());
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-		// TODO code application logic here
-		// int directionNum = 2;
-		// int systemNum = 2;
-		// int repeatNum = 2;
-		// int channelNum = 2;
-		// int rankNum = 2;
-		// int laneNum = 4;
-		// TestLane[][][] lanes;
-		// TestMarginsDDR margins;
-		// TestRepeat repeat1;
-		// TestRepeat repeat2;
-		// TestRepeat[] repeats;
-		// TestSystem system1;
-		// TestSystem system2;
-		// TestSystem[] systems;
-		// TestDirection direction1;
-		// TestDirection direction2;
-		// TestDirection[] directions;
-		// Test test;
-		//
-		// lanes = new TestLane[channelNum][rankNum][laneNum];
-		// lanes[0][0][0] = new TestLane(10);
-		// lanes[0][0][1] = new TestLane(8);
-		// lanes[0][0][2] = new TestLane(11);
-		// lanes[0][0][3] = new TestLane(10);
-		//
-		// lanes[0][1][0] = new TestLane(9);
-		// lanes[0][1][1] = new TestLane(10);
-		// lanes[0][1][2] = new TestLane(12);
-		// lanes[0][1][3] = new TestLane(11);
-		//
-		// lanes[1][0][0] = new TestLane(8);
-		// lanes[1][0][1] = new TestLane(8);
-		// lanes[1][0][2] = new TestLane(9);
-		// lanes[1][0][3] = new TestLane(10);
-		//
-		// lanes[1][1][0] = new TestLane(13);
-		// lanes[1][1][1] = new TestLane(12);
-		// lanes[1][1][2] = new TestLane(9);
-		// lanes[1][1][3] = new TestLane(10);
-		//
-		// margins = new TestMarginsDDR(lanes);
-		// repeat1 = new TestRepeat(margins);
-		//
-		// lanes = new TestLane[channelNum][rankNum][laneNum];
-		// lanes[0][0][0] = new TestLane(8);
-		// lanes[0][0][1] = new TestLane(9);
-		// lanes[0][0][2] = new TestLane(12);
-		// lanes[0][0][3] = new TestLane(11);
-		//
-		// lanes[0][1][0] = new TestLane(10);
-		// lanes[0][1][1] = new TestLane(8);
-		// lanes[0][1][2] = new TestLane(9);
-		// lanes[0][1][3] = new TestLane(7);
-		//
-		// lanes[1][0][0] = new TestLane(9);
-		// lanes[1][0][1] = new TestLane(10);
-		// lanes[1][0][2] = new TestLane(13);
-		// lanes[1][0][3] = new TestLane(12);
-		//
-		// lanes[1][1][0] = new TestLane(12);
-		// lanes[1][1][1] = new TestLane(11);
-		// lanes[1][1][2] = new TestLane(8);
-		// lanes[1][1][3] = new TestLane(10);
-		//
-		// margins = new TestMarginsDDR(lanes);
-		// repeat2 = new TestRepeat(margins);
-		//
-		// repeats = new TestRepeat[repeatNum];
-		// repeats[0] = repeat1;
-		// repeats[1] = repeat2;
-		//
-		// system1 = new TestSystem(repeats);
-		//
-		// lanes = new TestLane[channelNum][rankNum][laneNum];
-		// lanes[0][0][0] = new TestLane(9);
-		// lanes[0][0][1] = new TestLane(7);
-		// lanes[0][0][2] = new TestLane(10);
-		// lanes[0][0][3] = new TestLane(13);
-		//
-		// lanes[0][1][0] = new TestLane(7);
-		// lanes[0][1][1] = new TestLane(8);
-		// lanes[0][1][2] = new TestLane(9);
-		// lanes[0][1][3] = new TestLane(6);
-		//
-		// lanes[1][0][0] = new TestLane(8);
-		// lanes[1][0][1] = new TestLane(9);
-		// lanes[1][0][2] = new TestLane(8);
-		// lanes[1][0][3] = new TestLane(9);
-		//
-		// lanes[1][1][0] = new TestLane(11);
-		// lanes[1][1][1] = new TestLane(12);
-		// lanes[1][1][2] = new TestLane(10);
-		// lanes[1][1][3] = new TestLane(9);
-		//
-		// margins = new TestMarginsDDR(lanes);
-		// repeat1 = new TestRepeat(margins);
-		//
-		// lanes = new TestLane[channelNum][rankNum][laneNum];
-		// lanes[0][0][0] = new TestLane(10);
-		// lanes[0][0][1] = new TestLane(13);
-		// lanes[0][0][2] = new TestLane(10);
-		// lanes[0][0][3] = new TestLane(12);
-		//
-		// lanes[0][1][0] = new TestLane(9);
-		// lanes[0][1][1] = new TestLane(10);
-		// lanes[0][1][2] = new TestLane(7);
-		// lanes[0][1][3] = new TestLane(11);
-		//
-		// lanes[1][0][0] = new TestLane(9);
-		// lanes[1][0][1] = new TestLane(11);
-		// lanes[1][0][2] = new TestLane(12);
-		// lanes[1][0][3] = new TestLane(10);
-		//
-		// lanes[1][1][0] = new TestLane(8);
-		// lanes[1][1][1] = new TestLane(9);
-		// lanes[1][1][2] = new TestLane(7);
-		// lanes[1][1][3] = new TestLane(9);
-		//
-		// margins = new TestMarginsDDR(lanes);
-		// repeat2 = new TestRepeat(margins);
-		//
-		// repeats = new TestRepeat[repeatNum];
-		// repeats[0] = repeat1;
-		// repeats[1] = repeat2;
-		//
-		// system2 = new TestSystem(repeats);
-		//
-		// systems = new TestSystem[systemNum];
-		// systems[0] = system1;
-		// systems[1] = system2;
-		//
-		// direction1 = new TestDirection(systems);
-		//
-		// lanes = new TestLane[channelNum][rankNum][laneNum];
-		// lanes[0][0][0] = new TestLane(10);
-		// lanes[0][0][1] = new TestLane(8);
-		// lanes[0][0][2] = new TestLane(11);
-		// lanes[0][0][3] = new TestLane(10);
-		//
-		// lanes[0][1][0] = new TestLane(9);
-		// lanes[0][1][1] = new TestLane(10);
-		// lanes[0][1][2] = new TestLane(12);
-		// lanes[0][1][3] = new TestLane(11);
-		//
-		// lanes[1][0][0] = new TestLane(7);
-		// lanes[1][0][1] = new TestLane(8);
-		// lanes[1][0][2] = new TestLane(9);
-		// lanes[1][0][3] = new TestLane(10);
-		//
-		// lanes[1][1][0] = new TestLane(13);
-		// lanes[1][1][1] = new TestLane(12);
-		// lanes[1][1][2] = new TestLane(9);
-		// lanes[1][1][3] = new TestLane(10);
-		//
-		// margins = new TestMarginsDDR(lanes);
-		// repeat1 = new TestRepeat(margins);
-		//
-		// lanes = new TestLane[channelNum][rankNum][laneNum];
-		// lanes[0][0][0] = new TestLane(10);
-		// lanes[0][0][1] = new TestLane(8);
-		// lanes[0][0][2] = new TestLane(11);
-		// lanes[0][0][3] = new TestLane(13);
-		//
-		// lanes[0][1][0] = new TestLane(9);
-		// lanes[0][1][1] = new TestLane(10);
-		// lanes[0][1][2] = new TestLane(8);
-		// lanes[0][1][3] = new TestLane(8);
-		//
-		// lanes[1][0][0] = new TestLane(8);
-		// lanes[1][0][1] = new TestLane(11);
-		// lanes[1][0][2] = new TestLane(12);
-		// lanes[1][0][3] = new TestLane(10);
-		//
-		// lanes[1][1][0] = new TestLane(9);
-		// lanes[1][1][1] = new TestLane(10);
-		// lanes[1][1][2] = new TestLane(12);
-		// lanes[1][1][3] = new TestLane(13);
-		//
-		// margins = new TestMarginsDDR(lanes);
-		// repeat2 = new TestRepeat(margins);
-		//
-		// repeats = new TestRepeat[repeatNum];
-		// repeats[0] = repeat1;
-		// repeats[1] = repeat2;
-		//
-		// system1 = new TestSystem(repeats);
-		//
-		// lanes = new TestLane[channelNum][rankNum][laneNum];
-		// lanes[0][0][0] = new TestLane(7);
-		// lanes[0][0][1] = new TestLane(10);
-		// lanes[0][0][2] = new TestLane(11);
-		// lanes[0][0][3] = new TestLane(12);
-		//
-		// lanes[0][1][0] = new TestLane(9);
-		// lanes[0][1][1] = new TestLane(9);
-		// lanes[0][1][2] = new TestLane(10);
-		// lanes[0][1][3] = new TestLane(8);
-		//
-		// lanes[1][0][0] = new TestLane(7);
-		// lanes[1][0][1] = new TestLane(6);
-		// lanes[1][0][2] = new TestLane(8);
-		// lanes[1][0][3] = new TestLane(7);
-		//
-		// lanes[1][1][0] = new TestLane(10);
-		// lanes[1][1][1] = new TestLane(11);
-		// lanes[1][1][2] = new TestLane(12);
-		// lanes[1][1][3] = new TestLane(13);
-		//
-		// margins = new TestMarginsDDR(lanes);
-		// repeat1 = new TestRepeat(margins);
-		//
-		// lanes = new TestLane[channelNum][rankNum][laneNum];
-		// lanes[0][0][0] = new TestLane(11);
-		// lanes[0][0][1] = new TestLane(12);
-		// lanes[0][0][2] = new TestLane(8);
-		// lanes[0][0][3] = new TestLane(9);
-		//
-		// lanes[0][1][0] = new TestLane(10);
-		// lanes[0][1][1] = new TestLane(8);
-		// lanes[0][1][2] = new TestLane(8);
-		// lanes[0][1][3] = new TestLane(9);
-		//
-		// lanes[1][0][0] = new TestLane(11);
-		// lanes[1][0][1] = new TestLane(12);
-		// lanes[1][0][2] = new TestLane(12);
-		// lanes[1][0][3] = new TestLane(13);
-		//
-		// lanes[1][1][0] = new TestLane(7);
-		// lanes[1][1][1] = new TestLane(9);
-		// lanes[1][1][2] = new TestLane(10);
-		// lanes[1][1][3] = new TestLane(8);
-		//
-		// margins = new TestMarginsDDR(lanes);
-		// repeat2 = new TestRepeat(margins);
-		//
-		// repeats = new TestRepeat[repeatNum];
-		// repeats[0] = repeat1;
-		// repeats[1] = repeat2;
-		//
-		// system2 = new TestSystem(repeats);
-		//
-		// systems = new TestSystem[systemNum];
-		// systems[0] = system1;
-		// systems[1] = system2;
-		//
-		// direction2 = new TestDirection(systems);
-		//
-		// directions = new TestDirection[directionNum];
-		// directions[0] = direction1;
-		// directions[1] = direction2;
-		//
-		// test = new Test(directions);
-		//
-		// System.out.println(test.toString());
-
 	}
 }

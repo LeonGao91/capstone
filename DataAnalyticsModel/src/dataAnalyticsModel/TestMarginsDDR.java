@@ -96,6 +96,7 @@ public class TestMarginsDDR extends TestMargins {
 	
 	
 	public int checkSystemOutliers(double benchmark, double threshold){
+		//System.out.println("SystemOutlierThreshold: " + threshold);
 		int outlierCount = 0;
 		for (int i = 0; i < channelNum; i++) {
 			for (int j = 0; j < rankNum; j++) {
@@ -112,6 +113,7 @@ public class TestMarginsDDR extends TestMargins {
 	}
 	
 	public int checkLaneOutliers(double meanThreshold, double medianThreshold){
+		//System.out.println("LaneOutlierThreshold: " + meanThreshold + " " + medianThreshold);
 		int outlierCount = 0;
 		boolean meanOutlier = false;
 		boolean medianOutlier = false;
@@ -276,7 +278,7 @@ public class TestMarginsDDR extends TestMargins {
 			for (int j = 0; j < rankNum; j++){
 				sb.append("channel" + i + "rank" + j + ": ");
 				for (int k = 0; k < laneNum; k++){
-					sb.append(getLaneByIndexes(i, j, k).getMargin() + " ");
+					sb.append("" + getLaneByIndexes(i, j, k).getMargin() + getLaneByIndexes(i, j, k).isValid() + " ");
 				}
 				sb.append("\n");
 			}
