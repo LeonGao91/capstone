@@ -77,7 +77,10 @@ public class DataAnalyticsModel {
 			test = new Test(directions);
 			br1.close();
 			br2.close();
+			System.out.println("test");
 			System.out.println(test.toString());
+			System.out.println("Health: " + test.getHealth());
+			System.out.println("Trust: " + test.getTrust());
 			//System.out.println(test.getHealth());
 			//System.out.println(test.getTrust());
 		} catch (Exception e) {

@@ -303,7 +303,7 @@ public class TestDirection {
 			meanEachLane[i] = ss[i].getMean();
 //			medianEachLane[i] = ds[i].getPercentile(50);
 		}
-		System.out.println(Util.arrayToString(meanEachLane));
+		//System.out.println(Util.arrayToString(meanEachLane));
 		findWorstCase(ss);
 	}
 	
@@ -320,8 +320,8 @@ public class TestDirection {
 				minLaneNo = i;
 			}
 		}
-		System.out.println("worst case mean: " + worstCase);
-		System.out.println("worst case lane: " + minLaneNo);
+		//System.out.println("worst case mean: " + worstCase);
+		//System.out.println("worst case lane: " + minLaneNo);
 		//count number of lanes that are close to worst lane 
 		for (int i = 0; i < meanEachLane.length; i++){
 			if (meanEachLane[i] - worstCase < byLaneThreshold){
@@ -431,7 +431,7 @@ public class TestDirection {
 	 *         objects
 	 */
 	public TestDirection add(TestDirection direction){
-		System.out.println("add direction");
+		//System.out.println("add direction");
 		TestRepeat[] newRepeats;
 		TestSystem[] newTestSystems;
 		TestDirection newDirection;

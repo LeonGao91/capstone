@@ -51,8 +51,8 @@ public class Test {
 	private TestDirection[] pairedDirections;
 	private int size; // number of directions
 	private double outlierCount; // number of outliers
-	private HashMap<String, Double> HealthItems;
-	private HashMap<String, Double> TrustItems;
+	private HashMap<String, Double> healthItems;
+	private HashMap<String, Double> trustItems;
 	
 	//Thresholds
 	private double[] thresholds;
@@ -118,12 +118,18 @@ public class Test {
 	 *            an array TestDirection representing all directions of one test.
 	 */
 	public Test(TestDirection[] directions) {
+		System.out.println("construct test");
 		size = directions.length;
 		this.directions = directions;
 		outlierCount = 0;
+		health = 0;
+		trust = 0;
+		healthItems = new HashMap<>();
+		trustItems = new HashMap<>();
 		pairDirections();		
 		initializeThresholds();
 		basicChecks();
+		
 	}
 	
 	public void initializeThresholds(){
@@ -186,17 +192,9 @@ public class Test {
 			
 			//high to low correlation check
 			udCorr = udCorr && pearsons.correlation(directions[i].getAllMarginMean(), directions[i + 1].getAllMarginMean())> corrThreshold;
-			if (udCorr) {
-				HealthItems.put(HIGHTOLOWCORRCHECKHEALTH, 1.5);
-				TrustItems.put(HIGHTOLOWCORRCHECKTRUST, 2.5);
-			}
-			
+
 			// lane2lane check
 			lane2LaneCorr = lane2LaneCorr && directions[2 * i].getLane2LaneCorr() > lane2LaneCorrThresholds[2 * i] && directions[2 * i + 1].getLane2LaneCorr() > lane2LaneCorrThresholds[2 * i + 1];
-			if (lane2LaneCorr) {
-				HealthItems.put(LANE2LANECORRCHECKHEALTH, 1.5);
-				TrustItems.put(LANE2LANECORRCHECKTRUST, 2.5);
-			}
 		}
 		
 		for (int i = 0; i < directions.length; i++) {
@@ -208,91 +206,103 @@ public class Test {
 			outlierSigmaMinCheck = outlierSigmaMinCheck && directions[i].getNoOutlierStats().getSigmaMin() < sigmaThreshold;
 			// basic sigma min check threshold 2
 			outlierSigmaMinCheckT2 = outlierSigmaMinCheckT2 && directions[i].getNoOutlierStats().getSigmaMin() < sigmaThreshold2;
-			
 			// outlier count
 			outlierCount += directions[i].getOutlierCount();
 		}
-		
+	
 		//window correlation check
 		for (int i = 0; i + 1 < pairedDirections.length; i++) {
 			winCorr = winCorr && pearsons.correlation(pairedDirections[i].getAllMarginMean(), pairedDirections[i + 1].getAllMarginMean()) > corrThreshold;
 		}
-		if (winCorr) {
-			HealthItems.put(WINDOWCORRCHECKHEALTH, 3.0);
-			TrustItems.put(WINDOWCORRCHECKTRUST, 5.0);
-		}
 		
 		// mean check 1
 		if (basicMeanCheck || outlierMeanCheck) {
-			HealthItems.put(MEANMINCHECK, 20.0);
+			healthItems.put(MEANMINCHECK, 20.0);
 		}
+
 		if (outlierMeanCheck == basicMeanCheck) {
-			TrustItems.put(MEANCHECK, 5.0);
+			trustItems.put(MEANCHECK, 5.0);
 		}	
 		// mean check 2 (high threshold)
 		if (basicMeanCheckH) {
-			HealthItems.put(HIGHMEANMINCHECK, 5.0);
+			healthItems.put(HIGHMEANMINCHECK, 5.0);
 		}
 		
 		// min check 1
 		if (basicMinCheck || outlierMinCheck) {
-			HealthItems.put(MINMINCHECK, 20.0);
+			healthItems.put(MINMINCHECK, 20.0);
 		}
 		if (outlierMinCheck == basicMinCheck) {
-			TrustItems.put(MINCHECK, 5.0);
+			trustItems.put(MINCHECK, 5.0);
 		}		
 		// min check 2 (high threshold)
 		if (basicMinCheckH) {
-			HealthItems.put(HIGHMINMINCHECK, 5.0);
+			healthItems.put(HIGHMINMINCHECK, 5.0);
 		}		
 		
 		// sigma check (mean)
 		if (basicSigmaMeanCheck || outlierSigmaMeanCheck) {
-			HealthItems.put(SIGMAMEANCHECK, 5.0);
+			healthItems.put(SIGMAMEANCHECK, 5.0);
 		}
 		if (outlierMeanCheck == basicMeanCheck) {
-			TrustItems.put(SIGMAMEANCHECKTRUST, 5.0);
+			trustItems.put(SIGMAMEANCHECKTRUST, 5.0);
 		}
 		// sigma check (min)
 		if (basicSigmaMinCheck || outlierSigmaMinCheck) {
-			HealthItems.put(SIGMAMINCHECK, 5.0);
+			healthItems.put(SIGMAMINCHECK, 5.0);
 		}		
 		if (outlierMinCheck == basicMinCheck) {
-			TrustItems.put(SIGMAMINCHECKTRUST, 5.0);
+			trustItems.put(SIGMAMINCHECKTRUST, 5.0);
 		}
 		// sigma check 2
 		if (outlierSigmaMinCheckT2) {
-			TrustItems.put(TOTALSIGMACHECK, -2.0);
+			trustItems.put(TOTALSIGMACHECK, -2.0);
 		}
 		
 		// mean check 3 (high threshold)
 		if (outlierMeanCheckH2) {
-			HealthItems.put(HIGHMEANMEANCHECK, 5.0);
+			healthItems.put(HIGHMEANMEANCHECK, 5.0);
 		}		
 		// mean check 4 (high threshold)
 		if (outlierMeanCheckH3) {
-			HealthItems.put(HIGHMINMEANCHECK, 5.0);
+			healthItems.put(HIGHMINMEANCHECK, 5.0);
 		}
 				
 		// outlier count
-		HealthItems.put(OUTLIERHEALTH, -outlierCount);
-		TrustItems.put(OUTLIERTRUST, -outlierCount);
+		healthItems.put(OUTLIERHEALTH, -outlierCount);
+		trustItems.put(OUTLIERTRUST, -outlierCount);
 		
 		// window check
 		if (windowCheck || outlierWindowCheck) {
-			HealthItems.put(WINDOWMEANCHECK, 5.0);
+			healthItems.put(WINDOWMEANCHECK, 5.0);
 		}
 
 		// repeatability noise
 		if (outlierNoiseCheck) {
-			HealthItems.put(REPEATNOISECHECK, 5.0);
+			healthItems.put(REPEATNOISECHECK, 5.0);
 		}
 		
-		for (double value : HealthItems.values()) {
+		if (udCorr) {
+			healthItems.put(HIGHTOLOWCORRCHECKHEALTH, 1.5);
+			trustItems.put(HIGHTOLOWCORRCHECKTRUST, 2.5);
+		}
+		
+		if (lane2LaneCorr) {
+			healthItems.put(LANE2LANECORRCHECKHEALTH, 1.5);
+			trustItems.put(LANE2LANECORRCHECKTRUST, 2.5);
+		}
+		
+		if (winCorr) {
+			healthItems.put(WINDOWCORRCHECKHEALTH, 3.0);
+			trustItems.put(WINDOWCORRCHECKTRUST, 5.0);
+		}
+		
+		
+		for (double value : healthItems.values()) {
 			health += value;
 		}
 		
-		for (double value : TrustItems.values()) {
+		for (double value : trustItems.values()) {
 			trust += value;
 		}
 	}
