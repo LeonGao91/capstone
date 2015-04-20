@@ -29,7 +29,10 @@
         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         <script src="js/OurJS/lineChart.js"></script>
         <script src="js/library/eye/Chart.js"></script>
+        <script src="js/OurJS/result.js"></script>
         <script src="js/OurJS/eyeChart.js"></script>
+        
+        
         
     </head>
 
@@ -101,116 +104,95 @@
             <div class="panel-heading">
                 <h3 class="panel-title" align="center">Scores</h3>
             </div>
-            <div id="trust" class="gauge"></div>
-            <div id="health" class="gauge"></div>
-            <script>
-                var g = new JustGage({
-                  id: "trust",
-                  value: 32,
-                  min: 0,
-                  max: 100,
-                  title: "Trust",
-                  label: "SCORE",
-                  levelColors: ["D00000","00CC33"],
-                  startAnimationTime : 2000
-                });
-                var g2 = new JustGage({
-                  id: "health",
-                  value: 91,
-                  min: 0,
-                  max: 100,
-                  title: "Health",
-                  label: "SCORE",
-                  levelColors: ["D00000","00CC33"],
-                  startAnimationTime : 2000
-                });
-            </script>
+            <div class="row">
+                    <div id="trust" class="gauge"></div>
+                    <div id="health" class="gauge"></div>
+            </div>
+             <div class="row">
+                <div class="col-md-6 center-block">
+                    <!-- pop up window -->
+                    <button type="button" class="btn btn-primary center-block view-item" data-toggle="modal" data-target=".bs-example-modal-lg">View</button>
+
+                        <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                        <h4 class="modal-title" id="myLargeModalLabel">Item detail</h4>
+                                    </div>
+                                    <div class="modal-body">
+
+                                        <table class="table pop-up-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Item</th>
+                                                    <th>Score</th>
+                                                    <th>Criteria</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>xxx xxx</td>
+                                                    <td>xxxxxx</td>
+                                                    <td>xxx xxx xxx</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>xxx xxx</td>
+                                                    <td>xxxxxx</td>
+                                                    <td>xxx xxx xxx</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>xxx xxx</td>
+                                                    <td>xxxxxx</td>
+                                                    <td>xxx xxx xxx</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                
+                 <div class="col-md-6  text-center">
+                    <button type="button" class="btn btn-primary center-block view-item" data-toggle="modal" data-target=".bs-example-modal-lg">View</button>
+                </div>
+            </div>
         </div>
+        
         <div class="panel panel-danger main_panel">
             <div class="panel-heading">
                 <h3 class="panel-title" align="center">Messages</h3>
             </div>
             <div class="panel-body">Trust score is too low</div>
         </div>
+        
         <div class="panel panel-primary main_panel">
             <div class="panel-heading">
                 <button id="chart-title" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                <h3 id="chart_header" class="panel-title" align="center">Eye Diagram <span class="caret"></span></h3>
+                <h3 id="chart_header" class="panel-title" align="center">Eye Chart  <span class="caret"></span></h3>
                 </button>
                 <ul id="chart-menu" class="dropdown-menu" role="menu">
-                    <li><a href="#"><h4>Increment Chart  </h4></a></li>
-                    <li><a href="#"><h4>Eye Diagram  </h4></a></li>
+                    <li class="changeChart" chart="#eyeChart"><a><h4>Eye Chart  </h4></a></li>
+                    <li class="changeChart" chart="#linechart_material"><a><h4>Health/Trust Chart </h4></a></li>
+                    <li class="changeChart" chart="#combination"><a><h4>Combination Chart </h4></a></li>
+                    <li class="changeChart" chart="#increament"><a><h4>Increment Chart  </h4></a></li>
                 </ul>
             </div>
-            <!--<div id="linechart_material"></div>-->
-            <br>
-            <br>
-            <canvas id="eyeChartRead" width="600" height="350"></canvas>
-            <canvas id="eyeChartWrite" width="600" height="350"></canvas>
-            <script>
-                var ctx1 = document.getElementById("eyeChartRead").getContext("2d");
-                var ctx2 = document.getElementById("eyeChartWrite").getContext("2d");
-                var data1 = {
-    labels: ["Voltage", "Timing", "Voltage", "Timing"],
-    datasets: [
-        {
-            label: "Average",
-            fillColor: "rgba(51, 122, 183,0.3)",
-            strokeColor: "rgba(51, 122, 183,1)",
-            pointColor: "rgba(51, 122, 183,1)",
-            pointStrokeColor: "#fff",
-            pointHighlightFill: "#fff",
-            pointHighlightStroke: "rgba(51, 122, 183,1)",
-            data: [11,8,16,9]
-        },
-        {
-            label: "Minimum",
-            fillColor: "rgba(237,29,65,0.2)",
-            strokeColor: "rgba(237,29,65,0.6)",
-            pointColor: "rgba(237,29,65,0.6)",
-            pointStrokeColor: "#fff",
-            pointHighlightFill: "#fff",
-            pointHighlightStroke: "rgba(237,29,65,0.6)",
-            data: [1,1,5,4]
-        }
-    ]
-};
-    var data2 = {
-    labels: ["Voltage", "Timing", "Voltage", "Timing"],
-    datasets: [
-        {
-            label: "Average",
-            fillColor: "rgba(51, 122, 183,0.3)",
-            strokeColor: "rgba(51, 122, 183,1)",
-            pointColor: "rgba(51, 122, 183,1)",
-            pointStrokeColor: "#fff",
-            pointHighlightFill: "#fff",
-            pointHighlightStroke: "rgba(51, 122, 183,1)",
-            data: [9,10,12,11]
-        },
-        {
-            label: "Minimum",
-            fillColor: "rgba(237,29,65,0.2)",
-            strokeColor: "rgba(237,29,65,0.6)",
-            pointColor: "rgba(237,29,65,0.6)",
-            pointStrokeColor: "#fff",
-            pointHighlightFill: "#fff",
-            pointHighlightStroke: "rgba(237,29,65,0.6)",
-            data: [5,3,2,6]
-        }
-    ]
-};
-    var option = {
-    
-
-    //Number - Point label font size in pixels
-    pointLabelFontSize : 15,
-
-    
-};
-var read = new Chart(ctx1).Radar(data1,option);
-var write = new Chart(ctx2).Radar(data2,option);
-            </script>
+            
+            <div class="row" id="eyeChart">
+                <div class="col-md-6">
+                    <div class="eyeTitle">Read</div>
+                        <canvas id="eyeChartRead"></canvas>    
+                    </div>
+                    <div class="col-md-6">
+                        <div class="eyeTitle">Write</div>
+                        <canvas id="eyeChartWrite"></canvas>
+                    </div>
+            </div>
+            <div id="linechart_material" style="display:none"></div>
+            <div id="combination" style="display:none"><img src="media/combination2.png" id="combinationpng"/></div>
         </div>
     </body>
 </html>

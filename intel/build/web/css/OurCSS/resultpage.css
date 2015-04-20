@@ -84,3 +84,36 @@ and open the template in the editor.
 #canvas{
     padding-bottom: 2%;
 }
+
+#eyeChartWrite,#eyeChartRead{
+    width: 600px;
+    max-width: 600px;
+    height: 350px;
+    max-height:350px;
+    display: inline-block;
+    vertical-align: baseline;
+}
+
+img#combinationpng {
+  max-height: 400px;
+  max-width: 800px;
+}
+
+#combination{
+    text-align: center;
+}
+
+.view-item {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.pop-up-table tr:nth-child(even){
+    background-color: rgb(174, 217, 255);
+}
+
+.pop-up-table thead{
+    background-color:#337ab7;
+    color:white;
+}
+

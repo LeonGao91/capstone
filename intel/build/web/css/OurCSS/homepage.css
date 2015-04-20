@@ -49,4 +49,26 @@ th.arrow_col {
 
 .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
     vertical-align: middle;
+    text-align: center;
+}
+
+.label,.label-success,.label-danger {
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.label {
+  font-size: 13px;
+}
+
+.eyeTitle{
+    text-align: center;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: bold;
+    font-stretch: normal;
+    font-size: 15px;
+    line-height: normal;
+    font-family: Arial;
+    color:rgb(117, 117, 117);
+    margin: 2%;
 }

@@ -68,7 +68,7 @@
                         <td  style="width: 15%">DELL XPS 13</td>
                         <td><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></td>
                         <td>04/07/2015</td>
-                        <td>PASS</td>
+                        <td><span class="label label-success">PASS</span></td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                         
                     </tr>
@@ -76,49 +76,49 @@
                         <td>DELL XPS 13</td>
                         <td></td>
                         <td>04/06/2015</td>
-                        <td>PASS</td>
+                        <td><span class="label label-success">PASS</span></td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr>
                         <td>DELL XPS 13</td>
                         <td></td>
                         <td>04/05/2015</td>
-                        <td>FAIL</td>
+                        <td><span class="label label-danger">FAIL</span></td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr class="expandable" color="">
                         <td>DELL XPS 14</td>
                         <td><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></td>
                         <td>04/06/2015</td>
-                        <td>FAIL</td>
+                        <td><span class="label label-danger">FAIL</span></td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr>
                         <td>DELL XPS 14</td>
                         <td></td>
                         <td>04/05/2015</td>
-                        <td>FAIL</td>
+                        <td><span class="label label-danger">FAIL</span></td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr class="expandable" color="">
                         <td>DELL XPS 15</td>
                         <td><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></td>
                         <td>04/06/2015</td>
-                        <td>PASS</td>
+                        <td><span class="label label-success">PASS</span></td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr>
                         <td>DELL XPS 15</td>
                         <td></td>
                         <td>04/03/2015</td>
-                        <td>PASS</td>
+                        <td><span class="label label-success">PASS</span></td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr>
                         <td>DELL XPS 15</td>
                         <td></td>
                         <td>03/30/2015</td>
-                        <td>FAIL</td>
+                        <td><span class="label label-danger">FAIL</span></td>
                         <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                 </tbody>
