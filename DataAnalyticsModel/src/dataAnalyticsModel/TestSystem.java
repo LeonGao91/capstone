@@ -31,7 +31,7 @@ public class TestSystem {
 //	 *            a two-dimensional array storing all data of one system.
 //	 */
 //	public TestSystem(int[][] dataInput) {
-//		size = dataInput.length;
+//		size = dataInput.length; // TODO
 //		repeats = new TestRepeat[size];
 //		basicStats = new Stats();
 //		noOutlierStats = new Stats();
@@ -48,7 +48,7 @@ public class TestSystem {
 	 *            an array of TestRepeat representing all repeats of one system.
 	 */
 	public TestSystem(TestRepeat[] repeats){
-		size = repeats.length;
+		size = repeats.length; // TODO
 		this.repeats = repeats;
 		basicStats = new Stats();
 		noOutlierStats = new Stats();
@@ -69,7 +69,7 @@ public class TestSystem {
 		//System.out.println(checkOutlier);
 		Stats tempRepeatStats;
 
-		for (int i = 0; i < repeats.length; i++) {
+		for (int i = 0; i < repeats.length; i++) { // TODO
 			// Ignore outliers or remove ourliers
 			tempRepeatStats = checkOutlier ? repeats[i].getNoOutlierStats() : repeats[i].getBasicStats();
 			// if (checkOutlier == TestDirection.NOTCHECKOUTLIER ||

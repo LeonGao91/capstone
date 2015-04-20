@@ -47,9 +47,9 @@ public class TestRepeat {
 //	 *            an array storing all data of one repeat.
 //	 */
 //	public TestRepeat(int[] dataInput) {
-//		size = dataInput.length;
+//		size = dataInput.length; // TODO
 //		lanes = new TestLane[size];
-//		for (int i=0; i< dataInput.length; i++){
+//		for (int i=0; i< dataInput.length; i++){ // TODO
 //			lanes[i] = new TestLane(dataInput[i]);
 //		}
 //		status = TestRepeat.VALID;

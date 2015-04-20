@@ -46,7 +46,7 @@ public class DataAnalyticsModel {
 				for (int j = 0; j < 5; j++) {
 					lanes1 = new TestLane[1][1][64];
 					lanes2 = new TestLane[1][1][64];
-					// System.out.println(numbers.length);
+					// System.out.println(numbers.length); // TODO
 					if ((line1 = br1.readLine()) != null && (line2 = br2.readLine()) != null) {
 						//System.out.println(line);
 						String[] numbers1 = line1.split(",");

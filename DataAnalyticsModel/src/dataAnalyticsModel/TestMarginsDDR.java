@@ -40,9 +40,9 @@ public class TestMarginsDDR extends TestMargins {
 	 */
 	public TestMarginsDDR(TestLane[][][] lanes) {
 		this.lanes = lanes;
-		channelNum = lanes.length;
-		rankNum = lanes[0].length;
-		laneNum = lanes[0][0].length;
+		channelNum = lanes.length; // TODO
+		rankNum = lanes[0].length; // TODO
+		laneNum = lanes[0][0].length; // TODO
 		//System.out.println(channelNum + " " + rankNum + " " + laneNum);
 		acrossLaneMeans = new double[channelNum][rankNum];
 		acrossLaneMins = new double[channelNum][rankNum];
@@ -145,7 +145,7 @@ public class TestMarginsDDR extends TestMargins {
 	 *            a DescriptiveStatistics object to compute statistics
 	 */
 	public void addValuesByLane(SummaryStatistics[] ss) {
-		if (ss.length != byLaneSize) {
+		if (ss.length != byLaneSize) { // TODO
 			System.out.println("Doesn't match");
 		} else {
 			int index = 0;
@@ -170,7 +170,7 @@ public class TestMarginsDDR extends TestMargins {
 	 *            a SummaryStatistics array to compute statistics for each lane
 	 */
 	public void addValuesByLane2Lane(SummaryStatistics[] ss) {
-		if (ss.length != acrossLaneSize) {
+		if (ss.length != acrossLaneSize) { // TODO
 			System.out.println("Wrong matrix size");
 		} else {
 			for (int i = 0; i < channelNum; i++) {
