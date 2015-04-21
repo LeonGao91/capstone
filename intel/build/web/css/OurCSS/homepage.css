@@ -72,3 +72,8 @@ th.arrow_col {
     color:rgb(117, 117, 117);
     margin: 2%;
 }
+
+#filter {
+  display: block;
+  width:30%;
+}

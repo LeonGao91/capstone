@@ -105,13 +105,13 @@
                 <h3 class="panel-title" align="center">Scores</h3>
             </div>
             <div class="row">
-                    <div id="trust" class="gauge"></div>
-                    <div id="health" class="gauge"></div>
+                <div id="trust" class="gauge"></div>
+                <div id="health" class="gauge"></div>
             </div>
              <div class="row">
                 <div class="col-md-6 center-block">
                     <!-- pop up window -->
-                    <button type="button" class="btn btn-primary center-block view-item" data-toggle="modal" data-target=".bs-example-modal-lg">View</button>
+                   <button type="button" class="btn btn-primary center-block view-item" data-toggle="modal" data-target=".bs-example-modal-lg">View</button>
 
                         <div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
@@ -182,13 +182,13 @@
             </div>
             
             <div class="row" id="eyeChart">
-                <div class="col-md-6">
+                <div class="col-md-6 center-block">
                     <div class="eyeTitle">Read</div>
-                        <canvas id="eyeChartRead"></canvas>    
+                        <canvas id="eyeChartRead" class="center-block"></canvas>    
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 center-block">
                         <div class="eyeTitle">Write</div>
-                        <canvas id="eyeChartWrite"></canvas>
+                        <canvas id="eyeChartWrite" class="center-block"></canvas>
                     </div>
             </div>
             <div id="linechart_material" style="display:none"></div>
