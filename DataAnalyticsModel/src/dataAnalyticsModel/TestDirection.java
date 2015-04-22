@@ -42,7 +42,7 @@ public class TestDirection {
 	}
 	
 	public void setSystems(TestSystem[] systems){
-		size = systems.length; // TODO
+		size = systems.length; 
 		this.systems = systems;
 		findStats(NOTCHECKOUTLIER);
 		findOutlier();
@@ -56,7 +56,7 @@ public class TestDirection {
 //	 *            a three-dimensional array storing all data of one direction.
 //	 */
 //	public TestDirection(int[][][] dataInput) {
-//		size = dataInput.length; // TODO
+//		size = dataInput.length; 
 //		systems = new TestSystem[size];
 //		basicStats = new Stats();
 //		noOutlierStats = new Stats();
@@ -78,7 +78,7 @@ public class TestDirection {
 	 *            an array TestSystem representing all systems of one direction.
 	 */
 	public TestDirection(TestSystem[] systems) {
-		size = systems.length; // TODO
+		size = systems.length; 
 		this.systems = systems;
 		basicStats = new Stats();
 		noOutlierStats = new Stats();
@@ -173,7 +173,7 @@ public class TestDirection {
 			}
 		}
 		
-		for (int i = 0; i < systems.length; i++) { // TODO
+		for (int i = 0; i < size; i++) { 
 			// Assign an input Stats object of each system according to outlier indicator
 			tempSystemStats = checkOutlier ? getSystemByIndex(i).getNoOutlierStats()
 					: getSystemByIndex(i).getBasicStats();
@@ -252,7 +252,7 @@ public class TestDirection {
 		boolean meanOutlier = false;
 		boolean medianOutlier = false;
 		DescriptiveStatistics ds = new DescriptiveStatistics();
-		for (int i = 0; i < meanEachLane.length; i++) { // TODO
+		for (int i = 0; i < meanEachLane.length; i++) {
 			ds.addValue(meanEachLane[i]);
 		}
 		meanOutlier = (ds.getMean() - ds.getMin()) > outlierThresholds[4];
@@ -314,7 +314,7 @@ public class TestDirection {
 		double worstCase = Integer.MAX_VALUE;
 		minLaneNo = 0;
 		//find worst case lane from by lane means
-		for (int i = 0; i < meanEachLane.length; i++){ // TODO
+		for (int i = 0; i < meanEachLane.length; i++){ 
 			if (worstCase > meanEachLane[i]){
 				worstCase = meanEachLane[i];
 				minLaneNo = i;
@@ -323,7 +323,7 @@ public class TestDirection {
 		//System.out.println("worst case mean: " + worstCase);
 		//System.out.println("worst case lane: " + minLaneNo);
 		//count number of lanes that are close to worst lane 
-		for (int i = 0; i < meanEachLane.length; i++){ // TODO
+		for (int i = 0; i < meanEachLane.length; i++){ 
 			if (meanEachLane[i] - worstCase < byLaneThreshold){
 				nearWcCount++;
 			}
@@ -413,8 +413,8 @@ public class TestDirection {
 	public double getLane2LaneCorr(){
 		double[][] correlationMatrix = Util.removeEye(getLane2LaneCorrceof());
 		//System.out.println(Util.arrayToString(correlationMatrix));
-		double[] maxCorrelation = new double[correlationMatrix.length]; // TODO
-		for (int i = 0; i < correlationMatrix.length; i++){ // TODO
+		double[] maxCorrelation = new double[correlationMatrix.length]; 
+		for (int i = 0; i < correlationMatrix.length; i++){ 
 			maxCorrelation[i] = Util.getArrayMax(correlationMatrix[i]);
 		}
 		return Util.getArrayMean(maxCorrelation);
