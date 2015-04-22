@@ -31,6 +31,7 @@
                         <ul class="nav navbar-nav">
                             <li class="active"><a href="">Main</a></li>
                             <li><a href="result.jsp">Result</a></li>
+                            <li><a href="result1.jsp">Result1</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li>
@@ -128,6 +129,7 @@
  	</div>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
         <script>
+            //expandable table
             $(document).ready(function() {
                 $('tr.expandable:even').addClass('odd');
                 $('.expandable').click(function () {
@@ -139,26 +141,16 @@
                         $(this).toggle(350);
                         $(this).css("background-color",color);
                     });
-                    /**if ($(this).attr('color')===""){
-                        $(this).css("background-color","rgb(174, 217, 255)");
-                        $(this).attr('color',"yes");
-                    }
-                    else{
-                        $(this).css("background-color","#FFF");
-                        $(this).attr('color',"");
-                    }
-                    **/
                 });
 
                 $('.expandable').nextAll('tr').each( function() {
                     if(!($(this).is('.expandable'))) $(this).hide();
                 });
- 
-
-
 
             });
-            (function(document) {
+            
+        //filter
+        (function(document) {
 	'use strict';
 
 	var LightTableFilter = (function(Arr) {

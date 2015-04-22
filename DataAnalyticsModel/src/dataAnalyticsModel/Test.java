@@ -105,7 +105,7 @@ public class Test {
 //	 */
 //
 //	public Test(int[][][][] dataInput) {
-//		size = dataInput.length; // TODO
+//		size = dataInput.length; 
 //		directions = new TestDirection[size];
 //		//Construct each direction
 //		for (int i = 0; i < size; i++) {
@@ -125,7 +125,7 @@ public class Test {
 	 */
 	public Test(TestDirection[] directions) {
 		System.out.println("construct test");
-		size = directions.length; // TODO
+		size = directions.length; 
 		this.directions = directions;
 		outlierCount = 0;
 		health = 0;
@@ -199,7 +199,7 @@ public class Test {
 	}
 
 	private void basicChecks() {
-		for (int i = 0; i < directions.length / 2; i++) { // TODO
+		for (int i = 0; i < size / 2; i++) { 
 			// basic mean check
 			basicMeanCheck = basicMeanCheck && directions[2 * i].getBasicStats().getMeanMin() > thresholds[i]
 					&& directions[2 * i + 1].getBasicStats().getMeanMin() > thresholds[i];
@@ -237,7 +237,7 @@ public class Test {
 			udCorr = udCorr && pearsons.correlation(directions[i].getAllMarginMean(), directions[i + 1].getAllMarginMean())> corrThreshold;
 		}
 		
-		for (int i = 0; i < directions.length; i++) { // TODO
+		for (int i = 0; i < size; i++) { 
 			// basic sigma mean check
 			basicSigmaMeanCheck = basicSigmaMeanCheck && directions[i].getBasicStats().getSigmaMean() < sigmaThreshold;
 			outlierSigmaMeanCheck = outlierSigmaMeanCheck && directions[i].getNoOutlierStats().getSigmaMean() < sigmaThreshold;
@@ -253,7 +253,7 @@ public class Test {
 		}
 	
 		//window correlation check
-		for (int i = 0; i + 1 < pairedDirections.length; i++) { // TODO
+		for (int i = 0; i + 1 < size / 2; i++) { 
 			winCorr = winCorr && pearsons.correlation(pairedDirections[i].getAllMarginMean(), pairedDirections[i + 1].getAllMarginMean()) > corrThreshold;
 		}
 		
@@ -354,7 +354,7 @@ public class Test {
 	 */
 	private void pairDirections(){
 		pairedDirections = new TestDirection[size/2];
-		for (int i = 0; i < pairedDirections.length; i++){ // TODO
+		for (int i = 0; i < size/2; i++){ 
 			pairedDirections[i] = directions[i*2].add(directions[i*2+1]);
 		}
 	}

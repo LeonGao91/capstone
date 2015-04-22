@@ -49,6 +49,7 @@
                         <ul class="nav navbar-nav">
                             <li><a href="index.jsp">Main</a></li>
                             <li class="active"><a href="#">Result</a></li>
+                            <li><a href="result1.jsp">Result1</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li>
@@ -177,7 +178,7 @@
                     <li class="changeChart" chart="#eyeChart"><a><h4>Eye Chart  </h4></a></li>
                     <li class="changeChart" chart="#linechart_material"><a><h4>Health/Trust Chart </h4></a></li>
                     <li class="changeChart" chart="#combination"><a><h4>Combination Chart </h4></a></li>
-                    <li class="changeChart" chart="#increament"><a><h4>Increment Chart  </h4></a></li>
+                    <!--<li class="changeChart" chart="#increament"><a><h4>Increment Chart  </h4></a></li>-->
                 </ul>
             </div>
             
