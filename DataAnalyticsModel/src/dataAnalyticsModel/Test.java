@@ -1,7 +1,13 @@
 package dataAnalyticsModel;
 
+import java.io.File;
 import java.util.HashMap;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 /**
@@ -61,7 +67,7 @@ public class Test {
 	private double sigmaThreshold;
 	private double sigmaThreshold2;
 	private double corrThreshold;
-	private double[] lane2LaneCorrThresholds;
+	private double lane2LaneCorrThresholds;
 	
 	//Check results
 	private boolean basicMeanCheck = true;
@@ -126,16 +132,15 @@ public class Test {
 		trust = 0;
 		healthItems = new HashMap<>();
 		trustItems = new HashMap<>();
-		pairDirections();		
-		initializeThresholds();
-		basicChecks();	
+		pairDirections();
+		initializeThresholds("/Users/yuecao/Dropbox/capstone/DataAnalyticsModel/src/Thresholds.txt");
+		basicChecks();
 	}
 	
 	public void initializeThresholds(){
 		thresholds = new double[4];
 		highThresholds = new double[4];
 		repeatNoiseThresholds = new double[4];
-		lane2LaneCorrThresholds = new double[8];
 		
 		for (int i = 0; i < 4; i++){
 			thresholds[i] = 6;
@@ -143,15 +148,54 @@ public class Test {
 			repeatNoiseThresholds[i] = 0.5;
 		}
 		sigmaThreshold = 2;
-		sigmaThreshold = 0.2;
+		sigmaThreshold2 = 0.2;
 		corrThreshold = 0.8;
-		for (int i = 0; i < 8; i++){
-			lane2LaneCorrThresholds[i] = 0.8;
-		}
+		lane2LaneCorrThresholds = 0.8;
 	}
 	
+	/**
+	 * Read an xml file and initialize the thresholds
+	 * @param filePath
+	 */
 	public void initializeThresholds(String filePath){
-		//TODO
+		// convert the xmlString to a Document object
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        Document doc = null;
+        try {
+        		DocumentBuilder builder = factory.newDocumentBuilder();
+            doc = builder.parse(new File(filePath));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        doc.getDocumentElement().normalize();
+		thresholds = new double[4];
+		highThresholds = new double[4];
+		repeatNoiseThresholds = new double[4];
+		
+		NodeList nl;
+        for (int i = 1; i <= 4; i++) {
+    			nl = doc.getElementsByTagName("T" + i);
+    			thresholds[i - 1] = Double.parseDouble(nl.item(0).getTextContent());
+
+    			nl = doc.getElementsByTagName("T" + i + "H");
+    			highThresholds[i - 1] = Double.parseDouble(nl.item(0).getTextContent());
+    			
+    			nl = doc.getElementsByTagName("T" + i + "R");
+    			repeatNoiseThresholds[i - 1] = Double.parseDouble(nl.item(0).getTextContent());
+        }
+
+        nl = doc.getElementsByTagName("TS");
+		sigmaThreshold = Double.parseDouble(nl.item(0).getTextContent());
+		
+		nl = doc.getElementsByTagName("TS2");
+		sigmaThreshold2 = Double.parseDouble(nl.item(0).getTextContent());
+		
+		nl = doc.getElementsByTagName("TC");
+		corrThreshold = Double.parseDouble(nl.item(0).getTextContent());
+		
+		nl = doc.getElementsByTagName("TL");
+		lane2LaneCorrThresholds = Double.parseDouble(nl.item(0).getTextContent()); 
 	}
 
 	private void basicChecks() {
@@ -191,9 +235,6 @@ public class Test {
 			
 			//high to low correlation check
 			udCorr = udCorr && pearsons.correlation(directions[i].getAllMarginMean(), directions[i + 1].getAllMarginMean())> corrThreshold;
-
-			// lane2lane check
-			lane2LaneCorr = lane2LaneCorr && directions[2 * i].getLane2LaneCorr() > lane2LaneCorrThresholds[2 * i] && directions[2 * i + 1].getLane2LaneCorr() > lane2LaneCorrThresholds[2 * i + 1];
 		}
 		
 		for (int i = 0; i < directions.length; i++) { // TODO
@@ -207,6 +248,8 @@ public class Test {
 			outlierSigmaMinCheckT2 = outlierSigmaMinCheckT2 && directions[i].getNoOutlierStats().getSigmaMin() < sigmaThreshold2;
 			// outlier count
 			outlierCount += directions[i].getOutlierCount();
+			// lane2lane check
+			lane2LaneCorr = lane2LaneCorr && directions[i].getLane2LaneCorr() > lane2LaneCorrThresholds;
 		}
 	
 		//window correlation check
