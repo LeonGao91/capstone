@@ -1,4 +1,5 @@
 $(document).ready(function() {
+            //show the chart
             $(".changeChart").click(function(){
                 var chart = $(this).attr("chart");
                 var title = $(this).children().children().html();
@@ -9,6 +10,7 @@ $(document).ready(function() {
                  $(chart).show();
                 $("#chart_header").html(title+"<span class=\"caret\"></span>");
             });
+            
             var g = new JustGage({
                   id: "trust",
                   value: 32,
