@@ -18,6 +18,7 @@ public class TestRepeat {
 	private Stats noOutlierStats; // statistics after removing outliers
 	private int byLaneNumber;
 	private int acrossLaneNumber;
+	private String repeatID;
 
 
 	/**
@@ -38,6 +39,7 @@ public class TestRepeat {
 		noOutlierStats = margins.getAcrossNoOutlierLaneStats();
 		byLaneNumber = margins.getByLaneSize();
 		acrossLaneNumber = margins.getAcrossLaneSize();
+		repeatID = "";
 	}
 
 //	/**
@@ -76,11 +78,11 @@ public class TestRepeat {
 		return noOutlierStats;
 	}
 	
-	public int findSystemOutliers(double benchmark, double threshold){
+	public String findSystemOutliers(double benchmark, double threshold){
 		return margins.checkSystemOutliers(benchmark, threshold);
 	}
 	
-	public int findLaneOutliers(double meanThreshold, double medianThreshold){
+	public String findLaneOutliers(double meanThreshold, double medianThreshold){
 		return margins.checkLaneOutliers(meanThreshold, medianThreshold);
 	}
 	
@@ -119,6 +121,22 @@ public class TestRepeat {
 
 	public String toString(){
 		return margins.toString();
+	}
+	
+	public boolean checkValidity(){
+		return margins.checkValidity();
+	}
+
+	public String getRepeatID() {
+		return repeatID;
+	}
+
+	public void setRepeatID(String repeatID) {
+		this.repeatID = repeatID;
+	}
+	
+	public String getLaneIDByIndex(int index){
+		return margins.getLaneIDByIndex(index);
 	}
 
 }

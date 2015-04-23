@@ -67,9 +67,9 @@ public abstract class TestMargins {
 	 */
 	public abstract void findAcrossLaneStats(boolean checkOutlier);
 	
-	public abstract int checkSystemOutliers(double benchmark, double threshold);
+	public abstract String checkSystemOutliers(double benchmark, double threshold);
 	
-	public abstract int checkLaneOutliers(double meanThreshold, double medianThreshold);
+	public abstract String checkLaneOutliers(double meanThreshold, double medianThreshold);
 
 	/**
 	 * Method to add margins to a DescriptiveStatistics object by lane. The
@@ -110,5 +110,9 @@ public abstract class TestMargins {
 	
 	
 	public abstract void markOutlierByLane(int laneIndex);
+	
+	public abstract boolean checkValidity();
+	
+	public abstract String getLaneIDByIndex(int index);
 
 }

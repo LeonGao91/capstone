@@ -9,6 +9,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 /**
  * This class represents a validation test composing directions, systems,
@@ -68,6 +69,7 @@ public class Test {
 	private double sigmaThreshold2;
 	private double corrThreshold;
 	private double lane2LaneCorrThresholds;
+	private double[] outlierThresholds = new double[6]; //TODO xml configuration, default 6
 	
 	//Check results
 	private boolean basicMeanCheck = true;
@@ -90,6 +92,8 @@ public class Test {
 	private boolean winCorr = true; //window correlation
 	private boolean lane2LaneCorr = true; //lane2lane correlation
 	private PearsonsCorrelation pearsons = new PearsonsCorrelation();
+	private StringBuffer messages;
+	private boolean outliers[];
 	
 	/**
 	 * Constructor with no argument.
@@ -132,8 +136,10 @@ public class Test {
 		trust = 0;
 		healthItems = new HashMap<>();
 		trustItems = new HashMap<>();
-		pairDirections();
+		messages = new StringBuffer();
+		initializeOutliers();
 		initializeThresholds("/Users/yuecao/Dropbox/capstone/DataAnalyticsModel/src/Thresholds.txt");
+		pairDirections();  //TODO
 		basicChecks();
 	}
 	
@@ -151,6 +157,13 @@ public class Test {
 		sigmaThreshold2 = 0.2;
 		corrThreshold = 0.8;
 		lane2LaneCorrThresholds = 0.8;
+	}
+	
+	private void initializeOutliers(){
+		outliers = new boolean[5];
+		for (int i = 0; i < 5; i++){
+			outliers[i] = false;
+		}
 	}
 	
 	/**
@@ -198,6 +211,85 @@ public class Test {
 		lane2LaneCorrThresholds = Double.parseDouble(nl.item(0).getTextContent()); 
 	}
 
+	private void checkOutlier(){
+		//Obvious scan
+		boolean outlierSystem;
+		for (int i = 0; i < getDirectionByIndex(0).getSize(); i++){
+			outlierSystem = false;
+			for (int j =0; j < size; j++){
+				for (int k = 0; k < getSystemByIndexes(j,i).getSize(); k++){
+					outlierSystem = outlierSystem && getRepeatByIndexes(j, i, k).checkValidity();
+				}
+			}
+			if (outlierSystem){
+				messages.append("Remeasure " + getSystemByIndexes(0,i).getSystemID() + ": all zeros\n");
+				outliers[0] = true;
+			}
+		}
+		//Check threshold-based outliers
+		TestRepeat tempRepeat;
+		TestSystem tempSystem;
+		TestDirection tempDirection;
+		StringBuffer sb = new StringBuffer();
+		String message = "";
+		for (int i = 0; i < size; i++) {
+			tempDirection = getDirectionByIndex(i);
+			for (int j = 0; j < tempDirection.getSize(); j++){
+				tempSystem = getSystemByIndexes(i, j);
+				for (int k = 0; k < tempSystem.getSize(); k++){
+					tempRepeat = getRepeatByIndexes(i, j, k);
+					// Threshold based outlier detection - 1
+					message = tempRepeat.findSystemOutliers(tempDirection.getBasicStats().getMean(),
+								outlierThresholds[0]);
+					if (!message.equals("") && sb.indexOf(message) == -1){
+						outliers[1] = true;
+						sb.append(", " + message); 
+					}
+					// Threshold based outlier detection - 2
+					message = tempRepeat.findSystemOutliers(tempSystem.getBasicStats().getMean(), outlierThresholds[1]);
+					if (!message.equals("") && (sb.indexOf(message) == -1)){
+						outliers[2] = true;
+						sb.append(", " + message); 
+					}					
+					// Lane2lane outlier - 1
+					message = tempRepeat.findLaneOutliers(outlierThresholds[2],	outlierThresholds[3]);
+					if (!message.equals("") && (sb.indexOf(message) == -1)){
+						outliers[3] = true;
+						sb.append(", " + message); 
+					}
+					if (sb.length() == 0){
+						sb.insert(0, "  Lane outlier found in " + tempSystem.getSystemID() + " " + tempRepeat.getRepeatID() + ":\n");
+					}
+				}
+			}
+			// Lane2lane outlier - 2
+			boolean meanOutlier = false;
+			boolean medianOutlier = false;
+			meanOutlier = (tempDirection.getMeanAllLane() - tempDirection.getMinAllLane()) > outlierThresholds[4];
+			medianOutlier = (tempDirection.getMedianAllLane() - tempDirection.getMinAllLane()) > outlierThresholds[5];
+			if (meanOutlier || medianOutlier) {
+				outliers[4] = true;
+				sb.append("  " + getRepeatByIndexes(i, 0, 0).getLaneIDByIndex(tempDirection.getMinLaneNo()) + " Outlier in All Systems\n");
+				tempDirection.markOutlierByLane(tempDirection.getMinLaneNo());
+			}
+			if (sb.length() != 0){
+				messages.append(tempDirection.getDirectionID() + ":\n");
+				messages.append(sb);
+			}
+			sb = new StringBuffer();
+		}
+		//Find no outlier stats
+		for (int i = 0; i < size; i++){
+			for (int j = 0; j < getDirectionByIndex(i).getSize(); j++){
+				for (int k = 0; k < getSystemByIndexes(i, j).getSize(); k++){
+					getRepeatByIndexes(i, j, k).findStats(TestDirection.CHECKOUTLIER);
+				}
+				getSystemByIndexes(i, j).findStats(TestDirection.CHECKOUTLIER);
+			}
+			getDirectionByIndex(i).findStats(TestDirection.CHECKOUTLIER);
+		}
+	}
+	
 	private void basicChecks() {
 		for (int i = 0; i < size / 2; i++) { 
 			// basic mean check
@@ -369,7 +461,15 @@ public class Test {
 	public TestDirection getDirectionByIndex(int index) {
 		return directions[index];
 	}
+	
+	public TestSystem getSystemByIndexes(int directionIndex, int systemIndex) {
+		return directions[directionIndex].getSystemByIndex(systemIndex);
+	}
 
+	public TestRepeat getRepeatByIndexes(int directionIndex, int systemIndex, int repeatIndex) {
+		return directions[directionIndex].getSystemByIndex(systemIndex).getRepeatByIndex(repeatIndex);
+	}
+	
 	/**
 	 * Get number of directions of the test
 	 * 

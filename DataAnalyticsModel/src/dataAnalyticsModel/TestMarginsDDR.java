@@ -73,7 +73,6 @@ public class TestMarginsDDR extends TestMargins {
 				//System.out.println("" + i + " " + j);
 				ds[i][j] = new DescriptiveStatistics();
 				for (int k = 0; k < laneNum; k++) {
-					//System.out.println("" + i + " " + j + " " + k);
 					// Only include valid values
 					if (lanes[i][j][k].isValid()) {
 						ds[i][j].addValue(lanes[i][j][k].getMargin());
@@ -95,26 +94,27 @@ public class TestMarginsDDR extends TestMargins {
 	}
 	
 	
-	public int checkSystemOutliers(double benchmark, double threshold){
-		//System.out.println("SystemOutlierThreshold: " + threshold);
-		int outlierCount = 0;
+	public String checkSystemOutliers(double benchmark, double threshold){
+		StringBuffer message = new StringBuffer();
 		for (int i = 0; i < channelNum; i++) {
 			for (int j = 0; j < rankNum; j++) {
 				if (Math.abs(acrossLaneMeans[i][j] - benchmark) > threshold){
-					System.out.println("System outlier found in channel" + i + "rank" + j);
-					outlierCount++;
+					System.out.println(lanes[i][j][0].getLaneAttribute(TestLane.CANNELID) + " " + lanes[i][j][0].getLaneAttribute(TestLane.RANKID));
+					message.append("    " + lanes[i][j][0].getLaneAttribute(TestLane.CANNELID)  + " " + lanes[i][j][0].getLaneAttribute(TestLane.RANKID) + "\n");
+					//mark outlier lanes as invalid
 					for (int k = 0; k < laneNum; k++){
 						lanes[i][j][k].setState(TestLane.INVALID);
 					}
 				}
 			}
 		}
-		return outlierCount;
+		return message.toString();
 	}
 	
-	public int checkLaneOutliers(double meanThreshold, double medianThreshold){
+	public String checkLaneOutliers(double meanThreshold, double medianThreshold){
 		//System.out.println("LaneOutlierThreshold: " + meanThreshold + " " + medianThreshold);
-		int outlierCount = 0;
+//		int outlierCount = 0;
+		StringBuffer message = new StringBuffer();
 		boolean meanOutlier = false;
 		boolean medianOutlier = false;
 		for (int i = 0; i < channelNum; i++) {
@@ -122,19 +122,20 @@ public class TestMarginsDDR extends TestMargins {
 				meanOutlier = (acrossLaneMeans[i][j] - acrossLaneMins[i][j]) > meanThreshold;
 				medianOutlier = (acrossLaneMedians[i][j] - acrossLaneMins[i][j]) > medianThreshold;
 				if ( meanOutlier || medianOutlier){
-					System.out.println("Lane outlier found in channel" + i + "rank" + j);
+					System.out.println(lanes[i][j][0].getLaneAttribute(TestLane.CANNELID) + " " + lanes[i][j][0].getLaneAttribute(TestLane.RANKID));
+					message.append(lanes[i][j][0].getLaneAttribute(TestLane.CANNELID) + " " + lanes[i][j][0].getLaneAttribute(TestLane.RANKID) + "\n");
 					for (int k = 0; k < laneNum; k++){
 						lanes[i][j][k].setState(TestLane.INVALID);
 					}
 				}
-				if (meanOutlier && medianOutlier){
-					outlierCount = outlierCount + 2;
-				}else if (meanOutlier || medianOutlier){
-					outlierCount++;
-				}
+//				if (meanOutlier && medianOutlier){
+//					outlierCount = outlierCount + 2;
+//				}else if (meanOutlier || medianOutlier){
+//					outlierCount++;
+//				}
 			}
 		}
-		return outlierCount;
+		return message.toString();
 	}
 
 	/**
@@ -236,6 +237,20 @@ public class TestMarginsDDR extends TestMargins {
 		int channel = laneIndex % this.channelNum;
 		getLaneByIndexes(channel, rank, lane).setState(TestLane.INVALID);
 	}
+	
+	public boolean checkValidity(){
+		for (int i = 0; i < channelNum; i++) {
+			for (int j = 0; j < rankNum; j++) {
+				for (int k = 0; k < laneNum; k++) {
+					// Only include valid values
+					if (lanes[i][j][k].getMargin() != 0) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
 
 	/**
 	 * Get certain lane by channel, rank, lane indexed
@@ -270,6 +285,10 @@ public class TestMarginsDDR extends TestMargins {
 	 */
 	public int getLaneNum() {
 		return laneNum;
+	}
+	
+	public String getLaneIDByIndex(int index){
+		return lanes[0][0][index].getLaneAttribute(TestLane.LANEID);
 	}
 	
 	public String toString(){

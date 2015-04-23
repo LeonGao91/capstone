@@ -17,6 +17,7 @@ public class TestSystem {
 	private Stats noOutlierStats;
 	private Stats basicStats;
 	private int size; // number of repeats
+	private String systemID;
 
 	/**
 	 * Constructor with no argument.
@@ -52,6 +53,7 @@ public class TestSystem {
 		this.repeats = repeats;
 		basicStats = new Stats();
 		noOutlierStats = new Stats();
+		systemID = "";
 		findStats(TestDirection.NOTCHECKOUTLIER);
 	}
 	
@@ -94,6 +96,14 @@ public class TestSystem {
 			//System.out.println(ssMin.getMin());
 			//System.out.println(ssMean.getN());
 	}
+	
+	public boolean checkValidity(){
+		boolean outlier = false;
+		for (int i = 0; i < size; i++){
+			outlier = outlier && getRepeatByIndex(i).checkValidity();
+		}
+		return outlier;
+	}
 
 	/**
 	 * Get number of repeats of the test
@@ -131,6 +141,10 @@ public class TestSystem {
 	 */
 	public Stats getBasicStats() {
 		return basicStats;
+	}
+	
+	public String getSystemID(){
+		return systemID;
 	}
 	
 	public String toString(){
