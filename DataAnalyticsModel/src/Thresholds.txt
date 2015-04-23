@@ -1,0 +1,32 @@
+<Thresholds>
+	<Threshold>
+		<T1>6.0</T1>
+		<T2>6.0</T2>
+		<T3>6.0</T3>
+		<T4>6.0</T4>
+	</Threshold>
+	<HighThreshold>
+		<T1H>10.0</T1H>
+		<T2H>10.0</T2H>
+		<T3H>10.0</T3H>
+		<T4H>10.0</T4H>
+	</HighThreshold>
+	<RepeatabilityNoiseThreshold>
+		<T1R>0.5</T1R>
+		<T2R>0.5</T2R>
+		<T3R>0.5</T3R>
+		<T4R>0.5</T4R>
+	</RepeatabilityNoiseThreshold>
+	<SigmaThreshold>
+		<TS>2</TS>
+	</SigmaThreshold>
+	<SigmaThreshold2>
+		<TS2>0.2</TS2>
+	</SigmaThreshold2>
+	<CorrThreshold>
+		<TC>0.8</TC>
+	</CorrThreshold>
+	<LaneToLaneCorrThreshold>
+		<TL>0.8</TL>
+	</LaneToLaneCorrThreshold>
+</Thresholds>
