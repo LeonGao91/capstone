@@ -94,13 +94,16 @@ public class TestMarginsDDR extends TestMargins {
 	}
 	
 	
-	public String checkSystemOutliers(double benchmark, double threshold){
-		StringBuffer message = new StringBuffer();
+	public boolean checkSystemOutliers(double benchmark, double threshold, StringBuilder messages){
+		String message = "";
 		for (int i = 0; i < channelNum; i++) {
 			for (int j = 0; j < rankNum; j++) {
 				if (Math.abs(acrossLaneMeans[i][j] - benchmark) > threshold){
-					System.out.println(lanes[i][j][0].getLaneAttribute(TestLane.CANNELID) + " " + lanes[i][j][0].getLaneAttribute(TestLane.RANKID));
-					message.append("    " + lanes[i][j][0].getLaneAttribute(TestLane.CANNELID)  + " " + lanes[i][j][0].getLaneAttribute(TestLane.RANKID) + "\n");
+					message = lanes[i][j][0].getLaneAttribute(TestLane.CANNELID) + " " + lanes[i][j][0].getLaneAttribute(TestLane.RANKID);
+					System.out.println(message);
+					if (messages.indexOf(message) == -1){
+							messages.append("    " + lanes[i][j][0].getLaneAttribute(TestLane.CANNELID)  + " " + lanes[i][j][0].getLaneAttribute(TestLane.RANKID) + "\n");
+					}
 					//mark outlier lanes as invalid
 					for (int k = 0; k < laneNum; k++){
 						lanes[i][j][k].setState(TestLane.INVALID);
@@ -108,13 +111,13 @@ public class TestMarginsDDR extends TestMargins {
 				}
 			}
 		}
-		return message.toString();
+		return !message.isEmpty();
 	}
 	
-	public String checkLaneOutliers(double meanThreshold, double medianThreshold){
+	public boolean checkLaneOutliers(double meanThreshold, double medianThreshold, StringBuilder messages){
 		//System.out.println("LaneOutlierThreshold: " + meanThreshold + " " + medianThreshold);
 //		int outlierCount = 0;
-		StringBuffer message = new StringBuffer();
+		String message = "";
 		boolean meanOutlier = false;
 		boolean medianOutlier = false;
 		for (int i = 0; i < channelNum; i++) {
@@ -122,8 +125,11 @@ public class TestMarginsDDR extends TestMargins {
 				meanOutlier = (acrossLaneMeans[i][j] - acrossLaneMins[i][j]) > meanThreshold;
 				medianOutlier = (acrossLaneMedians[i][j] - acrossLaneMins[i][j]) > medianThreshold;
 				if ( meanOutlier || medianOutlier){
-					System.out.println(lanes[i][j][0].getLaneAttribute(TestLane.CANNELID) + " " + lanes[i][j][0].getLaneAttribute(TestLane.RANKID));
-					message.append(lanes[i][j][0].getLaneAttribute(TestLane.CANNELID) + " " + lanes[i][j][0].getLaneAttribute(TestLane.RANKID) + "\n");
+					message = lanes[i][j][0].getLaneAttribute(TestLane.CANNELID) + " " + lanes[i][j][0].getLaneAttribute(TestLane.RANKID);
+					System.out.println(message);
+					if (messages.indexOf(message) == -1){
+						messages.append(lanes[i][j][0].getLaneAttribute(TestLane.CANNELID) + " " + lanes[i][j][0].getLaneAttribute(TestLane.RANKID));
+					}
 					for (int k = 0; k < laneNum; k++){
 						lanes[i][j][k].setState(TestLane.INVALID);
 					}
@@ -135,7 +141,7 @@ public class TestMarginsDDR extends TestMargins {
 //				}
 			}
 		}
-		return message.toString();
+		return !message.isEmpty();
 	}
 
 	/**

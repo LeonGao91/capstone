@@ -58,6 +58,22 @@ public class TestSystem {
 	}
 	
 	/**
+	 * Constructor with two basic arguments.
+	 * This constructor should be the most often used.
+	 *
+	 * @param repeats
+	 *            an array of TestRepeat representing all repeats of one system.
+	 */
+	public TestSystem(TestRepeat[] repeats, String systemID){
+		size = repeats.length; 
+		this.repeats = repeats;
+		basicStats = new Stats();
+		noOutlierStats = new Stats();
+		this.systemID = systemID;
+		findStats(TestDirection.NOTCHECKOUTLIER);
+	}
+	
+	/**
 	 * Calculate statistics within this system.
 	 * 
 	 * @param checkOutlier

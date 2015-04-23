@@ -58,6 +58,25 @@ public class TestLane {
 	}
 	
 	/**
+	 * Constructor with five basic arguments.
+	 * This constructor should be the most often used.
+	 * 
+	 * @param dataInput
+	 *            an array storing all data of one repeat.
+	 * @param isValid
+	 *            a boolean indicating whether this lane is valid.
+	 */
+
+	public TestLane(int dataInput, boolean isValid, String cannelID, String rankID, String laneID) {
+		margin = dataInput;
+		attributes = new HashMap<>();
+		state = isValid;
+		this.setLaneAttribute(CANNELID, cannelID);
+		this.setLaneAttribute(RANKID, rankID);
+		this.setLaneAttribute(LANEID, laneID);
+	}
+	
+	/**
 	 * Get the attributes of the lane.
 	 * 
 	 * @return a HashMap of attribute names and values

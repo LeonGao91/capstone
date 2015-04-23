@@ -41,6 +41,22 @@ public class TestRepeat {
 		acrossLaneNumber = margins.getAcrossLaneSize();
 		repeatID = "";
 	}
+	
+	/**
+	 * Constructor with two basic arguments.
+	 * This constructor should be the most often used.
+	 *
+	 * @param lanes
+	 *            an array of TestLane representing all lanes of one repeat.
+	 */
+	public TestRepeat(TestMargins margins, String repeatID){
+		this.margins = margins;
+		basicStats = margins.getAcrossLanesStats();
+		noOutlierStats = margins.getAcrossNoOutlierLaneStats();
+		byLaneNumber = margins.getByLaneSize();
+		acrossLaneNumber = margins.getAcrossLaneSize();
+		this.repeatID = repeatID;
+	}
 
 //	/**
 //	 * Constructor with one int array argument.
@@ -78,12 +94,12 @@ public class TestRepeat {
 		return noOutlierStats;
 	}
 	
-	public String findSystemOutliers(double benchmark, double threshold){
-		return margins.checkSystemOutliers(benchmark, threshold);
+	public boolean findSystemOutliers(double benchmark, double threshold, StringBuilder messages){
+		return margins.checkSystemOutliers(benchmark, threshold, messages);
 	}
 	
-	public String findLaneOutliers(double meanThreshold, double medianThreshold){
-		return margins.checkLaneOutliers(meanThreshold, medianThreshold);
+	public boolean findLaneOutliers(double meanThreshold, double medianThreshold, StringBuilder messages){
+		return margins.checkLaneOutliers(meanThreshold, medianThreshold, messages);
 	}
 	
 	public void markOutlierByLane(int laneIndex){

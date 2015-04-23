@@ -53,6 +53,9 @@ public class Test {
 	
 	private double health;
 	private double trust;
+	private String conclusion;
+	private String customerID;
+	private String productID;
 	
 	private TestDirection[] directions;
 	private TestDirection[] pairedDirections;
@@ -70,6 +73,7 @@ public class Test {
 	private double corrThreshold;
 	private double lane2LaneCorrThresholds;
 	private double[] outlierThresholds = new double[6]; //TODO xml configuration, default 6
+	private double[] pairedOutlierThresholds = new double[6]; //TODO xml configuration, default 12
 	
 	//Check results
 	private boolean basicMeanCheck = true;
@@ -92,7 +96,7 @@ public class Test {
 	private boolean winCorr = true; //window correlation
 	private boolean lane2LaneCorr = true; //lane2lane correlation
 	private PearsonsCorrelation pearsons = new PearsonsCorrelation();
-	private StringBuffer messages;
+	private StringBuilder messages;
 	private boolean outliers[];
 	
 	/**
@@ -136,7 +140,32 @@ public class Test {
 		trust = 0;
 		healthItems = new HashMap<>();
 		trustItems = new HashMap<>();
-		messages = new StringBuffer();
+		messages = new StringBuilder();
+		initializeOutliers();
+		initializeThresholds("/Users/yuecao/Dropbox/capstone/DataAnalyticsModel/src/Thresholds.txt");
+		pairDirections();  //TODO
+		basicChecks();
+	}
+	
+	/**
+	 * Constructor with three basic arguments.
+	 * This constructor should be the most often used.
+	 *
+	 * @param directions
+	 *            an array TestDirection representing all directions of one test.
+	 */
+	public Test(TestDirection[] directions, String customerID, String productID) {
+		System.out.println("construct test");
+		size = directions.length; 
+		this.directions = directions;
+		outlierCount = 0;
+		health = 0;
+		trust = 0;
+		healthItems = new HashMap<>();
+		trustItems = new HashMap<>();
+		messages = new StringBuilder();
+		this.customerID = customerID;
+		this.productID = productID;
 		initializeOutliers();
 		initializeThresholds("/Users/yuecao/Dropbox/capstone/DataAnalyticsModel/src/Thresholds.txt");
 		pairDirections();  //TODO
@@ -211,7 +240,7 @@ public class Test {
 		lane2LaneCorrThresholds = Double.parseDouble(nl.item(0).getTextContent()); 
 	}
 
-	private void checkOutlier(){
+	public void checkOutlier(){
 		//Obvious scan
 		boolean outlierSystem;
 		for (int i = 0; i < getDirectionByIndex(0).getSize(); i++){
@@ -226,58 +255,61 @@ public class Test {
 				outliers[0] = true;
 			}
 		}
-		//Check threshold-based outliers
-		TestRepeat tempRepeat;
-		TestSystem tempSystem;
-		TestDirection tempDirection;
-		StringBuffer sb = new StringBuffer();
-		String message = "";
-		for (int i = 0; i < size; i++) {
-			tempDirection = getDirectionByIndex(i);
-			for (int j = 0; j < tempDirection.getSize(); j++){
-				tempSystem = getSystemByIndexes(i, j);
-				for (int k = 0; k < tempSystem.getSize(); k++){
-					tempRepeat = getRepeatByIndexes(i, j, k);
-					// Threshold based outlier detection - 1
-					message = tempRepeat.findSystemOutliers(tempDirection.getBasicStats().getMean(),
-								outlierThresholds[0]);
-					if (!message.equals("") && sb.indexOf(message) == -1){
-						outliers[1] = true;
-						sb.append(", " + message); 
-					}
-					// Threshold based outlier detection - 2
-					message = tempRepeat.findSystemOutliers(tempSystem.getBasicStats().getMean(), outlierThresholds[1]);
-					if (!message.equals("") && (sb.indexOf(message) == -1)){
-						outliers[2] = true;
-						sb.append(", " + message); 
-					}					
-					// Lane2lane outlier - 1
-					message = tempRepeat.findLaneOutliers(outlierThresholds[2],	outlierThresholds[3]);
-					if (!message.equals("") && (sb.indexOf(message) == -1)){
-						outliers[3] = true;
-						sb.append(", " + message); 
-					}
-					if (sb.length() == 0){
-						sb.insert(0, "  Lane outlier found in " + tempSystem.getSystemID() + " " + tempRepeat.getRepeatID() + ":\n");
-					}
-				}
-			}
-			// Lane2lane outlier - 2
-			boolean meanOutlier = false;
-			boolean medianOutlier = false;
-			meanOutlier = (tempDirection.getMeanAllLane() - tempDirection.getMinAllLane()) > outlierThresholds[4];
-			medianOutlier = (tempDirection.getMedianAllLane() - tempDirection.getMinAllLane()) > outlierThresholds[5];
-			if (meanOutlier || medianOutlier) {
-				outliers[4] = true;
-				sb.append("  " + getRepeatByIndexes(i, 0, 0).getLaneIDByIndex(tempDirection.getMinLaneNo()) + " Outlier in All Systems\n");
-				tempDirection.markOutlierByLane(tempDirection.getMinLaneNo());
-			}
-			if (sb.length() != 0){
-				messages.append(tempDirection.getDirectionID() + ":\n");
-				messages.append(sb);
-			}
-			sb = new StringBuffer();
+		for (int i = 0; i < size; i++){
+			getDirectionByIndex(i).findOutlier(outlierThresholds, outliers, messages);
 		}
+		//Check threshold-based outliers
+//		TestRepeat tempRepeat;
+//		TestSystem tempSystem;
+//		TestDirection tempDirection;
+//		StringBuffer sb = new StringBuffer();
+//		String message = "";
+//		for (int i = 0; i < size; i++) {
+//			tempDirection = getDirectionByIndex(i);
+//			for (int j = 0; j < tempDirection.getSize(); j++){
+//				tempSystem = getSystemByIndexes(i, j);
+//				for (int k = 0; k < tempSystem.getSize(); k++){
+//					tempRepeat = getRepeatByIndexes(i, j, k);
+//					// Threshold based outlier detection - 1
+//					message = tempRepeat.findSystemOutliers(tempDirection.getBasicStats().getMean(),
+//								outlierThresholds[0]);
+//					if (!message.equals("") && sb.indexOf(message) == -1){
+//						outliers[1] = true;
+//						sb.append(", " + message); 
+//					}
+//					// Threshold based outlier detection - 2
+//					message = tempRepeat.findSystemOutliers(tempSystem.getBasicStats().getMean(), outlierThresholds[1]);
+//					if (!message.equals("") && (sb.indexOf(message) == -1)){
+//						outliers[2] = true;
+//						sb.append(", " + message); 
+//					}					
+//					// Lane2lane outlier - 1
+//					message = tempRepeat.findLaneOutliers(outlierThresholds[2],	outlierThresholds[3]);
+//					if (!message.equals("") && (sb.indexOf(message) == -1)){
+//						outliers[3] = true;
+//						sb.append(", " + message); 
+//					}
+//					if (sb.length() == 0){
+//						sb.insert(0, "  Lane outlier found in " + tempSystem.getSystemID() + " " + tempRepeat.getRepeatID() + ":\n");
+//					}
+//				}
+//			}
+//			// Lane2lane outlier - 2
+//			boolean meanOutlier = false;
+//			boolean medianOutlier = false;
+//			meanOutlier = (tempDirection.getMeanAllLane() - tempDirection.getMinAllLane()) > outlierThresholds[4];
+//			medianOutlier = (tempDirection.getMedianAllLane() - tempDirection.getMinAllLane()) > outlierThresholds[5];
+//			if (meanOutlier || medianOutlier) {
+//				outliers[4] = true;
+//				sb.append("  " + getRepeatByIndexes(i, 0, 0).getLaneIDByIndex(tempDirection.getMinLaneNo()) + " Outlier in All Systems\n");
+//				tempDirection.markOutlierByLane(tempDirection.getMinLaneNo());
+//			}
+//			if (sb.length() != 0){
+//				messages.append(tempDirection.getDirectionID() + ":\n");
+//				messages.append(sb);
+//			}
+//			sb = new StringBuffer();
+//		}
 		//Find no outlier stats
 		for (int i = 0; i < size; i++){
 			for (int j = 0; j < getDirectionByIndex(i).getSize(); j++){
