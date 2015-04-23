@@ -365,4 +365,11 @@ public class Test {
 		}
 		return sb.toString();
 	}
+	
+	public String toXML(){
+		StringBuilder sb = new StringBuilder();
+		
+		return sb.toString();
+		
+	}
 }
