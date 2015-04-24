@@ -14,6 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import Models.UserTransaction;
 
 /**
  *
@@ -36,11 +37,13 @@ public class login extends HttpServlet {
         
         String userName = request.getParameter("id");
         String pw = request.getParameter("pw");
+        UserTransaction t = new UserTransaction();
+        
         //validate user and password
-        if(validateUser(userName, pw)){
+        if(t.validateUser(userName, pw)){
             //Set session for the valid user
             request.getSession().setAttribute("validUser", userName);
-            request.getSession().setAttribute("folders", validateFolders("id"));
+            request.getSession().setAttribute("folders", t.getFolder(userName));
             response.sendRedirect("index.jsp");
         }
         else {
@@ -59,28 +62,6 @@ public class login extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         
-    }
-    
-    /**
-     * 
-     * @param id User id
-     * @param pw password
-     * @return 
-     */
-    public boolean validateUser(String id, String pw) {
-        if(id.equals("id") && pw.equals("password")) {
-            return true;
-        }
-        return false;
-    }
-    
-    public String validateFolders(String id) {
-        String folder = null;
-        if(id.equals("id")) {
-            System.out.println(id);
-            folder = "userFolder1";
-        }
-        return folder;
     }
 
 }
