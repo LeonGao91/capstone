@@ -56,31 +56,31 @@ public class DataAnalyticsModel {
 							// " k: " + k);
 							// System.out.println(numbers[k]);
 							lanes1[0][0][k] = new TestLane(
-									Integer.parseInt(numbers1[k]));
+									Integer.parseInt(numbers1[k]), TestLane.VALID, "channel0", "rank0", "lane" + k);
 							// System.out.println(lanes[0][0][k].toString());
 							lanes2[0][0][k] = new TestLane(
-									Integer.parseInt(numbers2[k]));
+									Integer.parseInt(numbers2[k]), TestLane.VALID, "channel0", "rank0", "lane" + k);
 						}
 					}
 					margins1 = new TestMarginsDDR(lanes1);
 					margins2 = new TestMarginsDDR(lanes2);
 					//System.out.println(margins.toString());
-					repeats1[j] = new TestRepeat(margins1);
-					repeats2[j] = new TestRepeat(margins2);
+					repeats1[j] = new TestRepeat(margins1, "repeat" + j);
+					repeats2[j] = new TestRepeat(margins2, "repeat" + j);
 				}
-				systems1[i] = new TestSystem(repeats1);
-				systems2[i] = new TestSystem(repeats2);
+				systems1[i] = new TestSystem(repeats1, "system" + i);
+				systems2[i] = new TestSystem(repeats2, "system" + i);
 			}
 			// }
-			directions[0] = new TestDirection(systems1);
-			directions[1] = new TestDirection(systems2);
-			test = new Test(directions);
+			directions[0] = new TestDirection(systems1, "direction0");
+			directions[1] = new TestDirection(systems2, "direction1");
+			test = new Test(directions, "testClient", "testProduct");
 			br1.close();
 			br2.close();
-			System.out.println("test");
-			System.out.println(test.toString());
+			System.out.print(test.toString());
 			System.out.println("Health: " + test.getHealth());
 			System.out.println("Trust: " + test.getTrust());
+			ResultExporter.output(test);
 			//System.out.println(test.getHealth());
 			//System.out.println(test.getTrust());
 		} catch (Exception e) {

@@ -54,7 +54,7 @@ public class TestSystem {
 		basicStats = new Stats();
 		noOutlierStats = new Stats();
 		systemID = "";
-		findStats(TestDirection.NOTCHECKOUTLIER);
+		findStats(Test.NOTCHECKOUTLIER);
 	}
 	
 	/**
@@ -70,7 +70,8 @@ public class TestSystem {
 		basicStats = new Stats();
 		noOutlierStats = new Stats();
 		this.systemID = systemID;
-		findStats(TestDirection.NOTCHECKOUTLIER);
+		findStats(Test.NOTCHECKOUTLIER);
+		//System.out.println(systemID);
 	}
 	
 	/**

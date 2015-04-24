@@ -54,7 +54,7 @@ public class TestMarginsDDR extends TestMargins {
 		byLaneSize = channelNum * rankNum * laneNum;
 		acrossLanesStats = new Stats();
 		acrossLanesNoOutlierStats = new Stats();
-		findAcrossLaneStats(TestDirection.NOTCHECKOUTLIER);
+		findAcrossLaneStats(Test.NOTCHECKOUTLIER);
 	}
 
 	/**
@@ -96,21 +96,25 @@ public class TestMarginsDDR extends TestMargins {
 	
 	public boolean checkSystemOutliers(double benchmark, double threshold, StringBuilder messages){
 		String message = "";
+		//String laneID = "";
 		for (int i = 0; i < channelNum; i++) {
 			for (int j = 0; j < rankNum; j++) {
 				if (Math.abs(acrossLaneMeans[i][j] - benchmark) > threshold){
-					message = lanes[i][j][0].getLaneAttribute(TestLane.CANNELID) + " " + lanes[i][j][0].getLaneAttribute(TestLane.RANKID);
-					System.out.println(message);
+					message = lanes[i][j][0].getLaneAttribute(TestLane.CHANNELID) + " " + lanes[i][j][0].getLaneAttribute(TestLane.RANKID);
+					System.out.println("lane outlier found: " + message);
 					if (messages.indexOf(message) == -1){
-							messages.append("    " + lanes[i][j][0].getLaneAttribute(TestLane.CANNELID)  + " " + lanes[i][j][0].getLaneAttribute(TestLane.RANKID) + "\n");
+							//System.out.println("add to messages");
+							messages.append("    " + message + "\n");
 					}
 					//mark outlier lanes as invalid
 					for (int k = 0; k < laneNum; k++){
 						lanes[i][j][k].setState(TestLane.INVALID);
+						//laneID = lanes[i][j][k].getLaneAttribute(TestLane.CHANNELID + TestLane.RANKID + TestLane.LANEID);
 					}
 				}
 			}
 		}
+		//System.out.println(laneID+" system outlier checked");
 		return !message.isEmpty();
 	}
 	
@@ -125,10 +129,10 @@ public class TestMarginsDDR extends TestMargins {
 				meanOutlier = (acrossLaneMeans[i][j] - acrossLaneMins[i][j]) > meanThreshold;
 				medianOutlier = (acrossLaneMedians[i][j] - acrossLaneMins[i][j]) > medianThreshold;
 				if ( meanOutlier || medianOutlier){
-					message = lanes[i][j][0].getLaneAttribute(TestLane.CANNELID) + " " + lanes[i][j][0].getLaneAttribute(TestLane.RANKID);
-					System.out.println(message);
+					message = lanes[i][j][0].getLaneAttribute(TestLane.CHANNELID) + " " + lanes[i][j][0].getLaneAttribute(TestLane.RANKID);
+					System.out.println("lane outlier found: " + message);
 					if (messages.indexOf(message) == -1){
-						messages.append(lanes[i][j][0].getLaneAttribute(TestLane.CANNELID) + " " + lanes[i][j][0].getLaneAttribute(TestLane.RANKID));
+						messages.append("    " + message + "\n");
 					}
 					for (int k = 0; k < laneNum; k++){
 						lanes[i][j][k].setState(TestLane.INVALID);

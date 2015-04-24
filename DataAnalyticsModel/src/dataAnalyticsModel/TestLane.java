@@ -16,7 +16,7 @@ import java.util.Map;
 public class TestLane {
 	public static boolean VALID = true; //the margin value is valid
 	public static boolean INVALID = false; //the margin value is invalid
-	public static String CANNELID = "channelID";
+	public static String CHANNELID = "channelID";
 	public static String RANKID = "rankID";
 	public static String LANEID = "laneID";
 	private int margin; // margin value of the lane
@@ -67,13 +67,14 @@ public class TestLane {
 	 *            a boolean indicating whether this lane is valid.
 	 */
 
-	public TestLane(int dataInput, boolean isValid, String cannelID, String rankID, String laneID) {
+	public TestLane(int dataInput, boolean isValid, String channelID, String rankID, String laneID) {
 		margin = dataInput;
 		attributes = new HashMap<>();
 		state = isValid;
-		this.setLaneAttribute(CANNELID, cannelID);
+		this.setLaneAttribute(CHANNELID, channelID);
 		this.setLaneAttribute(RANKID, rankID);
 		this.setLaneAttribute(LANEID, laneID);
+		//System.out.println(channelID+rankID+laneID);
 	}
 	
 	/**

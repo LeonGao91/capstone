@@ -13,24 +13,21 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
  *
  */
 public class TestDirection {
-	public static boolean CHECKOUTLIER = true; //remove outlier
-	public static boolean NOTCHECKOUTLIER = false; // not remove outlier
+	
 	private TestSystem[] systems; // test systems
 	private Stats noOutlierStats; // statistics after removing outliers
 	private Stats basicStats; // statistics before removing outliers
 	private Stats wcStats; //statistics for worst case
 	private int nearWcCount; //number of lanes close to worst case
 	private int size; // number of systems
-	private int outlierCount; //number of outliers in this direction
 	private int minLaneNo; //index of minimum lane
-	private double[] outlierThresholds; //thresholds for detecting outliers
-	private double byLaneThreshold; //threshold for determining near worst case lane
+	private double byLaneThreshold = 0.5; //threshold for determining near worst case lane
 	private double[] meanEachLane; //mean of each lane across systems and repeats
 	private double minAllLane; //min of meanEachLane
 	private double meanAllLane; //mean of meanEachLane
 	private double medianAllLane; //median of meanEachLane
-	private boolean[] outliers;
 	private String directionID;
+	private SummaryStatistics[] byLaneValues;
 //	private double[] medianEachLane; //median of each lane across systems and repeats
 	
 
@@ -41,17 +38,14 @@ public class TestDirection {
 		basicStats = new Stats();
 		noOutlierStats = new Stats();
 		wcStats = new Stats();
-		outlierCount = 0;
 		nearWcCount = 0;
-		outliers = new boolean[5];
 		directionID = "";
-		initializeThresholds();
 	}
 	
 	public void setSystems(TestSystem[] systems){
 		size = systems.length; 
 		this.systems = systems;
-		findStats(NOTCHECKOUTLIER);
+		findStats(Test.NOTCHECKOUTLIER);
 		//findOutlier();
 		//findStats(CHECKOUTLIER);
 	}
@@ -90,12 +84,9 @@ public class TestDirection {
 		basicStats = new Stats();
 		noOutlierStats = new Stats();
 		wcStats = new Stats();
-		outlierCount = 0;
 		nearWcCount = 0;
 		directionID = "";
-		initializeOutlier();
-		initializeThresholds();
-		findStats(NOTCHECKOUTLIER);
+		findStats(Test.NOTCHECKOUTLIER);
 		findByLaneMean();
 		//findOutlier();
 		//findStats(CHECKOUTLIER);
@@ -113,46 +104,13 @@ public class TestDirection {
 		basicStats = new Stats();
 		noOutlierStats = new Stats();
 		wcStats = new Stats();
-		outlierCount = 0;
 		nearWcCount = 0;
 		this.directionID = directionID;
-		initializeOutlier();
-		initializeThresholds();
-		findStats(NOTCHECKOUTLIER);
+		findStats(Test.NOTCHECKOUTLIER);
 		findByLaneMean();
-		//findOutlier();
-		//findStats(CHECKOUTLIER);
-	}
-
-	/**
-	 * Initial thresholds with default numbers.
-	 */
-	private void initializeThresholds() {
-		outlierThresholds = new double[6];
-		for (int i = 0; i < 6; i++) {
-			outlierThresholds[i] = 6;
-		}
-		byLaneThreshold = 0.5;
+		System.out.println(directionID);
 	}
 	
-	/**
-	 * Double current thresholds.
-	 */
-	public void doubleThresholds() {
-		for (int i = 0; i < 6; i++) {
-			this.outlierThresholds[i] = this.outlierThresholds[i] * 2;
-			//System.out.println("double outlierThreshold: " + outlierThresholds[i]);
-		}
-		byLaneThreshold = byLaneThreshold * 2;
-	}
-	
-	private void initializeOutlier(){
-		outliers = new boolean[5];
-		for (int i = 0; i < 5; i++){
-			outliers[i] = false;
-		}
-	}
-
 	/**
 	 * Initial thresholds from external file.
 	 * 
@@ -256,7 +214,7 @@ public class TestDirection {
 		TestRepeat tempRepeat;
 		TestSystem tempSystem;
 		StringBuilder sb = new StringBuilder();
-		String message = "";
+		StringBuilder tempMessages = new StringBuilder();
 		for (int i = 0; i < size; i++) {
 			tempSystem = getSystemByIndex(i);
 			for (int j = 0; j < tempSystem.getSize(); j++) {
@@ -264,42 +222,44 @@ public class TestDirection {
 				// Threshold based outlier detection - 1
 				outliers[1] = outliers[1]
 						|| tempRepeat.findSystemOutliers(basicStats.getMean(),
-								outlierThresholds[0], sb);
+								thresholds[0], sb);
+				//System.out.println("1: " + sb.toString());
 				// Threshold based outlier detection - 2
 				outliers[2] = outliers[2]
 						|| tempRepeat.findSystemOutliers(tempSystem
 								.getBasicStats().getMean(),
-								outlierThresholds[1], sb);
+								thresholds[1], sb);
+				//System.out.println("2: " + sb.toString());
 				// Lane2lane outlier - 1
 				outliers[3] = outliers[3]
-						|| tempRepeat.findLaneOutliers(outlierThresholds[2],
-								outlierThresholds[3], sb);
-				if (sb.length() == 0) {
-					sb.insert(
-							0,
-							"  Lane outlier found in "
-									+ tempSystem.getSystemID() + " "
-									+ tempRepeat.getRepeatID() + ":\n");
+						|| tempRepeat.findLaneOutliers(thresholds[2],
+								thresholds[3], sb);
+				//System.out.println("3: " + sb.toString());
+				if (sb.length() != 0) {
+					tempMessages.append("  Lane outlier found in " + tempSystem.getSystemID() + " " + tempRepeat.getRepeatID() + ":\n");
+					//System.out.print(sb.toString());
+					tempMessages.append(sb);
+					sb = new StringBuilder();
 				}
 			}
 		}
 		// Lane2lane outlier - 2
 		boolean meanOutlier = false;
 		boolean medianOutlier = false;
-		meanOutlier = (meanAllLane - minAllLane) > outlierThresholds[4];
-		medianOutlier = (medianAllLane - minAllLane) > outlierThresholds[5];
+		meanOutlier = (meanAllLane - minAllLane) > thresholds[4];
+		medianOutlier = (medianAllLane - minAllLane) > thresholds[5];
 		if (meanOutlier || medianOutlier) {
 			outliers[4] = true;
-			sb.append("  "
+			tempMessages.append("  "
 					+ getRepeatByIndexes(0, 0).getLaneIDByIndex(minLaneNo)
 					+ " Outlier in All Systems\n");
 			markOutlierByLane(minLaneNo);
 		}
-		if (sb.length() != 0) {
+		if (tempMessages.length() != 0) {
 			messages.append(directionID + ":\n");
-			messages.append(sb);
+			messages.append(tempMessages);
+			//System.out.print(messages.toString());
 		}
-		sb = new StringBuilder();
 	}
 //		TestRepeat tempRepeat;
 //		StringBuffer sb = new StringBuffer();
@@ -368,20 +328,20 @@ public class TestDirection {
 //		medianEachLane = new double[numberOfLanes];
 		TestRepeat tempRepeat;
 		//Used for get statistics
-		SummaryStatistics[] ss = new SummaryStatistics[numberOfLanes];
+		byLaneValues = new SummaryStatistics[numberOfLanes];
 		//Loop to add margins
 		for (int i = 0; i < numberOfLanes ; i++){
-			ss[i] = new SummaryStatistics();
+			byLaneValues[i] = new SummaryStatistics();
 		}
 		for (int i = 0; i < size; i++){
 			for (int j = 0; j < systems[1].getSize(); j++){
 				tempRepeat = getRepeatByIndexes(i, j);
-				tempRepeat.addValuesByLane(ss);
+				tempRepeat.addValuesByLane(byLaneValues);
 			}
 		}
 		//Get statistics and store
 		for (int i = 0; i < numberOfLanes; i++){
-			meanEachLane[i] = ss[i].getMean();
+			meanEachLane[i] = byLaneValues[i].getMean();
 //			medianEachLane[i] = ds[i].getPercentile(50);
 		}
 		//System.out.println(Util.arrayToString(meanEachLane));
@@ -393,13 +353,12 @@ public class TestDirection {
 		minAllLane = ds.getMin();
 		meanAllLane = ds.getMean();
 		medianAllLane = ds.getPercentile(50);
-		findWorstCase(ss);
 	}
 	
 	/**
 	 * Find the worst case lane and number of lanes close to the worst lane
 	 */
-	private void findWorstCase(SummaryStatistics[] ss){
+	public void findWorstCase(double byLaneThreshold){
 		double worstCase = Integer.MAX_VALUE;
 		minLaneNo = 0;
 		//find worst case lane from by lane means
@@ -409,15 +368,17 @@ public class TestDirection {
 				minLaneNo = i;
 			}
 		}
+		System.out.println("Worst lane no: " + minLaneNo);
 		//count number of lanes that are close to worst lane 
 		for (int i = 0; i < meanEachLane.length; i++){ 
 			if (meanEachLane[i] - worstCase < byLaneThreshold){
 				nearWcCount++;
 			}
 		}
+		System.out.println("Near worst lane num: " + nearWcCount);
 		//get worst case lane statistics
-		wcStats.setMean(ss[minLaneNo].getMean());
-		wcStats.setMin(ss[minLaneNo].getMin());
+		wcStats.setMean(byLaneValues[minLaneNo].getMean());
+		wcStats.setMin(byLaneValues[minLaneNo].getMin());
 	}
 	
 	private void markOutlierByLane(int laneIndex){
@@ -531,9 +492,8 @@ public class TestDirection {
 			}
 			newTestSystems[i] = new TestSystem(newRepeats);
 		}
-		newDirection = new TestDirection();
-		newDirection.doubleThresholds();
-		newDirection.setSystems(newTestSystems);
+		String newID = this.directionID + " " + direction.getDirectionID();
+		newDirection = new TestDirection(newTestSystems, newID);
 		return newDirection;
 	}
 
@@ -585,15 +545,6 @@ public class TestDirection {
 	}
 	
 	/**
-	 * Get all systems of the direction
-	 * 
-	 * @return a TestSystem array
-	 */
-	public TestSystem[] getSystems() {
-		return systems;
-	}
-
-	/**
 	 * Get near worst case lane count
 	 * 
 	 * @return number of lanes close to worst case lane
@@ -602,16 +553,6 @@ public class TestDirection {
 		return nearWcCount;
 	}
 
-	/**
-	 * Get ourlier count
-	 * 
-	 * @return number of outliers in this direction
-	 */
-	public int getOutlierCount() {
-		return outlierCount;
-	}
-	
-	
 	public String getDirectionID() {
 		return directionID;
 	}
@@ -638,7 +579,6 @@ public class TestDirection {
 
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append("outlierCount: " + outlierCount + "\n");
 		for (int i = 0; i < size; i++){
 			sb.append("system" + i + " ");
 			sb.append(systems[i].toString());

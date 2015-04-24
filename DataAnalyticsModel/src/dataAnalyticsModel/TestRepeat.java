@@ -56,6 +56,7 @@ public class TestRepeat {
 		byLaneNumber = margins.getByLaneSize();
 		acrossLaneNumber = margins.getAcrossLaneSize();
 		this.repeatID = repeatID;
+		//System.out.println(repeatID);
 	}
 
 //	/**
