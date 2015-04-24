@@ -49,7 +49,6 @@
                         <ul class="nav navbar-nav">
                             <li><a href="index.jsp">Main</a></li>
                             <li class="active"><a href="#">Result</a></li>
-                            <li><a href="result1.jsp">Result1</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li>
@@ -99,6 +98,8 @@
                     <li><a href="#"><h4>DELL XPS 13 - 04/10/2015  </h4></a></li>
                 </ul>
                 <span id="passfail" class="label label-success" style="font-size:15px">PASS!</span>
+                <span class="label label-warning basic" style="margin-right: 10%">3 REPEATS</span>
+                <span class="label label-info basic" style="margin-right: 1%">5 SYSTEMS</span>
         </div>
         
         <div class="panel panel-primary main_panel" style="margin-top: 2%">

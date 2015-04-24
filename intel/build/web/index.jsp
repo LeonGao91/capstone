@@ -31,7 +31,6 @@
                         <ul class="nav navbar-nav">
                             <li class="active"><a href="">Main</a></li>
                             <li><a href="result.jsp">Result</a></li>
-                            <li><a href="result1.jsp">Result1</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li>
