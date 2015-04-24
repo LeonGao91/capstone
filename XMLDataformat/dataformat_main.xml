@@ -1,0 +1,24 @@
+<products>
+	<product>
+		<name>DELL XPS 13</name>
+		<last-test-date>04/07/2015</last-test-date>
+		<pass-fail>PASS</pass-fail>
+		<test pass="true">
+			<last_test>04/07/2015</last-test-date>
+		<test>
+		<test pass="false">
+			<last_test>04/07/2015</last-test-date>
+		<test>
+	</product>
+	<product>
+		<name>DELL XPS 15</name>
+		<last_test-date>04/10/2015</last-test-date>
+		<pass_fail>PASS</pass_fail>
+		<test pass="true">
+			<last_test>04/10/2015</last-test-date>
+		<test>
+		<test pass="true">
+			<last_test>04/09/2015</last-test-date>
+		<test>
+	</product>
+</products>

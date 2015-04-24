@@ -1,0 +1,19 @@
+<test-result>
+	<trust>90</trust>
+	<health>60</health>
+	<trust_detail> [{'propertyA' : 'valueA'}, {'propertyB' : 'valueB'}, {'propertyC' : 'valueC'}] <trust_detail>
+	<health_detail> [{'propertyA' : 'valueA'}, {'propertyB' : 'valueB'}, {'propertyC' : 'valueC'}]<health_detail>
+	<messages>
+		<message>....</message>
+		<message>....</message>
+	<messages>
+	<incremental_score>
+		[{'health' : [1,2,3,4,5,6,6,7,8,9]} , {'trust' : [1,2,3,4,5,6,6,7,8,9]}]
+	<incremental_score>
+	<eye>
+		[{'data1' : {'ave' : [4, 5, 6, 7]}, {'min' : [4, 5, 6, 7]}}, {'data2' : {'ave' : [4, 5, 6, 7]}, {'min' : [4, 5, 6, 7]}}]
+	</eye>
+	<combination>
+		????
+	<combination>
+</test-result>
