@@ -1,28 +1,26 @@
 package dataAnalyticsModel;
 
 public class EyeChart {
-	String chartName;
 	double[] min;
 	double[] mean;
 	double[] Intel_min;
 	double[] Intel_mean;
 	
 	public EyeChart(){
-		
+		min = new double[4];
+		mean = new double[4];
+		Intel_min = new double[4];
+		Intel_mean = new double[4];
 	}
 	
 	public EyeChart(String chartName, double[] min, double[] mean,
 			double[] intel_min, double[] intel_mean) {
-		this.chartName = chartName;
 		this.min = min;
 		this.mean = mean;
 		Intel_min = intel_min;
 		Intel_mean = intel_mean;
 	}
 
-	public void setChartName(String chartName) {
-		this.chartName = chartName;
-	}
 
 	public void setMin(double[] min) {
 		this.min = min;
@@ -39,4 +37,14 @@ public class EyeChart {
 	public void setIntel_mean(double[] intel_mean) {
 		Intel_mean = intel_mean;
 	}
+
+	public double[] getMin() {
+		return min;
+	}
+
+	public double[] getMean() {
+		return mean;
+	}
+	
+	
 }

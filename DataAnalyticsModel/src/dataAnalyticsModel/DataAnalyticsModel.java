@@ -72,12 +72,12 @@ public class DataAnalyticsModel {
 				systems2[i] = new TestSystem(repeats2, "system" + i);
 			}
 			// }
-			directions[0] = new TestDirection(systems1, "direction0");
-			directions[1] = new TestDirection(systems2, "direction1");
+			directions[0] = new TestDirection(systems1, "txVrefHigh");
+			directions[1] = new TestDirection(systems2, "txVrefLow");
 			test = new Test(directions, "testClient", "testProduct");
 			br1.close();
 			br2.close();
-			System.out.print(test.toString());
+			//System.out.print(test.toString());
 			System.out.println("Health: " + test.getHealth());
 			System.out.println("Trust: " + test.getTrust());
 			ResultExporter.output(test);
