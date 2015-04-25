@@ -81,7 +81,7 @@ public class DataAnalyticsModel {
 			// construct directions
 			directions[0] = new TestDirection(systems1, "txVrefHigh");
 			directions[1] = new TestDirection(systems2, "txVrefLow");
-			test = new Test(directions, "testClient", "testProduct");
+			test = new Test(directions, "testClient", "testProduct2");
 			br1.close();
 			br2.close();
 			System.out.println("Health: " + test.getHealth());
