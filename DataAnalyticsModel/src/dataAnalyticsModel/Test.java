@@ -68,6 +68,7 @@ public class Test {
 	private double outlierCount; // number of outliers
 	private LinkedHashMap<String, Double> healthDetail;
 	private LinkedHashMap<String, Double> trustDetail;
+	private Map<String, Integer> systems_repeats;
 	
 	//Thresholds
 	private double[] thresholds;
@@ -151,8 +152,8 @@ public class Test {
 		trust = 0;
 		healthDetail = new LinkedHashMap<>();
 		trustDetail = new LinkedHashMap<>();
+		systems_repeats = new LinkedHashMap<>();
 		messages = new StringBuilder();
-		initializeOutliers();
 		initialize("Config.xml");
 		pairDirections(); 
 		basicChecks();
@@ -173,10 +174,10 @@ public class Test {
 		trust = 0;
 		healthDetail = new LinkedHashMap<>();
 		trustDetail = new LinkedHashMap<>();
+		systems_repeats = new LinkedHashMap<>();
 		messages = new StringBuilder();
 		this.customerID = customerID;
 		this.productID = productID;
-		initializeOutliers();
 		initialize("Config.xml");
 		pairDirections();
 		checkOutlier();
@@ -185,29 +186,22 @@ public class Test {
 		System.out.println(customerID + productID);
 	}
 	
-	public void initializeThresholds(){
-		thresholds = new double[4];
-		highThresholds = new double[4];
-		repeatNoiseThresholds = new double[4];
-		
-		for (int i = 0; i < 4; i++){
-			thresholds[i] = 6;
-			highThresholds[i] = 10;
-			repeatNoiseThresholds[i] = 0.5;
-		}
-		sigmaThreshold = 2;
-		sigmaThreshold2 = 0.2;
-		corrThreshold = 0.8;
-		lane2LaneCorrThresholds = 0.8;
-	}
-	
-	private void initializeOutliers(){
-		outliers = new boolean[5];
-		for (int i = 0; i < 5; i++){
-			outliers[i] = false;
-		}
-	}
-	
+//	public void initializeThresholds(){
+//		thresholds = new double[4];
+//		highThresholds = new double[4];
+//		repeatNoiseThresholds = new double[4];
+//		
+//		for (int i = 0; i < 4; i++){
+//			thresholds[i] = 6;
+//			highThresholds[i] = 10;
+//			repeatNoiseThresholds[i] = 0.5;
+//		}
+//		sigmaThreshold = 2;
+//		sigmaThreshold2 = 0.2;
+//		corrThreshold = 0.8;
+//		lane2LaneCorrThresholds = 0.8;
+//	}
+//	
 	/**
 	 * Read an xml file and initialize the thresholds
 	 * @param filePath
@@ -301,6 +295,19 @@ public class Test {
 		trustDetail.put(LANE2LANECORRCHECKTRUST, Double.parseDouble(doc.getElementsByTagName("LANE2LANECORRCHECKTRUST").item(0).getTextContent()));
 		
 		System.out.println("Coefficients initialized");
+		
+		outliers = new boolean[5];
+		for (int i = 0; i < 5; i++){
+			outliers[i] = false;
+		}
+		
+		TestSystem tempSystem;
+		String systemID;
+		for (int i = 0; i < getDirectionByIndex(0).getSize(); i++) {
+			tempSystem = getSystemByIndexes(0, i);
+			systemID = tempSystem.getSystemID();
+			systems_repeats.put(systemID, tempSystem.getSize());
+		}
 	}
 
 	private void checkOutlier(){
@@ -595,6 +602,32 @@ public class Test {
 		return messages.toString();
 	}
 	
+	
+	public String getConclusion() {
+		return conclusion;
+	}
+
+	public String getCustomerID() {
+		return customerID;
+	}
+
+	public String getProductID() {
+		return productID;
+	}
+
+	public Map<String, Integer> getSystems_repeats() {
+		return systems_repeats;
+	}
+	
+	public double[] getEyeChartIntelMinBenchmark() {
+		return eyeChartIntelMinBenchmark;
+	}
+
+	public double[] getEyeChartIntelMeanBenchmark() {
+		return eyeChartIntelMeanBenchmark;
+	}
+	
+
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < size; i++){
