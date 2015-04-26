@@ -30,7 +30,8 @@
         <script src="js/OurJS/lineChart.js"></script>
         <script src="js/library/eye/Chart.js"></script>
         <script src="js/OurJS/result.js"></script>
-        <script src="js/OurJS/eyeChart.js"></script>
+        <!--combination chart-->
+        <script src="js/library/Chart.Scatter.js"></script>
         
         
         
@@ -101,6 +102,11 @@
                 <span class="label label-warning basic" style="margin-right: 10%">3 REPEATS</span>
                 <span class="label label-info basic" style="margin-right: 1%">5 SYSTEMS</span>
         </div>
+
+
+            
+            
+
         
         <div class="panel panel-primary main_panel" style="margin-top: 2%">
             <div class="panel-heading">
@@ -173,17 +179,20 @@
         <div class="panel panel-primary main_panel">
             <div class="panel-heading">
                 <button id="chart-title" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                <h3 id="chart_header" class="panel-title" align="center">Eye Chart  <span class="caret"></span></h3>
+                <h3 id="chart_header" class="panel-title" align="center">Health/Trust Chart <span class="caret"></span></h3>
                 </button>
                 <ul id="chart-menu" class="dropdown-menu" role="menu">
-                    <li class="changeChart" chart="#eyeChart"><a><h4>Eye Chart  </h4></a></li>
-                    <li class="changeChart" chart="#linechart_material"><a><h4>Health/Trust Chart </h4></a></li>
-                    <li class="changeChart" chart="#combination"><a><h4>Combination Chart </h4></a></li>
-                    <!--<li class="changeChart" chart="#increament"><a><h4>Increment Chart  </h4></a></li>-->
+                    <li id="changeEye"><a><h4>Eye Chart  </h4></a></li>
+                    <li id="changeCombination"><a><h4>Combination Chart </h4></a></li>
+                    <li id="changeIncrement" style="display:none"><a><h4>Health/Trust Chart </h4></a></li>
+                    
                 </ul>
             </div>
             
-            <div class="row" id="eyeChart">
+            <div id="charts">
+            <div id="linechart_material"></div>
+
+            <!--<div class="row" id="eyeChart">
                 <div class="col-md-6 center-block">
                     <div class="eyeTitle">Read</div>
                         <canvas id="eyeChartRead" class="center-block"></canvas>    
@@ -193,8 +202,13 @@
                         <canvas id="eyeChartWrite" class="center-block"></canvas>
                     </div>
             </div>
-            <div id="linechart_material" style="display:none"></div>
-            <div id="combination" style="display:none"><img src="media/combination2.png" id="combinationpng"/></div>
+
+            
+            <div id="combination">
+                <canvas id="combinationChart"></canvas>
+            </div>-->
+            
+            </div><!--charts-->
         </div>
     </body>
 </html>
