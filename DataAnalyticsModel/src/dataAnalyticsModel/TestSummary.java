@@ -1,6 +1,9 @@
 package dataAnalyticsModel;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This class represents a customer summary. It is mainly used to convert and
@@ -64,4 +67,12 @@ public class TestSummary {
 	public void updateProduct(String productID, TestProduct product) {
 		products.put(productID, product);
 	}
+        
+        /**
+         * get the iterator 
+         * @return set of the products
+         */
+        public Set<Map.Entry<String, TestProduct>> getElements() {
+            return products.entrySet();
+        }
 }

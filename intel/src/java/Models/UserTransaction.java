@@ -24,12 +24,12 @@ public class UserTransaction {
         
     }
     
-    public String[] getFolder(String id) {
+    public String getFolder(String id) {
         Session session = HibernateUtil.getSessionFactory().getCurrentSession();
         session.beginTransaction();
         
         User user = (User) session.get(User.class, id);
         session.getTransaction().commit();
-        return user.getFolders().split(";");
+        return user.getFolders();
     }
 }

@@ -1,26 +1,4 @@
 $(document).ready(function() {
-            //health,trust gauge
-            var g = new JustGage({
-                  id: "trust",
-                  value: 32,
-                  min: 0,
-                  max: 100,
-                  title: "Trust",
-                  label: "SCORE",
-                  levelColors: ["D00000","00CC33"],
-                  startAnimationTime : 2000
-                });
-                var g2 = new JustGage({
-                  id: "health",
-                  value: 91,
-                  min: 0,
-                  max: 100,
-                  title: "Health",
-                  label: "SCORE",
-                  levelColors: ["D00000","00CC33"],
-                  startAnimationTime : 2000
-                });
-
 	//combination chart
 	function drawCombination(){
 	var data = [

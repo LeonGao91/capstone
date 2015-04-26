@@ -2,6 +2,7 @@ package dataAnalyticsModel;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This class represents detailed test results. It is mainly used to convert and
@@ -122,6 +123,14 @@ public class TestDetail {
 	public Map<String, Double> getHealth_detail() {
 		return health_detail;
 	}
+        
+        /**
+	 * Get health detail scores set for iteration
+	 * @return a map of detailed health items scores
+	 */
+	public Set<String> getHealth_detail_keySet() {
+		return health_detail.keySet();
+	}
 
 	/**
 	 * Get trust detail scores map
@@ -131,6 +140,14 @@ public class TestDetail {
 		return trust_detail;
 	}
 
+        /**
+	 * Get Trust detail scores set for iteration
+	 * @return a map of detailed health items scores
+	 */
+	public Set<String> getTrust_detail_keySet() {
+		return trust_detail.keySet();
+	}
+        
 	/**
 	 * Get eye charts map
 	 * @return a map of eye charts
@@ -144,7 +161,16 @@ public class TestDetail {
 	 * @return warning messages
 	 */
 	public String getMessages() {
-		return messages;
+            StringBuilder message = new StringBuilder();
+            //use ";" as line breaker
+            String[] m = messages.split(";");
+            for(String s : m) {
+                //use "#" as "/t"
+                s = s.replaceAll("#", "    ");
+                message.append("\n").append(s);
+            }
+            System.out.println(message);
+            return message.toString();
 	}
 
 }

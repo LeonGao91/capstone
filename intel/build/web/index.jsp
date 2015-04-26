@@ -1,4 +1,9 @@
 
+<%@page import="java.util.LinkedList"%>
+<%@page import="java.util.Date"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="java.util.Map"%>
+<%@page import="dataAnalyticsModel.*"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
     //
@@ -66,13 +71,61 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <%
+                        //print out all elements
+                        Object o =  session.getAttribute("summary");
+                        if(o != null) {
+                            TestSummary summary = (TestSummary) o;
+                            for(Map.Entry<String, TestProduct> e : summary.getElements()) {
+                                TestProduct product = e.getValue();
+                                LinkedList<TestBrief> tests = product.getElements();
+                                out.print("<tr class='expandable'>");
+                                out.print("<td  style='width: 15%'> " + e.getKey() + " </td>");
+                                out.print("<td><span class='glyphicon glyphicon-triangle-bottom' aria-hidden='true'></span></td>");
+                                SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
+                                Date d = date.parse(product.getLast_test_date());
+                                date.applyPattern("HH:mm:ss - MM/dd/yyyy");
+                                out.print("<td>" + date.format(d) + "</td>");
+                                if (product.getPass_fail().equals("pass")) {
+                                    out.print("<td><span class='label label-success'>" + product.getPass_fail().toUpperCase() + "</span></td>");
+                                } else {
+                                    out.print("<td><span class='label label-danger'>" + product.getPass_fail().toUpperCase() + "</span></td>");
+                                }
+                                out.print("<td><form action='Detail?file=" 
+                                            + product.getLastTest()
+                                            + "&product=" + e.getKey()
+                                            + "&test=" + (tests.size() - 1)
+                                            + "' method='post'><button type='submit' class='btn btn-primary'>View</button></form></td></tr>");
+                                
+                                for (int i = tests.size() - 1; i >= 0; i--) {
+                                    TestBrief brief = tests.get(i);
+                                    out.print("<tr>");
+                                    out.print("<td>" + e.getKey() + "</td>");
+                                    out.print("<td></td>");
+                                    date = new SimpleDateFormat("yyyyMMddHHmmss");
+                                    d = date.parse(brief.getTest_date());
+                                    date.applyPattern("HH:mm:ss - MM/dd/yyyy");
+                                    out.print("<td>" + date.format(d) + "</td>");
+                                    if (brief.getPass_fail().equals("pass")) {
+                                        out.print("<td><span class='label label-success'>" + brief.getPass_fail().toUpperCase() + "</span></td>");
+                                    } else {
+                                        out.print("<td><span class='label label-danger'>" + brief.getPass_fail().toUpperCase() + "</span></td>");
+                                    }
+                                    out.print("<td><form action='Detail?file=" 
+                                            + brief.getResult_file()
+                                            + "&product=" + e.getKey()
+                                            + "&test=" + i
+                                            + "' method='post'><button type='submit' class='btn btn-primary'>View</button></form></td></tr>");
+                                }
+                            }
+                        }
+                    %>
                     <tr class="expandable" color="">
-                        <td  style="width: 15%">DELL XPS 13</td>
+                        <td>DELL XPS 13</td>
                         <td><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></td>
                         <td>04/07/2015</td>
                         <td><span class="label label-success">PASS</span></td>
-                        <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
-                        
+                        <td><a href="Detail?file=asd"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                     <tr>
                         <td>DELL XPS 13</td>
@@ -86,42 +139,11 @@
                         <td></td>
                         <td>04/05/2015</td>
                         <td><span class="label label-danger">FAIL</span></td>
-                        <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
-                    </tr>
-                    <tr class="expandable" color="">
-                        <td>DELL XPS 14</td>
-                        <td><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></td>
-                        <td>04/06/2015</td>
-                        <td><span class="label label-danger">FAIL</span></td>
-                        <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
-                    </tr>
-                    <tr>
-                        <td>DELL XPS 14</td>
-                        <td></td>
-                        <td>04/05/2015</td>
-                        <td><span class="label label-danger">FAIL</span></td>
-                        <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
-                    </tr>
-                    <tr class="expandable" color="">
-                        <td>DELL XPS 15</td>
-                        <td><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></td>
-                        <td>04/06/2015</td>
-                        <td><span class="label label-success">PASS</span></td>
-                        <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
-                    </tr>
-                    <tr>
-                        <td>DELL XPS 15</td>
-                        <td></td>
-                        <td>04/03/2015</td>
-                        <td><span class="label label-success">PASS</span></td>
-                        <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
-                    </tr>
-                    <tr>
-                        <td>DELL XPS 15</td>
-                        <td></td>
-                        <td>03/30/2015</td>
-                        <td><span class="label label-danger">FAIL</span></td>
-                        <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
+                        <td>
+                            <form  action="Detail?file=asd" method="post">
+                                <button type="submit" class="btn btn-primary">View</button>
+                            </form>
+                        </td>
                     </tr>
                 </tbody>
             </table>
