@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <testDetail>
-  <health>74.5</health>
-  <trust>26.5</trust>
+  <health>76.3</health>
+  <trust>98.5</trust>
   <health__detail class="linked-hash-map">
     <entry>
       <string>Mean of Min Check</string>

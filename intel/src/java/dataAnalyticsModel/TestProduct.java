@@ -1,5 +1,8 @@
 package dataAnalyticsModel;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -175,5 +178,21 @@ public class TestProduct {
             }
             TestBrief last = tests.get(tests.size() - 1);
             return last.getResult_file();
+        }
+        
+        /**
+         * Get time series data as a string
+         */
+        public String getTimeSeriesData() throws ParseException {
+            StringBuilder sb = new StringBuilder();
+            for(TestBrief test : tests) {
+                SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
+                Date d = date.parse(test.getTest_date());
+                date.applyPattern("HH:mm:ss - MM/dd/yyyy");
+                sb.append("['").append(date.format(d)).append("', ")
+                        .append(test.getHealth()).append(", ").append(test.getTrust()).append("],");
+            }
+            sb.setLength(sb.length() - 1);
+            return sb.toString();
         }
 }

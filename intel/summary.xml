@@ -77,8 +77,8 @@
           <testBrief>
             <pass__fail>fail</pass__fail>
             <test__date>20150425154926</test__date>
-            <health>74.5</health>
-            <trust>26.5</trust>
+            <health>98.5</health>
+            <trust>76.3</trust>
             <result__file>testProduct2_20150425154926.xml</result__file>
           </testBrief>
         </tests>

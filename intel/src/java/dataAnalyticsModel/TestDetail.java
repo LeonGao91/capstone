@@ -29,6 +29,7 @@ public class TestDetail {
 		health_detail = new LinkedHashMap<>();
 		trust_detail = new LinkedHashMap<>();
 		eyes = new LinkedHashMap<>();
+                
 	}
 
 	/**
@@ -160,17 +161,16 @@ public class TestDetail {
 	 * Get warning messages
 	 * @return warning messages
 	 */
-	public String getMessages() {
-            StringBuilder message = new StringBuilder();
+	public String[] getMessages() {
             //use ";" as line breaker
             String[] m = messages.split(";");
-            for(String s : m) {
-                //use "#" as "/t"
-                s = s.replaceAll("#", "    ");
-                message.append("\n").append(s);
+            for(int i = 0; i < m.length; i++) {
+                String s = m[i];
+                s = s.replaceAll("#", "&nbsp;&nbsp;");
+                System.out.println(s);
+                m[i] = s;
             }
-            System.out.println(message);
-            return message.toString();
+            return m;
 	}
 
 }
