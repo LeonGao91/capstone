@@ -22,6 +22,8 @@
 
         <link href="css/boostrap/bootstrap.min.css" rel="stylesheet">
         <link href="css/OurCSS/homepage.css" rel="stylesheet">
+        <script src="js/library/jquery-1.11.2.js"></script>
+        <script src="js/library/bootstrap.min.js"></script>
     </head>
 
     <body>
@@ -57,15 +59,33 @@
             </nav>
         </div>
         <div id="records"> 
-            <input type="text" class="light-table-filter form-control" data-table="order-table" placeholder="Filter" id="filter">
+            
 
-            <table id="" class="table order-table">
+            <table id="mytable" class="table order-table">
                 <thead>
                     <tr>
-                        <th>Product</th>
+                        <th>
+                            <div class="dropdown">
+                                <button class="btn btn-default dropdown-toggle filter" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">Product  <span class="caret"></span></button>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                                    <li role="presentation"><a role="menuitem" tabindex="-1"  class="listItem">DELL XPS 13</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1"  class="listItem">DELL XPS 14</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1"  class="listItem">ALL</a></li>  <!--remember to add "all"-->
+                                </ul>
+                            </div>
+                        </th>
                         <th class="arrow_col"></th>
-                        <th>Date</th>
-                        <th>Result</th>
+                        <th id="sort" down="1">Date  <span class="glyphicon glyphicon-chevron-down"></span></th>
+                        <th>
+                            <div class="dropdown">
+                                <button class="btn btn-default dropdown-toggle filter" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-expanded="true">Result  <span class="caret"></span></button>
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                                    <li role="presentation"><a role="menuitem" tabindex="-1"  class="listItem">PASS</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1"  class="listItem">FAIL</a></li> 
+                                    <li role="presentation"><a role="menuitem" tabindex="-1"  class="listItem">ALL</a></li>  <!--remember to add "all"-->
+                                </ul>
+                            </div>
+                        </th>
                         <th></th>
                         
                     </tr>
@@ -123,7 +143,7 @@
                     <tr class="expandable" color="">
                         <td>DELL XPS 13</td>
                         <td><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></td>
-                        <td>04/07/2015</td>
+                        <td class="date">04/07/2015</td>                                                                                  <!--remember only expandable rows need to add 'date' class-->
                         <td><span class="label label-success">PASS</span></td>
                         <td><a href="Detail?file=asd"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
@@ -144,6 +164,13 @@
                                 <button type="submit" class="btn btn-primary">View</button>
                             </form>
                         </td>
+                    </tr>
+                    <tr class="expandable" color="">
+                        <td>DELL XPS 14</td>
+                        <td><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></td>
+                        <td class="date">04/06/2015</td>
+                        <td><span class="label label-success">PASS</span></td>
+                        <td><a href="Detail?file=asd"><button type="button" class="btn btn-primary">View</button></a></td>
                     </tr>
                 </tbody>
             </table>
@@ -170,7 +197,76 @@
 
             });
             
+
         //filter
+
+        $(".filter").click(function(){
+
+
+            if ($(this).text()==='Product  '){
+                var columnNo = 1;
+            }
+            else if ($(this).text()==='Result  '){
+                var columnNo = 4;
+            }
+
+
+            $(".listItem").click(function(){
+
+                var input = $(this).html();
+
+                $("#mytable tr.expandable").each(function (){
+                    var text = $(this).find("td:nth-child("+columnNo+")").text();
+                    if (input==="ALL"){
+                        $(this).css("display","table-row");
+                    }
+                    else{
+                        $(this).css("display",text.indexOf(input) === -1 ? 'none' : 'table-row');
+                    }
+                });
+
+            });
+
+        });
+        
+
+        //sort
+
+    
+
+
+        $("#sort").click(function(){
+            var th = $(this);
+            var down = th.attr("down");
+            if (down==="1"){ 
+                th.children().attr("class","glyphicon glyphicon-chevron-up"); 
+                th.attr("down","0");
+                $(".date").sort(function(a,b){
+                    return new Date($(a).html()) < new Date($(b).html());
+                }).each(function(){
+                    $("tbody").prepend($(this).parent());
+                })
+            }
+            else{ 
+                th.children().attr("class","glyphicon glyphicon-chevron-down"); 
+                th.attr("down","1");
+                $(".date").sort(function(a,b){
+                    return new Date($(a).html()) > new Date($(b).html());
+                }).each(function(){
+                    $("tbody").prepend($(this).parent());
+                })
+            }
+
+        })
+            
+            
+                
+                
+                
+
+    
+        /**
+                //filter
         (function(document) {
 	'use strict';
 
@@ -210,6 +306,7 @@
 	});
 
 })(document);
+**/
         </script>
     </body>
 </html>
