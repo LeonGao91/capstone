@@ -449,7 +449,7 @@
         function drawCombination(){
 	var data = [
 		{
-			label: 'Health, Trust',
+			label: 'Trust, Health',
 			strokeColor: '#337ab7',
 			data: [
 				{ x: 32, y: 91 }, { x: 55, y: 80 }, { x: 50, y: 88 },

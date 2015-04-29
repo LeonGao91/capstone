@@ -128,15 +128,14 @@ img#combinationpng {
 
 }
 
-#combinationChart{
-    min-width: 310px; 
-    height: 350px; 
-    max-width: 800px; 
-    margin: 2% auto;
-    background-image: url(../../media/combination.png);
-    background-repeat: no-repeat;
-    background-position: 25px 7px;
-
+#combinationChart {
+  min-width: 310px;
+  height: 350px;
+  max-width: 800px;
+  margin: 2% auto;
+  background-image: url(../../media/combination2.png);
+  background-repeat: no-repeat;
+  background-position: 30px 7px;
 }
 
 .list-button {
