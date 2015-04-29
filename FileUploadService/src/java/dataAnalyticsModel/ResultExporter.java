@@ -28,7 +28,7 @@ public class ResultExporter {
 	 * 
 	 * @param test test object containing all test data and results.
 	 */
-	public static void output(Test test) {
+	public static void output(Test test, String path) {
 		//Output to test result file located in customerID/result/ directory.
 		TestDetail testDetail = new TestDetail();
 		testDetail.setHealth(test.getHealth());
@@ -90,7 +90,7 @@ public class ResultExporter {
 		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 		Calendar cal = Calendar.getInstance();
 		String timeStamp = dateFormat.format(cal.getTime());
-		String resultDirName = test.getCustomerID() + "/result";
+		String resultDirName = path + "/" + test.getCustomerID() + "/result";
 		String resultFileName = test.getProductID() + "_" + timeStamp + ".xml";
 		//Write to xml file
 		File dir = new File(resultDirName);
@@ -117,7 +117,7 @@ public class ResultExporter {
 		xstream.alias("testSummary", TestSummary.class);
 		xstream.alias("testProduct", TestProduct.class);
 		xstream.alias("testBrief", TestBrief.class);
-		String summaryDirName = test.getCustomerID();
+		String summaryDirName = path + "/" + test.getCustomerID();
 		String summaryFileName = "summary.xml";
 		dir = new File(summaryDirName);
 		if (!dir.exists()) {

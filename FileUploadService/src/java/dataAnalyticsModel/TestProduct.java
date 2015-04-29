@@ -3,7 +3,6 @@ package dataAnalyticsModel;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This class represents a test product. It is mainly used to convert and parse
@@ -156,24 +155,4 @@ public class TestProduct {
 	public LinkedList<TestBrief> getTests() {
 		return tests;
 	}
-        
-        /**
-         * get all tests
-         * @return all test
-         */
-        public LinkedList<TestBrief> getElements() {
-            return tests;
-        }
-        
-        /**
-         * Get last test file
-         * @return Last test
-         */
-        public String getLastTest() {
-            if(tests.size() <= 0) {
-                return "";
-            }
-            TestBrief last = tests.get(tests.size() - 1);
-            return last.getResult_file();
-        }
 }

@@ -5,6 +5,8 @@
  */
 package service;
 
+import dataAnalyticsModel.ResultExporter;
+import dataAnalyticsModel.Test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -92,7 +94,58 @@ public class FileUploadService {
         ReadHDF5File.combineBaseFile(file.getAbsolutePath(), baseFileName);
         ReadHDF5File.combineDataFile(file.getAbsolutePath(), dataFileName, fileInfo);
 
-        ReadHDF5File.getResult(dataFileName);
+        Test test = ReadHDF5File.getResult(dataFileName, fileInfo.customerID, fileInfo.platformID);
+        
+        ResultExporter.output(test, properties.getProperty("mainFolder"));
+    }
+
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "getSummary")
+    public String getSummary(@WebParam(name = "file") String customerID) {
+        String xml = "";
+        File f = new File(properties.getProperty("mainFolder") + "/" + customerID + "/summary.xml");
+        try {
+            Scanner s = new Scanner(f);
+            while(s.hasNextLine()){
+                xml = xml.concat(s.nextLine());
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("file not found");
+            return "";
+        }
+        return xml;
+
+    }
+
+    /**
+     * Web service operation
+     */
+    @WebMethod(operationName = "getDetail")
+    public String getDetail(@WebParam(name = "customerID") String customerID, @WebParam(name = "file") String file) {
+        System.out.println(file);
+        
+        String xml = "";
+        File f = new File(properties.getProperty("mainFolder") + "/" + customerID + "/result/" + file);
+        
+        if (!f.exists()) {
+            return "";
+        }
+        
+        try {
+            Scanner s = new Scanner(f);
+            while(s.hasNextLine()){
+                String str = s.nextLine();
+                System.out.println(str);
+                xml = xml.concat(str);
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("file not found");
+        }
+        
+        return xml;
     }
 
 }
