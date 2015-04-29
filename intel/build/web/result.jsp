@@ -164,6 +164,79 @@
                     3 REPEATS</span>
                 <span class="label label-info basic" style="margin-right: 1%">5 SYSTEMS</span>
         </div>
+        
+        <!-- newly added block-->
+        <div class="panel panel-primary main_panel" style="margin-top: 2%">
+            <div class="panel-heading">
+                <h3 class="panel-title" align="center">Basic Information</h3>
+            </div>
+
+             <div class="row">
+                <div class="col-md-6 center-block">
+
+                    <table class="table info-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>SystemID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>XPS 13</td>
+                            </tr>                      
+                             <tr>
+                                <th scope="row">2</th>
+                                <td>XPS 14</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">3</th>
+                                <td>XPS 15</td>
+                            </tr> 
+                            <tr>
+                                <th scope="row">4</th>
+                                <td>XPS 16</td>
+                            </tr> 
+                            <tr>
+                                <th scope="row">5</th>
+                                <td>XPS17</td>
+                            </tr> 
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col-md-6 center-block">
+
+                    <table class="table info-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>RepeatID</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>xxx</td>
+                            </tr>                      
+                             <tr>
+                                <th scope="row">2</th>
+                                <td>xxx</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">3</th>
+                                <td>xxx</td>
+                            </tr> 
+        
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+        
+        <!-- newly added block ended-->
 
         <div class="panel panel-primary main_panel" style="margin-top: 2%">
             <div class="panel-heading">
