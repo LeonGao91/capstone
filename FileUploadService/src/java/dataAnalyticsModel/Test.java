@@ -1,18 +1,22 @@
 package dataAnalyticsModel;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.xml.sax.SAXException;
 
 /**
  * This class represents a validation test composing directions, systems,
@@ -20,8 +24,8 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
  * computing their statistics.
  *
  *
- * @author Yan 04/04/2015
- * @version 1.0
+ * @author Lucy, Yan 04/29/2015
+ * @version 2.0
  *
  */
 public class Test {
@@ -45,8 +49,8 @@ public class Test {
     public static String NEARWCCOUNT = "Near Worst Case Lane Count";
     public static String LANE2LANECORRCHECKHEALTH = "Lane2Lane Correlation Check for Health";
     //Trust check items
-    public static String SYSTEMCOUNT = "System Count"; // TODO
-    public static String REPEATCOUNT = "Repeat Count"; // TODO
+    public static String SYSTEMCOUNT = "System Count"; // total system count
+    public static String REPEATCOUNT = "Repeat Count"; // average system repeat count
     public static String MEANCHECK = "Mean Check";
     public static String MINCHECK = "Min Check";
     public static String SIGMAMEANCHECKTRUST = "Sigma of Mean Check";
@@ -57,20 +61,18 @@ public class Test {
     public static String WINDOWCORRCHECKTRUST = "Window Correlation Check for Trust";
     public static String LANE2LANECORRCHECKTRUST = "Lane2Lane Correlation Check for Trust";
 
-    private double health;
-    private double trust;
-    private String conclusion;
-    private String customerID;
-    private String productID;
-
-    private TestDirection[] directions;
-    private TestDirection[] pairedDirections;
+    private double health; //health score
+    private double trust; //trust score
+    private String conclusion; //"pass" or "fail"
+    private String customerID; //customer ID
+    private String productID; //product ID
+    private TestDirection[] directions; //all directions
+    private TestDirection[] pairedDirections; //direction pairs
     private int size; // number of directions
     private double outlierCount; // number of outliers
-    private LinkedHashMap<String, Double> healthDetail;
-    private LinkedHashMap<String, Double> trustDetail;
-    private Map<String, Integer> systems_repeats;
-
+    private LinkedHashMap<String, Double> healthDetail; //details of computing health score
+    private LinkedHashMap<String, Double> trustDetail; //detals of computing trust score
+    private Map<String, Integer> systems_repeats; //systems and number of repeats
     //Thresholds
     private double[] thresholds;
     private double[] highThresholds;
@@ -79,14 +81,15 @@ public class Test {
     private double sigmaThreshold2;
     private double corrThreshold;
     private double lane2LaneCorrThresholds;
-    private double[] outlierThresholds; // xml configuration, default 6
-    private double[] pairedOutlierThresholds; // xml configuration, default 12
-    private double byLaneThreshold; /// xml configuration, default 0.5
+    private double[] outlierThresholds;
+    private double[] pairedOutlierThresholds;
+    private double byLaneThreshold;
     //Benchmarks
-    private double[] eyeChartIntelMinBenchmark; // xml configuration size 4 -12, 12, 40, -40
-    private double[] eyeChartIntelMeanBenchmark; // xml confituration size 4 -12, 12, 40, -40
-    private double healthBenchmark; // xml configuration, default 80
-    private double trustBenchmark; // xml configuration, default 80
+    private double[] eyeChartIntelMinBenchmark;
+    private double[] eyeChartIntelMeanBenchmark;
+    private double healthBenchmark;
+    private double trustBenchmark;
+    private int validation;
     //Check results
     private boolean basicMeanCheck = true;
     private boolean outlierMeanCheck = true;
@@ -107,7 +110,7 @@ public class Test {
     private boolean udCorr = true; //up-down correlation
     private boolean winCorr = true; //window correlation
     private boolean lane2LaneCorr = true; //lane2lane correlation
-    private PearsonsCorrelation pearsons = new PearsonsCorrelation();
+    private PearsonsCorrelation pearsons;
     private StringBuilder messages;
     private boolean outliers[];
     private double nearWcCount;
@@ -118,25 +121,6 @@ public class Test {
     public Test() {
     }
 
-//	/**
-//	 * Constructor with one int array argument.
-//	 *
-//	 * @param dataInput
-//	 *            a three-dimensional array storing all data of one direction.
-//	 */
-//
-//	public Test(int[][][][] dataInput) {
-//		size = dataInput.length; 
-//		directions = new TestDirection[size];
-//		//Construct each direction
-//		for (int i = 0; i < size; i++) {
-//			directions[i] = new TestDirection(dataInput[i]);
-//		}
-//		outlierCount = 0;
-//		pairDirections();
-//		initializeThresholds();
-//		basicChecks();
-//	}
     /**
      * Constructor with one TestDirection array argument.
      *
@@ -154,7 +138,8 @@ public class Test {
         trustDetail = new LinkedHashMap<>();
         systems_repeats = new LinkedHashMap<>();
         messages = new StringBuilder();
-        initialize("Config.xml");
+        pearsons = new PearsonsCorrelation();
+        initialize("");
         pairDirections();
         basicChecks();
     }
@@ -166,7 +151,7 @@ public class Test {
      * @param directions an array TestDirection representing all directions of
      * one test.
      */
-    public Test(TestDirection[] directions, String customerID, String productID) {
+    public Test(TestDirection[] directions, String customerID, String productID, String path) {
         size = directions.length;
         this.directions = directions;
         outlierCount = 0;
@@ -176,144 +161,155 @@ public class Test {
         trustDetail = new LinkedHashMap<>();
         systems_repeats = new LinkedHashMap<>();
         messages = new StringBuilder();
+        pearsons = new PearsonsCorrelation();
         this.customerID = customerID;
         this.productID = productID;
-        initialize("Config.xml");
+        initialize(path);
         pairDirections();
         checkOutlier();
         findNoOutlierStats();
         basicChecks();
-        System.out.println(customerID + productID);
+        System.out.println(customerID + " " + productID);
     }
 
-//	public void initializeThresholds(){
-//		thresholds = new double[4];
-//		highThresholds = new double[4];
-//		repeatNoiseThresholds = new double[4];
-//		
-//		for (int i = 0; i < 4; i++){
-//			thresholds[i] = 6;
-//			highThresholds[i] = 10;
-//			repeatNoiseThresholds[i] = 0.5;
-//		}
-//		sigmaThreshold = 2;
-//		sigmaThreshold2 = 0.2;
-//		corrThreshold = 0.8;
-//		lane2LaneCorrThresholds = 0.8;
-//	}
 //	
     /**
-     * Read an xml file and initialize the thresholds
+     * Read an xml file and initialize the thresholds.
      *
-     * @param filePath
+     * @param path path where Config.xml file locates
      */
-    public void initialize(String filePath) {
+    public final void initialize(String path) {
         // convert the xmlString to a Document object
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        Document doc = null;
+        Document doc;
+        String filePath = "Config.xml";
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();
             doc = builder.parse(new File(filePath));
-        } catch (Exception e) {
-            e.printStackTrace();
+            doc.getDocumentElement().normalize();
+            thresholds = new double[4];
+            highThresholds = new double[4];
+            repeatNoiseThresholds = new double[4];
+            //thresholds
+            for (int i = 1; i <= 4; i++) {
+                thresholds[i - 1] = Double.parseDouble(doc.getElementsByTagName("T" + i).item(0).getTextContent());
+                highThresholds[i - 1] = Double.parseDouble(doc.getElementsByTagName("T" + i + "H").item(0).getTextContent());
+                repeatNoiseThresholds[i - 1] = Double.parseDouble(doc.getElementsByTagName("T" + i + "R").item(0).getTextContent());
+            }
+            sigmaThreshold = Double.parseDouble(doc.getElementsByTagName("TS").item(0).getTextContent());
+            sigmaThreshold2 = Double.parseDouble(doc.getElementsByTagName("TS2").item(0).getTextContent());
+            corrThreshold = Double.parseDouble(doc.getElementsByTagName("TC").item(0).getTextContent());
+            lane2LaneCorrThresholds = Double.parseDouble(doc.getElementsByTagName("TL").item(0).getTextContent());
+            outlierThresholds = new double[6];
+            pairedOutlierThresholds = new double[6];
+            for (int i = 1; i <= 6; i++) {
+                outlierThresholds[i - 1] = Double.parseDouble(doc.getElementsByTagName("T" + i + "O").item(0).getTextContent());
+                pairedOutlierThresholds[i - 1] = Double.parseDouble(doc.getElementsByTagName("T" + i + "PO").item(0).getTextContent());
+            }
+            byLaneThreshold = Double.parseDouble(doc.getElementsByTagName("TBL").item(0).getTextContent());
+            // benchmarks
+            eyeChartIntelMinBenchmark = new double[4];
+            eyeChartIntelMeanBenchmark = new double[4];
+            for (int i = 1; i <= 4; i++) {
+                eyeChartIntelMinBenchmark[i - 1] = Double.parseDouble(doc.getElementsByTagName("B" + i + "EyeMin").item(0).getTextContent());
+                eyeChartIntelMeanBenchmark[i - 1] = Double.parseDouble(doc.getElementsByTagName("B" + i + "EyeMean").item(0).getTextContent());
+            }
+            healthBenchmark = Double.parseDouble(doc.getElementsByTagName("BH").item(0).getTextContent());
+            trustBenchmark = Double.parseDouble(doc.getElementsByTagName("BT").item(0).getTextContent());
+            // healthDetail
+            healthDetail.put(MEANMINCHECK, Double.parseDouble(doc.getElementsByTagName("MEANMINCHECK").item(0).getTextContent()));
+            healthDetail.put(MINMINCHECK, Double.parseDouble(doc.getElementsByTagName("MINMINCHECK").item(0).getTextContent()));
+            healthDetail.put(HIGHMEANMINCHECK, Double.parseDouble(doc.getElementsByTagName("HIGHMEANMINCHECK").item(0).getTextContent()));
+            healthDetail.put(HIGHMINMINCHECK, Double.parseDouble(doc.getElementsByTagName("HIGHMINMINCHECK").item(0).getTextContent()));
+            healthDetail.put(SIGMAMEANCHECK, Double.parseDouble(doc.getElementsByTagName("SIGMAMEANCHECK").item(0).getTextContent()));
+            healthDetail.put(SIGMAMINCHECK, Double.parseDouble(doc.getElementsByTagName("SIGMAMINCHECK").item(0).getTextContent()));
+            healthDetail.put(HIGHMEANMEANCHECK, Double.parseDouble(doc.getElementsByTagName("HIGHMEANMEANCHECK").item(0).getTextContent()));
+            healthDetail.put(HIGHMINMEANCHECK, Double.parseDouble(doc.getElementsByTagName("HIGHMINMEANCHECK").item(0).getTextContent()));
+            healthDetail.put(OUTLIERHEALTH, Double.parseDouble(doc.getElementsByTagName("OUTLIERHEALTH").item(0).getTextContent()));
+            healthDetail.put(WINDOWMEANCHECK, Double.parseDouble(doc.getElementsByTagName("WINDOWMEANCHECK").item(0).getTextContent()));
+            healthDetail.put(REPEATNOISECHECK, Double.parseDouble(doc.getElementsByTagName("REPEATNOISECHECK").item(0).getTextContent()));
+            healthDetail.put(HIGHTOLOWCORRCHECKHEALTH, Double.parseDouble(doc.getElementsByTagName("HIGHTOLOWCORRCHECKHEALTH").item(0).getTextContent()));
+            healthDetail.put(WINDOWCORRCHECKHEALTH, Double.parseDouble(doc.getElementsByTagName("WINDOWCORRCHECKHEALTH").item(0).getTextContent()));
+            healthDetail.put(NEARWCCOUNT, Double.parseDouble(doc.getElementsByTagName("NEARWCCOUNT").item(0).getTextContent()));
+            healthDetail.put(LANE2LANECORRCHECKHEALTH, Double.parseDouble(doc.getElementsByTagName("LANE2LANECORRCHECKHEALTH").item(0).getTextContent()));
+            // trustDetail
+            trustDetail.put(SYSTEMCOUNT, Double.parseDouble(doc.getElementsByTagName("SYSTEMCOUNT").item(0).getTextContent()));
+            trustDetail.put(REPEATCOUNT, Double.parseDouble(doc.getElementsByTagName("REPEATCOUNT").item(0).getTextContent()));
+            trustDetail.put(MEANCHECK, Double.parseDouble(doc.getElementsByTagName("MEANCHECK").item(0).getTextContent()));
+            trustDetail.put(MINCHECK, Double.parseDouble(doc.getElementsByTagName("MINCHECK").item(0).getTextContent()));
+            trustDetail.put(SIGMAMEANCHECKTRUST, Double.parseDouble(doc.getElementsByTagName("SIGMAMEANCHECKTRUST").item(0).getTextContent()));
+            trustDetail.put(SIGMAMINCHECKTRUST, Double.parseDouble(doc.getElementsByTagName("SIGMAMINCHECKTRUST").item(0).getTextContent()));
+            trustDetail.put(TOTALSIGMACHECK, Double.parseDouble(doc.getElementsByTagName("TOTALSIGMACHECK").item(0).getTextContent()));
+            trustDetail.put(OUTLIERTRUST, Double.parseDouble(doc.getElementsByTagName("OUTLIERTRUST").item(0).getTextContent()));
+            trustDetail.put(HIGHTOLOWCORRCHECKTRUST, Double.parseDouble(doc.getElementsByTagName("HIGHTOLOWCORRCHECKTRUST").item(0).getTextContent()));
+            trustDetail.put(WINDOWCORRCHECKTRUST, Double.parseDouble(doc.getElementsByTagName("WINDOWCORRCHECKTRUST").item(0).getTextContent()));
+            trustDetail.put(LANE2LANECORRCHECKTRUST, Double.parseDouble(doc.getElementsByTagName("LANE2LANECORRCHECKTRUST").item(0).getTextContent()));
+        } catch (ParserConfigurationException | SAXException | IOException e) {
+            e.getMessage();
         }
-        doc.getDocumentElement().normalize();
-
-        thresholds = new double[4];
-        highThresholds = new double[4];
-        repeatNoiseThresholds = new double[4];
-
-        for (int i = 1; i <= 4; i++) {
-            thresholds[i - 1] = Double.parseDouble(doc.getElementsByTagName("T" + i).item(0).getTextContent());
-            highThresholds[i - 1] = Double.parseDouble(doc.getElementsByTagName("T" + i + "H").item(0).getTextContent());
-            repeatNoiseThresholds[i - 1] = Double.parseDouble(doc.getElementsByTagName("T" + i + "R").item(0).getTextContent());
-        }
-        sigmaThreshold = Double.parseDouble(doc.getElementsByTagName("TS").item(0).getTextContent());
-        sigmaThreshold2 = Double.parseDouble(doc.getElementsByTagName("TS2").item(0).getTextContent());
-        corrThreshold = Double.parseDouble(doc.getElementsByTagName("TC").item(0).getTextContent());
-        lane2LaneCorrThresholds = Double.parseDouble(doc.getElementsByTagName("TL").item(0).getTextContent());
-
-        outlierThresholds = new double[6];
-        pairedOutlierThresholds = new double[6];
-
-        for (int i = 1; i <= 6; i++) {
-            outlierThresholds[i - 1] = Double.parseDouble(doc.getElementsByTagName("T" + i + "O").item(0).getTextContent());
-            pairedOutlierThresholds[i - 1] = Double.parseDouble(doc.getElementsByTagName("T" + i + "PO").item(0).getTextContent());
-        }
-        byLaneThreshold = Double.parseDouble(doc.getElementsByTagName("TBL").item(0).getTextContent());
-
-        System.out.println("Thresholds initialized");
-        System.out.print(Arrays.toString(thresholds));
-        System.out.print(Arrays.toString(highThresholds));
-        System.out.print(Arrays.toString(repeatNoiseThresholds));
-        System.out.print(Arrays.toString(outlierThresholds));
-        System.out.println(Arrays.toString(pairedOutlierThresholds));
-        System.out.println(sigmaThreshold + ", " + sigmaThreshold2 + ", " + corrThreshold + ", " + lane2LaneCorrThresholds + ", " + byLaneThreshold);
-
-        // benchmarks
-        eyeChartIntelMinBenchmark = new double[4];
-        eyeChartIntelMeanBenchmark = new double[4];
-
-        for (int i = 1; i <= 4; i++) {
-            eyeChartIntelMinBenchmark[i - 1] = Double.parseDouble(doc.getElementsByTagName("B" + i + "EyeMin").item(0).getTextContent());
-            eyeChartIntelMeanBenchmark[i - 1] = Double.parseDouble(doc.getElementsByTagName("B" + i + "EyeMean").item(0).getTextContent());
-        }
-        healthBenchmark = Double.parseDouble(doc.getElementsByTagName("BH").item(0).getTextContent());
-        trustBenchmark = Double.parseDouble(doc.getElementsByTagName("BT").item(0).getTextContent());
-
-        System.out.println("Benchmarks initialized");
-        System.out.print(Arrays.toString(eyeChartIntelMinBenchmark));
-        System.out.println(Arrays.toString(eyeChartIntelMeanBenchmark));
-        System.out.println(healthBenchmark + ", " + trustBenchmark);
-
-        // healthDetail
-        healthDetail.put(MEANMINCHECK, Double.parseDouble(doc.getElementsByTagName("MEANMINCHECK").item(0).getTextContent()));
-        healthDetail.put(MINMINCHECK, Double.parseDouble(doc.getElementsByTagName("MINMINCHECK").item(0).getTextContent()));
-        healthDetail.put(HIGHMEANMINCHECK, Double.parseDouble(doc.getElementsByTagName("HIGHMEANMINCHECK").item(0).getTextContent()));
-        healthDetail.put(HIGHMINMINCHECK, Double.parseDouble(doc.getElementsByTagName("HIGHMINMINCHECK").item(0).getTextContent()));
-        healthDetail.put(SIGMAMEANCHECK, Double.parseDouble(doc.getElementsByTagName("SIGMAMEANCHECK").item(0).getTextContent()));
-        healthDetail.put(SIGMAMINCHECK, Double.parseDouble(doc.getElementsByTagName("SIGMAMINCHECK").item(0).getTextContent()));
-        healthDetail.put(HIGHMEANMEANCHECK, Double.parseDouble(doc.getElementsByTagName("HIGHMEANMEANCHECK").item(0).getTextContent()));
-        healthDetail.put(HIGHMINMEANCHECK, Double.parseDouble(doc.getElementsByTagName("HIGHMINMEANCHECK").item(0).getTextContent()));
-        healthDetail.put(OUTLIERHEALTH, Double.parseDouble(doc.getElementsByTagName("OUTLIERHEALTH").item(0).getTextContent()));
-        healthDetail.put(WINDOWMEANCHECK, Double.parseDouble(doc.getElementsByTagName("WINDOWMEANCHECK").item(0).getTextContent()));
-        healthDetail.put(REPEATNOISECHECK, Double.parseDouble(doc.getElementsByTagName("REPEATNOISECHECK").item(0).getTextContent()));
-        healthDetail.put(HIGHTOLOWCORRCHECKHEALTH, Double.parseDouble(doc.getElementsByTagName("HIGHTOLOWCORRCHECKHEALTH").item(0).getTextContent()));
-        healthDetail.put(WINDOWCORRCHECKHEALTH, Double.parseDouble(doc.getElementsByTagName("WINDOWCORRCHECKHEALTH").item(0).getTextContent()));
-        healthDetail.put(NEARWCCOUNT, Double.parseDouble(doc.getElementsByTagName("NEARWCCOUNT").item(0).getTextContent()));
-        healthDetail.put(LANE2LANECORRCHECKHEALTH, Double.parseDouble(doc.getElementsByTagName("LANE2LANECORRCHECKHEALTH").item(0).getTextContent()));
-        // trustDetail
-        trustDetail.put(SYSTEMCOUNT, Double.parseDouble(doc.getElementsByTagName("SYSTEMCOUNT").item(0).getTextContent()));
-        trustDetail.put(REPEATCOUNT, Double.parseDouble(doc.getElementsByTagName("REPEATCOUNT").item(0).getTextContent()));
-        trustDetail.put(MEANCHECK, Double.parseDouble(doc.getElementsByTagName("MEANCHECK").item(0).getTextContent()));
-        trustDetail.put(MINCHECK, Double.parseDouble(doc.getElementsByTagName("MINCHECK").item(0).getTextContent()));
-        trustDetail.put(SIGMAMEANCHECKTRUST, Double.parseDouble(doc.getElementsByTagName("SIGMAMEANCHECKTRUST").item(0).getTextContent()));
-        trustDetail.put(SIGMAMINCHECKTRUST, Double.parseDouble(doc.getElementsByTagName("SIGMAMINCHECKTRUST").item(0).getTextContent()));
-        trustDetail.put(TOTALSIGMACHECK, Double.parseDouble(doc.getElementsByTagName("TOTALSIGMACHECK").item(0).getTextContent()));
-        trustDetail.put(OUTLIERTRUST, Double.parseDouble(doc.getElementsByTagName("OUTLIERTRUST").item(0).getTextContent()));
-        trustDetail.put(HIGHTOLOWCORRCHECKTRUST, Double.parseDouble(doc.getElementsByTagName("HIGHTOLOWCORRCHECKTRUST").item(0).getTextContent()));
-        trustDetail.put(WINDOWCORRCHECKTRUST, Double.parseDouble(doc.getElementsByTagName("WINDOWCORRCHECKTRUST").item(0).getTextContent()));
-        trustDetail.put(LANE2LANECORRCHECKTRUST, Double.parseDouble(doc.getElementsByTagName("LANE2LANECORRCHECKTRUST").item(0).getTextContent()));
-
-        System.out.println("Coefficients initialized");
-
+        //set all outlier indicators as false
         outliers = new boolean[5];
         for (int i = 0; i < 5; i++) {
             outliers[i] = false;
         }
-
+        //set validation benchark
+        validation = 5;
+        //get system and repeat counts
         TestSystem tempSystem;
         String systemID;
-        for (int i = 0; i < getDirectionByIndex(0).getSize(); i++) {
-            tempSystem = getSystemByIndexes(0, i);
-            systemID = tempSystem.getSystemID();
-            systems_repeats.put(systemID, tempSystem.getSize());
+        String summaryDirName = path + "/" + getCustomerID();
+        String summaryFileName = "summary.xml";
+        File summaryDir = new File(summaryDirName);
+        File summaryFile = new File(summaryDir, summaryFileName);
+        if (!summaryDir.exists() || !summaryFile.exists()) {
+            for (int i = 0; i < getDirectionByIndex(0).getSize(); i++) {
+                tempSystem = getSystemByIndexes(0, i);
+                systemID = tempSystem.getSystemID();
+                systems_repeats.put(systemID, tempSystem.getSize());
+            }
+        } else {
+            TestSummary testSummary;
+            Map<String, Integer> tempMap;
+            XStream xstream = new XStream(new DomDriver());
+            xstream.alias("testSummary", TestSummary.class);
+            xstream.alias("testProduct", TestProduct.class);
+            xstream.alias("testBrief", TestBrief.class);
+            String xml = "";
+            //read in product test information
+            try {
+                BufferedReader input = new BufferedReader(new FileReader(summaryFile));
+                StringBuilder sb = new StringBuilder();
+                String line = input.readLine();
+                while (line != null) {
+                    sb.append(line);
+                    sb.append(System.lineSeparator());
+                    line = input.readLine();
+                }
+                xml = sb.toString();
+                input.close();
+            } catch (Exception e) {
+                System.out.println("Could find file");
+            }
+            //convert to summary object
+            testSummary = (TestSummary) xstream.fromXML(xml);
+            tempMap = testSummary.getProduct(productID).getSystems_repeats();
+            //get existing system repeat count and add new system repeat count
+            for (int i = 0; i < getDirectionByIndex(0).getSize(); i++) {
+                tempSystem = getSystemByIndexes(0, i);
+                systemID = tempSystem.getSystemID();
+                tempMap.put(systemID, tempSystem.getSize() + tempMap.get(systemID));
+            }
+            systems_repeats = tempMap;
         }
     }
 
+    /**
+     * Check outliers of the test
+     */
     private void checkOutlier() {
         //Obvious scan
         boolean outlierSystem;
+        String message;
         for (int i = 0; i < getDirectionByIndex(0).getSize(); i++) {
             outlierSystem = false;
             for (int j = 0; j < size; j++) {
@@ -322,25 +318,28 @@ public class Test {
                 }
             }
             if (outlierSystem) {
-                messages.append("Remeasure " + getSystemByIndexes(0, i).getSystemID() + ": all zeros\n");
+                message = "Remeasure " + getSystemByIndexes(0, i).getSystemID() + ": all zeros;";
+                messages.append(message);
                 outliers[0] = true;
             }
         }
-        System.out.println("Obvious scan done");
-
+        //check direction outlier
         for (int i = 0; i < size; i++) {
             getDirectionByIndex(i).findWorstCase(byLaneThreshold);
             getDirectionByIndex(i).findOutlier(outlierThresholds, outliers, messages);
         }
-        System.out.println("Direction outlier checked");
+        //check paired direction outlier
         for (int i = 0; i < size / 2; i++) {
             getPairedDirectionByIndex(i).findWorstCase(byLaneThreshold);
             getPairedDirectionByIndex(i).findOutlier(pairedOutlierThresholds, outliers, messages);
         }
-        System.out.println("Paried direction outlier checked");
     }
 
+    /**
+     * Compute statistics excluding outliers
+     */
     private void findNoOutlierStats() {
+        //traverse each repeat of each direction
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < getDirectionByIndex(i).getSize(); j++) {
                 for (int k = 0; k < getSystemByIndexes(i, j).getSize(); k++) {
@@ -350,6 +349,7 @@ public class Test {
             }
             getDirectionByIndex(i).findStats(CHECKOUTLIER);
         }
+        //traverse each repeat of each paired directions
         for (int i = 0; i < size / 2; i++) {
             for (int j = 0; j < getPairedDirectionByIndex(i).getSize(); j++) {
                 for (int k = 0; k < getPairedSystemByIndexes(i, j).getSize(); k++) {
@@ -359,190 +359,195 @@ public class Test {
             }
             getPairedDirectionByIndex(i).findStats(CHECKOUTLIER);
         }
-        System.out.println("No outlier stats done");
     }
 
+    /**
+     * Check and compute scores.
+     */
     private void basicChecks() {
         for (int i = 0; i < size / 2; i++) {
             // basic mean check
-            basicMeanCheck = basicMeanCheck && directions[2 * i].getBasicStats().getMeanMin() > thresholds[i]
-                    && directions[2 * i + 1].getBasicStats().getMeanMin() > thresholds[i];
-            outlierMeanCheck = outlierMeanCheck && directions[2 * i].getNoOutlierStats().getMeanMin() > thresholds[i]
-                    && directions[2 * i + 1].getNoOutlierStats().getMeanMin() > thresholds[i];
-
+            basicMeanCheck = basicMeanCheck && getDirectionByIndex(2 * i).getBasicStats().getMeanMin() > thresholds[i]
+                    && getDirectionByIndex(2 * i + 1).getBasicStats().getMeanMin() > thresholds[i];
+            
+            outlierMeanCheck = outlierMeanCheck && getDirectionByIndex(2 * i).getNoOutlierStats().getMeanMin() > thresholds[i]
+                    && getDirectionByIndex(2 * i + 1).getNoOutlierStats().getMeanMin() > thresholds[i];
             // basic min check
-            basicMinCheck = basicMinCheck && directions[2 * i].getBasicStats().getMin() > thresholds[i]
-                    && directions[2 * i + 1].getBasicStats().getMin() > thresholds[i];
-            outlierMeanCheck = outlierMeanCheck && directions[2 * i].getNoOutlierStats().getMin() > thresholds[i]
-                    && directions[2 * i + 1].getNoOutlierStats().getMin() > thresholds[i];
-
+            basicMinCheck = basicMinCheck && getDirectionByIndex(2 * i).getBasicStats().getMin() > thresholds[i]
+                    && getDirectionByIndex(2 * i + 1).getBasicStats().getMin() > thresholds[i];
+            outlierMinCheck = outlierMinCheck && getDirectionByIndex(2 * i).getNoOutlierStats().getMin() > thresholds[i]
+                    && getDirectionByIndex(2 * i + 1).getNoOutlierStats().getMin() > thresholds[i];
             // mean check 2 (high threshold)
-            basicMeanCheckH = basicMeanCheckH && directions[2 * i].getBasicStats().getMeanMin() > highThresholds[i]
-                    && directions[2 * i + 1].getBasicStats().getMeanMin() > highThresholds[i];
+            basicMeanCheckH = basicMeanCheckH && getDirectionByIndex(2 * i).getBasicStats().getMeanMin() > highThresholds[i]
+                    && getDirectionByIndex(2 * i + 1).getBasicStats().getMeanMin() > highThresholds[i];
             // min check 2 (high threshold)	
-            basicMinCheckH = basicMinCheckH && directions[2 * i].getBasicStats().getMin() > highThresholds[i]
-                    && directions[2 * i + 1].getBasicStats().getMin() > highThresholds[i];
-
+            basicMinCheckH = basicMinCheckH && getDirectionByIndex(2 * i).getBasicStats().getMin() > highThresholds[i]
+                    && getDirectionByIndex(2 * i + 1).getBasicStats().getMin() > highThresholds[i];
             // mean check 3
-            outlierMeanCheckH2 = outlierMeanCheckH2 && directions[2 * i].getNoOutlierStats().getMean() > highThresholds[i]
-                    && directions[2 * i + 1].getNoOutlierStats().getMean() > highThresholds[i];
+            outlierMeanCheckH2 = outlierMeanCheckH2 && getDirectionByIndex(2 * i).getNoOutlierStats().getMean() > highThresholds[i]
+                    && getDirectionByIndex(2 * i + 1).getNoOutlierStats().getMean() > highThresholds[i];
             // mean check 4
-            outlierMeanCheckH3 = outlierMeanCheckH3 && directions[2 * i].getNoOutlierStats().getMinMean() > highThresholds[i]
-                    && directions[2 * i + 1].getNoOutlierStats().getMinMean() > highThresholds[i];
-
+            outlierMeanCheckH3 = outlierMeanCheckH3 && getDirectionByIndex(2 * i).getNoOutlierStats().getMinMean() > highThresholds[i]
+                    && getDirectionByIndex(2 * i + 1).getNoOutlierStats().getMinMean() > highThresholds[i];
             // window check
-            windowCheck = windowCheck && pairedDirections[i].getBasicStats().getMeanMin() > 2 * thresholds[i];
-            outlierWindowCheck = outlierWindowCheck && pairedDirections[i].getNoOutlierStats().getMeanMin() > 2 * thresholds[i];
-
+            windowCheck = windowCheck && getPairedDirectionByIndex(i).getBasicStats().getMeanMin() > 2 * thresholds[i];
+            outlierWindowCheck = outlierWindowCheck && getPairedDirectionByIndex(i).getNoOutlierStats().getMeanMin() > 2 * thresholds[i];
             // noise check
-            outlierNoiseCheck = outlierNoiseCheck && directions[2 * i].getNoOutlierStats().getRepeatNoise1() > repeatNoiseThresholds[i]
-                    && directions[2 * i + 1].getNoOutlierStats().getRepeatNoise1() > repeatNoiseThresholds[i];
-
-            if (directions[i].getSize() * getSystemByIndexes(i, 0).getSize() > 1) {
+            outlierNoiseCheck = outlierNoiseCheck && getDirectionByIndex(2 * i).getNoOutlierStats().getRepeatNoise1() > repeatNoiseThresholds[i]
+                    && getDirectionByIndex(2 * i + 1).getNoOutlierStats().getRepeatNoise1() > repeatNoiseThresholds[i];
+            if (getDirectionByIndex(i).getSize() * getSystemByIndexes(i, 0).getSize() > 1) {
                 //high to low correlation check
-                udCorr = pearsons.correlation(directions[i].getAllMarginMean(), directions[i + 1].getAllMarginMean()) > corrThreshold;
-                if (udCorr) {
-                    health += healthDetail.get(HIGHTOLOWCORRCHECKHEALTH);
-                    trust += trustDetail.get(HIGHTOLOWCORRCHECKTRUST);
-                }
+                udCorr = pearsons.correlation(getDirectionByIndex(i).getAllMarginMean(), getDirectionByIndex(i + 1).getAllMarginMean()) > corrThreshold;
             }
-
             // lane2lane check
-            if (directions[i].getSize() > 1) {
-                lane2LaneCorr = directions[2 * i].getLane2LaneCorr() > lane2LaneCorrThresholds && directions[2 * i + 1].getLane2LaneCorr() > lane2LaneCorrThresholds;
-                if (lane2LaneCorr) {
-                    health += healthDetail.get(LANE2LANECORRCHECKHEALTH);
-                    trust += trustDetail.get(LANE2LANECORRCHECKTRUST);
-                }
+            if (getDirectionByIndex(i).getSize() > 1) {
+                lane2LaneCorr = getDirectionByIndex(2 * i).getLane2LaneCorr() > lane2LaneCorrThresholds && getDirectionByIndex(2 * i + 1).getLane2LaneCorr() > lane2LaneCorrThresholds;
             }
-
         }
-
+        
         for (int i = 0; i < size; i++) {
             // sigma mean check
-            basicSigmaMeanCheck = basicSigmaMeanCheck && directions[i].getBasicStats().getSigmaMean() < sigmaThreshold;
-            outlierSigmaMeanCheck = outlierSigmaMeanCheck && directions[i].getNoOutlierStats().getSigmaMean() < sigmaThreshold;
+            basicSigmaMeanCheck = basicSigmaMeanCheck && getDirectionByIndex(i).getBasicStats().getSigmaMean() < sigmaThreshold;
+            outlierSigmaMeanCheck = outlierSigmaMeanCheck && getDirectionByIndex(i).getNoOutlierStats().getSigmaMean() < sigmaThreshold;
             // sigma min check
-            basicSigmaMinCheck = basicSigmaMinCheck && directions[i].getBasicStats().getSigmaMin() < sigmaThreshold;
-            outlierSigmaMinCheck = outlierSigmaMinCheck && directions[i].getNoOutlierStats().getSigmaMin() < sigmaThreshold;
+            basicSigmaMinCheck = basicSigmaMinCheck && getDirectionByIndex(i).getBasicStats().getSigmaMin() < sigmaThreshold;
+            outlierSigmaMinCheck = outlierSigmaMinCheck && getDirectionByIndex(i).getNoOutlierStats().getSigmaMin() < sigmaThreshold;
             // sigma check 2
-            outlierSigmaMinCheckT2 = outlierSigmaMinCheckT2 && directions[i].getNoOutlierStats().getSigmaMin() < sigmaThreshold2;
+            outlierSigmaMinCheckT2 = outlierSigmaMinCheckT2 && getDirectionByIndex(i).getNoOutlierStats().getSigmaMin() < sigmaThreshold2;
             // near worst case count
-            nearWcCount = Math.max(nearWcCount, directions[i].getNearWcCount());
+            nearWcCount = Math.max(nearWcCount, getDirectionByIndex(i).getNearWcCount());
         }
-
+        // window correlation check
+        if (getDirectionByIndex(0).getSize() * getSystemByIndexes(0, 0).getSize() > 1) {
+//            for (int i = 0; i + 1 < size / 2; i++) {
+            for (int i = 0; i < size / 4; i++) {
+                winCorr = winCorr && pearsons.correlation(getPairedDirectionByIndex(2 * i).getAllMarginMean(), getPairedDirectionByIndex(2 * i + 1).getAllMarginMean()) > corrThreshold;
+            }
+        }
+        
+        //Get detail scores
         // mean check 1
-        if (basicMeanCheck || outlierMeanCheck) {
-            health += healthDetail.get(MEANMINCHECK);
+        if (!basicMeanCheck && !outlierMeanCheck) {
+            healthDetail.put(MEANMINCHECK, 0.0);
         }
-        if (outlierMeanCheck == basicMeanCheck) {
-            trust += trustDetail.get(MEANCHECK);
+        if (outlierMeanCheck != basicMeanCheck) {
+            trustDetail.put(MEANCHECK, 0.0);
         }
         // mean check 2 (high threshold)
-        if (basicMeanCheckH) {
-            health += healthDetail.get(HIGHMEANMINCHECK);
+        if (!basicMeanCheckH) {
+            healthDetail.put(HIGHMEANMINCHECK, 0.0);
         }
-
         // min check 1
-        if (basicMinCheck || outlierMinCheck) {
-            health += healthDetail.get(MINMINCHECK);
+        if (!basicMinCheck && !outlierMinCheck) {
+            healthDetail.put(MINMINCHECK, 0.0);
         }
-        if (outlierMinCheck == basicMinCheck) {
-            trust += trustDetail.get(MINCHECK);
+        if (outlierMinCheck != basicMinCheck) {
+            trustDetail.put(MINCHECK, 0.0);
         }
         // min check 2 (high threshold)
-        if (basicMinCheckH) {
-            health += healthDetail.get(HIGHMINMINCHECK);
+        if (!basicMinCheckH) {
+            healthDetail.put(HIGHMINMINCHECK, 0.0);
         }
-
         // sigma check (mean)
-        if (basicSigmaMeanCheck || outlierSigmaMeanCheck) {
-            health += healthDetail.get(SIGMAMEANCHECK);
+        if (!basicSigmaMeanCheck && !outlierSigmaMeanCheck) {
+            healthDetail.put(SIGMAMEANCHECK, 0.0);
         }
-        if (outlierMeanCheck == basicMeanCheck) {
-            trust += trustDetail.get(SIGMAMEANCHECKTRUST);
+        if (outlierMeanCheck != basicMeanCheck) {
+            trustDetail.put(SIGMAMEANCHECKTRUST, 0.0);
         }
         // sigma check (min)
-        if (basicSigmaMinCheck || outlierSigmaMinCheck) {
-            health += healthDetail.get(SIGMAMINCHECK);
+        if (!basicSigmaMinCheck && !outlierSigmaMinCheck) {
+            healthDetail.put(SIGMAMINCHECK, 0.0);
         }
-        if (outlierMinCheck == basicMinCheck) {
-            trust += trustDetail.get(SIGMAMINCHECKTRUST);
+        if (outlierMinCheck != basicMinCheck) {
+            trustDetail.put(SIGMAMINCHECKTRUST, 0.0);
         }
         // sigma check 2
-        if (outlierSigmaMinCheckT2) {
-            trust -= trustDetail.get(TOTALSIGMACHECK);
+        if (!outlierSigmaMinCheckT2) {
+            trustDetail.put(TOTALSIGMACHECK, trustDetail.get(TOTALSIGMACHECK));
+        } else {
+            trustDetail.put(TOTALSIGMACHECK, 0.0);
         }
-
         // mean check 3 (high threshold)
-        if (outlierMeanCheckH2) {
-            health += healthDetail.get(HIGHMEANMEANCHECK);
+        if (!outlierMeanCheckH2) {
+            healthDetail.put(HIGHMEANMEANCHECK, 0.0);
         }
         // mean check 4 (high threshold)
-        if (outlierMeanCheckH3) {
-            health += healthDetail.get(HIGHMINMEANCHECK);
+        if (!outlierMeanCheckH3) {
+            healthDetail.put(HIGHMINMEANCHECK, 0.0);
         }
-
         // outlier count
         for (int i = 0; i < outliers.length; i++) {
             if (outliers[i]) {
                 outlierCount++;
             }
         }
-        health += healthDetail.get(OUTLIERHEALTH) * outlierCount;
-        trust += trustDetail.get(OUTLIERTRUST) * outlierCount;
-
+        healthDetail.put(OUTLIERHEALTH, healthDetail.get(OUTLIERHEALTH) * outlierCount);
+        trustDetail.put(OUTLIERTRUST, trustDetail.get(OUTLIERTRUST) * outlierCount);
         // window check
-        if (windowCheck || outlierWindowCheck) {
-            health += healthDetail.get(WINDOWMEANCHECK);
+        if (!windowCheck && !outlierWindowCheck) {
+            healthDetail.put(WINDOWMEANCHECK, 0.0);
         }
-
         // repeatability noise
-        if (outlierNoiseCheck) {
-            health += healthDetail.get(REPEATNOISECHECK);
+        if (!outlierNoiseCheck) {
+            healthDetail.put(REPEATNOISECHECK, 0.0);
         }
-
+        //high to low correlation check
+        if (!udCorr) {
+            healthDetail.put(HIGHTOLOWCORRCHECKHEALTH, 0.0);
+            trustDetail.put(HIGHTOLOWCORRCHECKTRUST, 0.0);
+        }
         // window correlation check
-        if (getDirectionByIndex(0).getSize() * getSystemByIndexes(0, 0).getSize() > 1) {
-            for (int i = 0; i + 1 < size / 2; i++) {
-                winCorr = winCorr && pearsons.correlation(pairedDirections[i].getAllMarginMean(), pairedDirections[i + 1].getAllMarginMean()) > corrThreshold;
-            }
-            if (winCorr) {
-                health += healthDetail.get(WINDOWCORRCHECKHEALTH);
-                trust += trustDetail.get(WINDOWCORRCHECKTRUST);
+        if (!winCorr) {
+            healthDetail.put(WINDOWCORRCHECKHEALTH, 0.0);
+            trustDetail.put(WINDOWCORRCHECKTRUST, 0.0);
+        }
+        //lane2lane chack
+        if (!lane2LaneCorr) {
+            healthDetail.put(LANE2LANECORRCHECKHEALTH, 0.0);
+            trustDetail.put(LANE2LANECORRCHECKTRUST, 0.0);
+        }
+        //near worst case count
+        healthDetail.put(NEARWCCOUNT, healthDetail.get(NEARWCCOUNT) * nearWcCount);
+        //check system and repeat count
+        trustDetail.put(SYSTEMCOUNT, (double) systems_repeats.size());
+        trustDetail.put(REPEATCOUNT, Util.mapMeanValue(systems_repeats));
+        String message = "";
+        for (Map.Entry<String, Integer> entry : systems_repeats.entrySet()) {
+            if (entry.getValue() < validation) {
+                message = message + " needs more test;";
             }
         }
-
-        // near worst case count
-        health += healthDetail.get(NEARWCCOUNT) * nearWcCount;
-
+        messages.insert(0, message);
+        health = Util.mapSumValue(healthDetail);
+        trust = Util.mapSumValue(trustDetail);
         // check health and trust scores with benchmarks
         if (health >= healthBenchmark && trust >= trustBenchmark) {
             conclusion = "pass";
         } else {
             conclusion = "fail";
             if (health < healthBenchmark && trust < trustBenchmark) {
-                messages.insert(0, "Low health score and low trust score.");
+                messages.insert(0, "Low health score and low trust score;");
             } else if (health < healthBenchmark) {
-                messages.insert(0, "Low health score.");
+                messages.insert(0, "Low health score;");
             } else {
-                messages.insert(0, "Low trust score.");
+                messages.insert(0, "Low trust score;");
             }
         }
     }
 
     /**
-     * Pair up/down, right/left directions together
+     * Pair up/down, right/left directions together.
      */
     private void pairDirections() {
         pairedDirections = new TestDirection[size / 2];
         for (int i = 0; i < size / 2; i++) {
-            pairedDirections[i] = directions[i * 2].add(directions[i * 2 + 1]);
+            pairedDirections[i] = getDirectionByIndex(2 * i).add(getDirectionByIndex(2 * i + 1));
         }
     }
 
     /**
-     * Get certain direction according to index
+     * Get certain direction according to index.
      *
      * @param index direction index
      * @return TestDirection object
@@ -551,28 +556,64 @@ public class Test {
         return directions[index];
     }
 
+    /**
+     * Get certain direction pair according to index.
+     *
+     * @param index direction pair index
+     * @return TestDirection object
+     */
     public TestDirection getPairedDirectionByIndex(int index) {
         return pairedDirections[index];
     }
 
+    /**
+     * Get certain system in direction according to indexes.
+     *
+     * @param directionIndex direction index
+     * @param systemIndex system index
+     * @return TestSystem object
+     */
     public TestSystem getSystemByIndexes(int directionIndex, int systemIndex) {
-        return directions[directionIndex].getSystemByIndex(systemIndex);
-    }
-
-    public TestSystem getPairedSystemByIndexes(int directionIndex, int systemIndex) {
-        return pairedDirections[directionIndex].getSystemByIndex(systemIndex);
-    }
-
-    public TestRepeat getRepeatByIndexes(int directionIndex, int systemIndex, int repeatIndex) {
-        return directions[directionIndex].getSystemByIndex(systemIndex).getRepeatByIndex(repeatIndex);
-    }
-
-    public TestRepeat getPairedRepeatByIndexes(int directionIndex, int systemIndex, int repeatIndex) {
-        return pairedDirections[directionIndex].getSystemByIndex(systemIndex).getRepeatByIndex(repeatIndex);
+        return getDirectionByIndex(directionIndex).getSystemByIndex(systemIndex);
     }
 
     /**
-     * Get number of directions of the test
+     * Get certain system in direction pair according to indexes.
+     *
+     * @param directionIndex direction pair index
+     * @param systemIndex system index
+     * @return TestSystem object
+     */
+    public TestSystem getPairedSystemByIndexes(int directionIndex, int systemIndex) {
+        return getPairedDirectionByIndex(directionIndex).getSystemByIndex(systemIndex);
+    }
+
+    /**
+     * Get certain repeat in direction according to indexes.
+     *
+     * @param directionIndex direction index
+     * @param systemIndex system index
+     * @param repeatIndex repeat index
+     * @return SystemRepeat object
+     */
+    public TestRepeat getRepeatByIndexes(int directionIndex, int systemIndex, int repeatIndex) {
+        return getDirectionByIndex(directionIndex).getSystemByIndex(systemIndex).getRepeatByIndex(repeatIndex);
+    }
+
+    /**
+     * Get certain repeat in direction pair according to indexes
+     *
+     * * @param directionIndex direction pair index
+     * @param systemIndex system index
+     * @param repeatIndex repeat index
+     * @return SystemRepeat object
+     */
+    public TestRepeat getPairedRepeatByIndexes(int directionIndex, int systemIndex, int repeatIndex) {
+        return getPairedDirectionByIndex(directionIndex).getSystemByIndex(systemIndex).getRepeatByIndex(repeatIndex);
+    }
+
+    /**
+     * Get number of directions of the test.
      *
      * @return number of directions
      */
@@ -581,7 +622,7 @@ public class Test {
     }
 
     /**
-     * Get the number of outliers of the test
+     * Get the number of outliers of the test.
      *
      * @return number of outliers
      */
@@ -589,10 +630,18 @@ public class Test {
         return outlierCount;
     }
 
+    /**
+     * Get health score.
+     * @return health score
+     */
     public double getHealth() {
         return health;
     }
 
+    /**
+     * Get trust score.
+     * @return trust score
+     */
     public double getTrust() {
         return trust;
     }
@@ -633,15 +682,19 @@ public class Test {
         return eyeChartIntelMeanBenchmark;
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        String message;
         for (int i = 0; i < size; i++) {
-            sb.append("direction" + i + " \n");
-            sb.append(directions[i].toString());
+            message = getDirectionByIndex(i) + "\n";
+            sb.append(message);
+            sb.append(getDirectionByIndex(i).toString());
         }
         for (int i = 0; i < size / 2; i++) {
-            sb.append("pairedDirection" + i + " \n");
-            sb.append(pairedDirections[i].toString());
+            message = getPairedDirectionByIndex(i) + "\n";
+            sb.append(message);
+            sb.append(getPairedDirectionByIndex(i).toString());
         }
         sb.append(messages.toString());
         return sb.toString();

@@ -27,21 +27,49 @@ public class ResultExporter {
 	 * system assigned directories.
 	 * 
 	 * @param test test object containing all test data and results.
+         * @param path output path
 	 */
 	public static void output(Test test, String path) {
-		//Output to test result file located in customerID/result/ directory.
+		//Create file paths and file names
+                String summaryDirName = path + "/" + test.getCustomerID();
+                System.out.println(summaryDirName);
+		String summaryFileName = "summary.xml";
+		File summaryDir = new File(summaryDirName);
+		if (!summaryDir.exists()) {
+			System.out.println("Summary folder not found, create new one");
+			summaryDir.mkdir();
+		}
+		File summaryFile = new File(summaryDir, summaryFileName);
+                //Get test date time
+		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+		Calendar cal = Calendar.getInstance();
+		String timeStamp = dateFormat.format(cal.getTime());
+		String resultDirName = path + "/" + test.getCustomerID() + "/result";
+                System.out.println(resultDirName);
+		String resultFileName = test.getProductID() + "_" + timeStamp + ".xml";
+		//Write to xml file
+		File resultDir = new File(resultDirName);
+		if (!resultDir.exists()) {
+			System.out.println("Result folder not found, create a new one");
+			resultDir.mkdir();
+		}
+		File resultFile = new File(resultDir, resultFileName);
+                
+
+                //Output to test result file located in customerID/result/ directory.
 		TestDetail testDetail = new TestDetail();
 		testDetail.setHealth(test.getHealth());
 		testDetail.setHealth_detail(test.getHealthDetail());
 		testDetail.setTrust(test.getTrust());
 		testDetail.setTrust_detail(test.getTrustDetail());
 		testDetail.setMessages(test.getTestMessages());
+                testDetail.setSystems_repeats(test.getSystems_repeats());
 		EyeChart eyeChart;
 		LinkedHashMap<String, EyeChart> eyes = new LinkedHashMap<>();
 		String eyeName;
 		double[] min;
 		double[] mean;
-		TestDirection tempDirection = new TestDirection();
+		TestDirection tempDirection;
 		String directionID;
 		//read and write eye charts data
 		//[0] timing left
@@ -52,7 +80,6 @@ public class ResultExporter {
 			tempDirection = test.getDirectionByIndex(i);
 			directionID = tempDirection.getDirectionID();
 			eyeName = directionID.substring(0, 2);
-
 			if (eyes.containsKey(eyeName)) {
 				min = eyes.get(eyeName).getMin();
 				mean = eyes.get(eyeName).getMean();
@@ -67,8 +94,8 @@ public class ResultExporter {
 				eyes.put(eyeName, eyeChart);
 			}
 			if (directionID.toLowerCase().contains("left")) {
-				min[0] = -tempDirection.getBasicStats().getMin();
-				mean[0] = -tempDirection.getBasicStats().getMinMean();
+				min[0] = tempDirection.getBasicStats().getMin();
+				mean[0] = tempDirection.getBasicStats().getMinMean();
 			} else if (directionID.toLowerCase().contains("right")) {
 				min[1] = tempDirection.getBasicStats().getMin();
 				mean[1] = tempDirection.getBasicStats().getMinMean();
@@ -76,8 +103,8 @@ public class ResultExporter {
 				min[2] = tempDirection.getBasicStats().getMin();
 				mean[2] = tempDirection.getBasicStats().getMinMean();
 			} else if (directionID.toLowerCase().contains("low")) {
-				min[3] = -tempDirection.getBasicStats().getMin();
-				mean[3] = -tempDirection.getBasicStats().getMinMean();
+				min[3] = tempDirection.getBasicStats().getMin();
+				mean[3] = tempDirection.getBasicStats().getMinMean();
 			}
 		}
 		testDetail.setEyes(eyes);
@@ -86,21 +113,9 @@ public class ResultExporter {
 		xstream.alias("testDetail", TestDetail.class);
 		xstream.alias("eyeChart", EyeChart.class);
 		String xml = xstream.toXML(testDetail);
-		//Get test date time
-		DateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-		Calendar cal = Calendar.getInstance();
-		String timeStamp = dateFormat.format(cal.getTime());
-		String resultDirName = path + "/" + test.getCustomerID() + "/result";
-		String resultFileName = test.getProductID() + "_" + timeStamp + ".xml";
-		//Write to xml file
-		File dir = new File(resultDirName);
-		if (!dir.exists()) {
-			System.out.println("Folder created");
-			dir.mkdir();
-		}
-		File file = new File(dir, resultFileName);
+		
 		try {
-			BufferedWriter output = new BufferedWriter(new FileWriter(file));
+			BufferedWriter output = new BufferedWriter(new FileWriter(resultFile));
 			output.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n");
 			output.write(xml);
 			output.close();
@@ -117,19 +132,12 @@ public class ResultExporter {
 		xstream.alias("testSummary", TestSummary.class);
 		xstream.alias("testProduct", TestProduct.class);
 		xstream.alias("testBrief", TestBrief.class);
-		String summaryDirName = path + "/" + test.getCustomerID();
-		String summaryFileName = "summary.xml";
-		dir = new File(summaryDirName);
-		if (!dir.exists()) {
-			System.out.println("Folder created");
-			dir.mkdir();
-		}
-		file = new File(dir, summaryFileName);
+		
 		//read existing file if summary exists
-		if (file.exists()) { 
+		if (summaryFile.exists()) { 
 			System.out.println("Summary exists");
 			try {
-				BufferedReader input = new BufferedReader(new FileReader(file));
+				BufferedReader input = new BufferedReader(new FileReader(summaryFile));
 				StringBuilder sb = new StringBuilder();
 				String line = input.readLine();
 				while (line != null) {
@@ -140,7 +148,6 @@ public class ResultExporter {
 				xml = sb.toString();
 				System.out.println("read: " + xml);
 				input.close();
-				System.out.println("XML file has been read");
 			} catch (Exception e) {
 				System.out.println("Could find file");
 			}
@@ -169,14 +176,14 @@ public class ResultExporter {
 		testProduct.addTest(testBrief);
 		testProduct.setLast_test_date(timeStamp);
 		testProduct.setPass_fail(test.getConclusion());
-		testProduct.updateSystemsRepeats(test.getSystems_repeats());
+		testProduct.setSystems_repeats(test.getSystems_repeats());
 		//Update test summary
 		testSummary.updateProduct(test.getProductID(), testProduct);
 		//Convert to xml object
 		xml = xstream.toXML(testSummary);
 		//Write to xml file
 		try {
-			BufferedWriter output = new BufferedWriter(new FileWriter(file));
+			BufferedWriter output = new BufferedWriter(new FileWriter(summaryFile));
 			output.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n");
 			output.write(xml);
 			output.close();
