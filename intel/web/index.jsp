@@ -140,38 +140,7 @@
                             }
                         }
                     %>
-                    <tr class="expandable" color="">
-                        <td>DELL XPS 13</td>
-                        <td><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></td>
-                        <td class="date">04/07/2015</td>                                                                                  <!--remember only expandable rows need to add 'date' class-->
-                        <td><span class="label label-success">PASS</span></td>
-                        <td><a href="Detail?file=asd"><button type="button" class="btn btn-primary">View</button></a></td>
-                    </tr>
-                    <tr>
-                        <td>DELL XPS 13</td>
-                        <td></td>
-                        <td>04/06/2015</td>
-                        <td><span class="label label-success">PASS</span></td>
-                        <td><a href="result.jsp"><button type="button" class="btn btn-primary">View</button></a></td>
-                    </tr>
-                    <tr>
-                        <td>DELL XPS 13</td>
-                        <td></td>
-                        <td>04/05/2015</td>
-                        <td><span class="label label-danger">FAIL</span></td>
-                        <td>
-                            <form  action="Detail?file=asd" method="post">
-                                <button type="submit" class="btn btn-primary">View</button>
-                            </form>
-                        </td>
-                    </tr>
-                    <tr class="expandable" color="">
-                        <td>DELL XPS 14</td>
-                        <td><span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span></td>
-                        <td class="date">04/06/2015</td>
-                        <td><span class="label label-success">PASS</span></td>
-                        <td><a href="Detail?file=asd"><button type="button" class="btn btn-primary">View</button></a></td>
-                    </tr>
+                    
                 </tbody>
             </table>
  	</div>
@@ -232,9 +201,6 @@
 
         //sort
 
-    
-
-
         $("#sort").click(function(){
             var th = $(this);
             var down = th.attr("down");
@@ -258,13 +224,6 @@
             }
 
         })
-            
-            
-                
-                
-                
-
-    
         /**
                 //filter
         (function(document) {

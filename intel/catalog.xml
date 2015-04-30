@@ -8,4 +8,6 @@
     <system systemId="http://localhost:8080/home/DataWebService?xsd=1" uri="src/conf/xml-resources/web-service-references/DataWebService/wsdl/localhost_8080/home/DataWebService.xsd_1.xsd"/>
     <system systemId="http://localhost:8080/SoapWebService/SoapService?wsdl" uri="src/conf/xml-resources/web-service-references/SoapService/wsdl/localhost_8080/SoapWebService/SoapService.wsdl"/>
     <system systemId="http://localhost:8080/SoapWebService/SoapService?xsd=1" uri="src/conf/xml-resources/web-service-references/SoapService/wsdl/localhost_8080/SoapWebService/SoapService.xsd_1.xsd"/>
+    <system systemId="http://128.237.207.25:8080/FileUploadService/FileUploadService?WSDL" uri="src/conf/xml-resources/web-service-references/FileUploadService/wsdl/128.237.207.25_8080/FileUploadService/FileUploadService.wsdl"/>
+    <system systemId="http://128.237.207.25:8080/FileUploadService/FileUploadService?xsd=1" uri="src/conf/xml-resources/web-service-references/FileUploadService/wsdl/128.237.207.25_8080/FileUploadService/FileUploadService.xsd_1.xsd"/>
 </catalog>

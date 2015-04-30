@@ -24,6 +24,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.ws.WebServiceRef;
+import service.FileUploadService_Service;
 
 /**
  *
@@ -31,6 +33,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "login", urlPatterns = {"/userLogin"})
 public class Login extends HttpServlet {
+    @WebServiceRef(wsdlLocation = "WEB-INF/wsdl/128.237.207.25_8080/FileUploadService/FileUploadService.wsdl")
+    private FileUploadService_Service service;
 
     private TestSummary summary;
     private XStream xstream = new XStream(new DomDriver());
@@ -59,7 +63,7 @@ public class Login extends HttpServlet {
             xstream.alias("testSummary", TestSummary.class);
             xstream.alias("testProduct", TestProduct.class);
             xstream.alias("testBrief", TestBrief.class);
-            summary = (TestSummary) xstream.fromXML(getSummary(userName));
+            summary = (TestSummary) xstream.fromXML(getSummary(t.getFolder(userName)));
             request.getSession().setAttribute("summary", summary);
             response.sendRedirect("index.jsp");
         }
@@ -71,18 +75,25 @@ public class Login extends HttpServlet {
         }
     }
 
-    private String getSummary(String id) {
-        String xml = "";
-        File f = new File("/Users/leon/Desktop/Capstone/capstone/intel/summary.xml");
-        try {
-            Scanner s = new Scanner(f);
-            while(s.hasNextLine()){
-                xml = xml.concat(s.nextLine());
-            }
-        } catch (FileNotFoundException ex) {
-            System.out.println("file not found");
-        }
-        return xml;
+//    private String getSummary(String id) {
+//        String xml = "";
+//        File f = new File("/Users/leon/Desktop/Capstone/capstone/intel/summary.xml");
+//        try {
+//            Scanner s = new Scanner(f);
+//            while(s.hasNextLine()){
+//                xml = xml.concat(s.nextLine());
+//            }
+//        } catch (FileNotFoundException ex) {
+//            System.out.println("file not found");
+//        }
+//        return xml;
+//    }
+
+    private String getSummary(java.lang.String file) {
+        // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
+        // If the calling of port operations may lead to race condition some synchronization is required.
+        service.FileUploadService port = service.getFileUploadServicePort();
+        return port.getSummary(file);
     }
 
 }

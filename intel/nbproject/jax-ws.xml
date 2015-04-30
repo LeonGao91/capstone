@@ -6,10 +6,10 @@
     </service>
   </services>
   <clients>
-    <client name="DataWebService">
-      <wsdl-url>http://localhost:8080/home/DataWebService?wsdl</wsdl-url>
-      <local-wsdl-file>localhost_8080/home/DataWebService.wsdl</local-wsdl-file>
-      <package-name forceReplace="true">ServiceClients</package-name>
+    <client name="FileUploadService">
+      <wsdl-url>http://128.237.207.25:8080/FileUploadService/FileUploadService?WSDL</wsdl-url>
+      <local-wsdl-file>128.237.207.25_8080/FileUploadService/FileUploadService.wsdl</local-wsdl-file>
+      <package-name>service</package-name>
       <catalog-file>catalog.xml</catalog-file>
       <wsimport-options>
         <wsimport-option>
@@ -26,43 +26,7 @@
         </wsimport-option>
         <wsimport-option>
           <wsimport-option-name>wsdlLocation</wsimport-option-name>
-          <wsimport-option-value>http://localhost:8080/home/DataWebService?wsdl</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>xnocompile</wsimport-option-name>
-          <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>xendorsed</wsimport-option-name>
-          <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>package</wsimport-option-name>
-          <wsimport-option-value>ServiceClients</wsimport-option-value>
-        </wsimport-option>
-      </wsimport-options>
-    </client>
-    <client name="SoapService">
-      <wsdl-url>http://localhost:8080/SoapWebService/SoapService?wsdl</wsdl-url>
-      <local-wsdl-file>localhost_8080/SoapWebService/SoapService.wsdl</local-wsdl-file>
-      <package-name>test</package-name>
-      <catalog-file>catalog.xml</catalog-file>
-      <wsimport-options>
-        <wsimport-option>
-          <wsimport-option-name>extension</wsimport-option-name>
-          <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>verbose</wsimport-option-name>
-          <wsimport-option-value>true</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>fork</wsimport-option-name>
-          <wsimport-option-value>false</wsimport-option-value>
-        </wsimport-option>
-        <wsimport-option>
-          <wsimport-option-name>wsdlLocation</wsimport-option-name>
-          <wsimport-option-value>http://localhost:8080/SoapWebService/SoapService?wsdl</wsimport-option-value>
+          <wsimport-option-value>http://128.237.207.25:8080/FileUploadService/FileUploadService?WSDL</wsimport-option-value>
         </wsimport-option>
         <wsimport-option>
           <wsimport-option-name>xnocompile</wsimport-option-name>

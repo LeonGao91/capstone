@@ -43,37 +43,21 @@
             <isset property="conf.dir"/>
         </condition>
     </target>
-    <target name="wsimport-client-DataWebService" depends="wsimport-init">
-        <mkdir dir="${build.generated.dir}/jax-wsCache/DataWebService"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/DataWebService" destdir="${build.generated.dir}/jax-wsCache/DataWebService" wsdl="${basedir}/${conf-dir}xml-resources/web-service-references/DataWebService/wsdl/localhost_8080/home/DataWebService.wsdl" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://localhost:8080/home/DataWebService?wsdl" xnocompile="true" xendorsed="true" package="ServiceClients">
-            <depends file="${basedir}/${conf-dir}xml-resources/web-service-references/DataWebService/wsdl/localhost_8080/home/DataWebService.wsdl"/>
-            <produces dir="${build.generated.dir}/jax-wsCache/DataWebService"/>
+    <target name="wsimport-client-FileUploadService" depends="wsimport-init">
+        <mkdir dir="${build.generated.dir}/jax-wsCache/FileUploadService"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/FileUploadService" destdir="${build.generated.dir}/jax-wsCache/FileUploadService" wsdl="${basedir}/${conf-dir}xml-resources/web-service-references/FileUploadService/wsdl/128.237.207.25_8080/FileUploadService/FileUploadService.wsdl" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://128.237.207.25:8080/FileUploadService/FileUploadService?WSDL" xnocompile="true" xendorsed="true">
+            <depends file="${basedir}/${conf-dir}xml-resources/web-service-references/FileUploadService/wsdl/128.237.207.25_8080/FileUploadService/FileUploadService.wsdl"/>
+            <produces dir="${build.generated.dir}/jax-wsCache/FileUploadService"/>
         </wsimport>
         <copy todir="${build.generated.sources.dir}/jax-ws">
-            <fileset dir="${build.generated.dir}/jax-wsCache/DataWebService">
+            <fileset dir="${build.generated.dir}/jax-wsCache/FileUploadService">
                 <include name="**/*.java"/>
             </fileset>
         </copy>
     </target>
-    <target name="wsimport-client-clean-DataWebService" depends="-init-project">
-        <delete dir="${build.generated.sources.dir}/jax-ws/ServiceClients"/>
-        <delete dir="${build.generated.dir}/jax-wsCache/DataWebService"/>
+    <target name="wsimport-client-clean-FileUploadService" depends="-init-project">
+        <delete dir="${build.generated.sources.dir}/jax-ws/service"/>
+        <delete dir="${build.generated.dir}/jax-wsCache/FileUploadService"/>
     </target>
-    <target name="wsimport-client-SoapService" depends="wsimport-init">
-        <mkdir dir="${build.generated.dir}/jax-wsCache/SoapService"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/SoapService" destdir="${build.generated.dir}/jax-wsCache/SoapService" wsdl="${basedir}/${conf-dir}xml-resources/web-service-references/SoapService/wsdl/localhost_8080/SoapWebService/SoapService.wsdl" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://localhost:8080/SoapWebService/SoapService?wsdl" xnocompile="true" xendorsed="true">
-            <depends file="${basedir}/${conf-dir}xml-resources/web-service-references/SoapService/wsdl/localhost_8080/SoapWebService/SoapService.wsdl"/>
-            <produces dir="${build.generated.dir}/jax-wsCache/SoapService"/>
-        </wsimport>
-        <copy todir="${build.generated.sources.dir}/jax-ws">
-            <fileset dir="${build.generated.dir}/jax-wsCache/SoapService">
-                <include name="**/*.java"/>
-            </fileset>
-        </copy>
-    </target>
-    <target name="wsimport-client-clean-SoapService" depends="-init-project">
-        <delete dir="${build.generated.sources.dir}/jax-ws/test"/>
-        <delete dir="${build.generated.dir}/jax-wsCache/SoapService"/>
-    </target>
-    <target name="wsimport-client-generate" depends="wsimport-client-DataWebService, wsimport-client-SoapService"/>
+    <target name="wsimport-client-generate" depends="wsimport-client-FileUploadService"/>
 </project>
