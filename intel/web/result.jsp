@@ -172,66 +172,41 @@
             </div>
 
              <div class="row">
-                <div class="col-md-6 center-block">
+                
 
                     <table class="table info-table">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                
                                 <th>SystemID</th>
+                                <th>Repeat</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <th scope="row">1</th>
                                 <td>XPS 13</td>
+                                <td>5</td>
                             </tr>                      
                              <tr>
-                                <th scope="row">2</th>
                                 <td>XPS 14</td>
+                                <td>5</td>
                             </tr>
                             <tr>
-                                <th scope="row">3</th>
                                 <td>XPS 15</td>
+                                <td>5</td>
                             </tr> 
                             <tr>
-                                <th scope="row">4</th>
                                 <td>XPS 16</td>
+                                <td>5</td>
                             </tr> 
                             <tr>
-                                <th scope="row">5</th>
                                 <td>XPS17</td>
+                                <td>5</td>
                             </tr> 
                         </tbody>
                     </table>
-                </div>
 
-                <div class="col-md-6 center-block">
-
-                    <table class="table info-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>RepeatID</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>xxx</td>
-                            </tr>                      
-                             <tr>
-                                <th scope="row">2</th>
-                                <td>xxx</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">3</th>
-                                <td>xxx</td>
-                            </tr> 
-        
-                        </tbody>
-                    </table>
-                </div>
+                
 
             </div>
         </div>
