@@ -233,21 +233,14 @@ public class TestMarginsDDR extends TestMargins {
             for (int j = 0; j < rankNum; j++) {
                 for (int k = 0; k < laneNum; k++) {
                     // add if both valid; double valid one if one invalid; mark invalid otherwise 
-                    if (getLaneByIndexes(i, j, k).isValid()
-                            && tmd.getLaneByIndexes(i, j, k).isValid()) {
-                        newLanes[i][j][k] = new TestLane(
-                                getLaneByIndexes(i, j, k).getMargin()
-                                + tmd.getLaneByIndexes(i, j, k)
-                                .getMargin());
-                    } else if (!getLaneByIndexes(i, j, k).isValid()
-                            && !tmd.getLaneByIndexes(i, j, k).isValid()) {
+                    if (getLaneByIndexes(i, j, k).isValid() && tmd.getLaneByIndexes(i, j, k).isValid()) {
+                        newLanes[i][j][k] = new TestLane( getLaneByIndexes(i, j, k).getMargin() + tmd.getLaneByIndexes(i, j, k).getMargin());
+                    } else if (!getLaneByIndexes(i, j, k).isValid() && !tmd.getLaneByIndexes(i, j, k).isValid()) {
                         newLanes[i][j][k] = new TestLane(0, TestLane.INVALID);
                     } else if (!getLaneByIndexes(i, j, k).isValid()) {
-                        newLanes[i][j][k] = new TestLane(2 * tmd
-                                .getLaneByIndexes(i, j, k).getMargin());
+                        newLanes[i][j][k] = new TestLane(2 * tmd.getLaneByIndexes(i, j, k).getMargin());
                     } else {
-                        newLanes[i][j][k] = new TestLane(
-                                2 * getLaneByIndexes(i, j, k).getMargin());
+                        newLanes[i][j][k] = new TestLane(2 * getLaneByIndexes(i, j, k).getMargin());
                     }
                 }
             }

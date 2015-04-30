@@ -8,8 +8,8 @@ import java.util.Map;
  * parse xml. Data contain test health and trust scores and detailed
  * information, eye charts data and warning messages.
  *
- * @author Yan 04/24/2015
- * @version 1.0
+ * @author Yan 04/29/2015
+ * @version 2.0
  *
  */
 public class TestDetail {

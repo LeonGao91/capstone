@@ -103,9 +103,7 @@ public class TestDirection {
         }
         for (int i = 0; i < getSystemByIndex(0).getSize(); i++) {
             for (int j = 0; j < size; j++) {
-                tempRepeatStats = checkOutlier ? getRepeatByIndexes(j, i)
-                        .getNoOutlierStats() : getRepeatByIndexes(j, i)
-                        .getBasicStats();
+                tempRepeatStats = checkOutlier ? getRepeatByIndexes(j, i).getNoOutlierStats() : getRepeatByIndexes(j, i).getBasicStats();
                 if (Double.compare(tempRepeatStats.getMin(), Double.NaN) != 0) {
                     mins[i].addValue(tempRepeatStats.getMin());
                 }
@@ -125,8 +123,7 @@ public class TestDirection {
         //get other stats
         for (int i = 0; i < size; i++) {
             // assign an input Stats object of each system according to outlier indicator
-            tempSystemStats = checkOutlier ? getSystemByIndex(i)
-                    .getNoOutlierStats() : getSystemByIndex(i).getBasicStats();
+            tempSystemStats = checkOutlier ? getSystemByIndex(i) .getNoOutlierStats() : getSystemByIndex(i).getBasicStats();
             //exclude NA statistics from each system
             if (Double.compare(tempSystemStats.getMeanMin(), Double.NaN) != 0) {
                 ssMeanMin.addValue(tempSystemStats.getMeanMin());
@@ -136,9 +133,7 @@ public class TestDirection {
                 ssMeanMean.addValue(tempSystemStats.getMean());
             }
             for (int j = 0; j < getSystemByIndex(i).getSize(); j++) {
-                tempRepeatStats = checkOutlier ? getRepeatByIndexes(i, j)
-                        .getNoOutlierStats() : getRepeatByIndexes(i, j)
-                        .getBasicStats();
+                tempRepeatStats = checkOutlier ? getRepeatByIndexes(i, j).getNoOutlierStats() : getRepeatByIndexes(i, j).getBasicStats();
                 //exclude NA statistics from each system
                 if (Double.compare(tempRepeatStats.getMin(), Double.NaN) != 0) {
                     ssAllMin.addValue(tempRepeatStats.getMin());
@@ -183,18 +178,11 @@ public class TestDirection {
             for (int j = 0; j < tempSystem.getSize(); j++) {
                 tempRepeat = getRepeatByIndexes(i, j);
                 // threshold based outlier detection - 1
-                outliers[1] = outliers[1]
-                        || tempRepeat.findSystemOutliers(basicStats.getMean(),
-                                thresholds[0], sb);
+                outliers[1] = outliers[1] || tempRepeat.findSystemOutliers(basicStats.getMean(),thresholds[0], sb);
                 // threshold based outlier detection - 2
-                outliers[2] = outliers[2]
-                        || tempRepeat.findSystemOutliers(tempSystem
-                                .getBasicStats().getMean(),
-                                thresholds[1], sb);
+                outliers[2] = outliers[2] || tempRepeat.findSystemOutliers(tempSystem.getBasicStats().getMean(), thresholds[1], sb);
                 // lane2lane outlier - 1
-                outliers[3] = outliers[3]
-                        || tempRepeat.findLaneOutliers(thresholds[2],
-                                thresholds[3], sb);
+                outliers[3] = outliers[3] || tempRepeat.findLaneOutliers(thresholds[2], thresholds[3], sb);
                 if (sb.length() != 0) {
                     message = "#Lane outlier found in " + tempSystem.getSystemID() + " " + tempRepeat.getRepeatID() + ";";
                     tempMessages.append(message);
@@ -508,6 +496,7 @@ public class TestDirection {
 
     /**
      * Get a string representation of a direction.
+     *
      * @return information of a direction including statistics
      */
     @Override

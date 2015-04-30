@@ -6,7 +6,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -32,7 +31,7 @@ public class Test {
 
     public static boolean CHECKOUTLIER = true; //remove outlier
     public static boolean NOTCHECKOUTLIER = false; // not remove outlier
-    //Health check items
+    //health check items
     public static String MEANMINCHECK = "Mean of Min Check";
     public static String MINMINCHECK = "Min of Min Check";
     public static String HIGHMEANMINCHECK = "Mean of Min Check (High)";
@@ -48,7 +47,7 @@ public class Test {
     public static String WINDOWCORRCHECKHEALTH = "Window Correlation Check for Health";
     public static String NEARWCCOUNT = "Near Worst Case Lane Count";
     public static String LANE2LANECORRCHECKHEALTH = "Lane2Lane Correlation Check for Health";
-    //Trust check items
+    //trust check items
     public static String SYSTEMCOUNT = "System Count"; // total system count
     public static String REPEATCOUNT = "Repeat Count"; // average system repeat count
     public static String MEANCHECK = "Mean Check";
@@ -73,7 +72,7 @@ public class Test {
     private LinkedHashMap<String, Double> healthDetail; //details of computing health score
     private LinkedHashMap<String, Double> trustDetail; //detals of computing trust score
     private Map<String, Integer> systems_repeats; //systems and number of repeats
-    //Thresholds
+    //thresholds
     private double[] thresholds;
     private double[] highThresholds;
     private double[] repeatNoiseThresholds;
@@ -84,13 +83,13 @@ public class Test {
     private double[] outlierThresholds;
     private double[] pairedOutlierThresholds;
     private double byLaneThreshold;
-    //Benchmarks
+    //benchmarks
     private double[] eyeChartIntelMinBenchmark;
     private double[] eyeChartIntelMeanBenchmark;
     private double healthBenchmark;
     private double trustBenchmark;
     private int validation;
-    //Check results
+    //check results
     private boolean basicMeanCheck = true;
     private boolean outlierMeanCheck = true;
     private boolean basicMinCheck = true;
@@ -150,6 +149,9 @@ public class Test {
      *
      * @param directions an array TestDirection representing all directions of
      * one test.
+     * @param customerID customer ID
+     * @param productID product ID
+     * @param path customer file path
      */
     public Test(TestDirection[] directions, String customerID, String productID, String path) {
         size = directions.length;
@@ -164,21 +166,26 @@ public class Test {
         pearsons = new PearsonsCorrelation();
         this.customerID = customerID;
         this.productID = productID;
+        //initialize benchmarks and thresholds
         initialize(path);
+        //pair directions
         pairDirections();
+        //check outlers
         checkOutlier();
+        //compute statistics excluding outliers
         findNoOutlierStats();
+        //check health and trust
         basicChecks();
         System.out.println(customerID + " " + productID);
     }
 
-//	
     /**
-     * Read an xml file and initialize the thresholds.
+     * Read xml configuration file and customer historical tests records to
+     * initialize the benchmarks and thresholds.
      *
-     * @param path path where Config.xml file locates
+     * @param path customer file path
      */
-    public final void initialize(String path) {
+    private void initialize(String path) {
         // convert the xmlString to a Document object
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         Document doc;
@@ -254,13 +261,14 @@ public class Test {
         }
         //set validation benchark
         validation = 5;
-        //get system and repeat counts
+        //get historical system and repeat counts
         TestSystem tempSystem;
         String systemID;
         String summaryDirName = path + "/" + getCustomerID();
         String summaryFileName = "summary.xml";
         File summaryDir = new File(summaryDirName);
         File summaryFile = new File(summaryDir, summaryFileName);
+        //first time test the product, create new records
         if (!summaryDir.exists() || !summaryFile.exists()) {
             for (int i = 0; i < getDirectionByIndex(0).getSize(); i++) {
                 tempSystem = getSystemByIndexes(0, i);
@@ -268,6 +276,7 @@ public class Test {
                 systems_repeats.put(systemID, tempSystem.getSize());
             }
         } else {
+            //not first time, add to existing records
             TestSummary testSummary;
             Map<String, Integer> tempMap;
             XStream xstream = new XStream(new DomDriver());
@@ -276,8 +285,7 @@ public class Test {
             xstream.alias("testBrief", TestBrief.class);
             String xml = "";
             //read in product test information
-            try {
-                BufferedReader input = new BufferedReader(new FileReader(summaryFile));
+            try (BufferedReader input = new BufferedReader(new FileReader(summaryFile))) {
                 StringBuilder sb = new StringBuilder();
                 String line = input.readLine();
                 while (line != null) {
@@ -288,7 +296,7 @@ public class Test {
                 xml = sb.toString();
                 input.close();
             } catch (Exception e) {
-                System.out.println("Could find file");
+                System.out.println("Could find file.");
             }
             //convert to summary object
             testSummary = (TestSummary) xstream.fromXML(xml);
@@ -304,13 +312,15 @@ public class Test {
     }
 
     /**
-     * Check outliers of the test
+     * Check outliers of the test.
      */
     private void checkOutlier() {
-        //Obvious scan
+        //obvious scan
         boolean outlierSystem;
         String message;
+        //traverse each direction, system and repeat
         for (int i = 0; i < getDirectionByIndex(0).getSize(); i++) {
+            int laneNum;
             outlierSystem = false;
             for (int j = 0; j < size; j++) {
                 for (int k = 0; k < getSystemByIndexes(j, i).getSize(); k++) {
@@ -321,6 +331,15 @@ public class Test {
                 message = "Remeasure " + getSystemByIndexes(0, i).getSystemID() + ": all zeros;";
                 messages.append(message);
                 outliers[0] = true;
+                //mark all lane margins of outlier system as outliers
+                for (int j = 0; j < size; j++) {
+                    for (int k = 0; k < getSystemByIndexes(j, i).getSize(); k++) {
+                        laneNum = getRepeatByIndexes(j, i, k).getByLaneSize();
+                        for(int l = 0; l < laneNum; l++){
+                            getRepeatByIndexes(j, i, k).markOutlierByLane(l);
+                        }
+                    }
+                }
             }
         }
         //check direction outlier
@@ -336,10 +355,10 @@ public class Test {
     }
 
     /**
-     * Compute statistics excluding outliers
+     * Compute statistics excluding outliers.
      */
     private void findNoOutlierStats() {
-        //traverse each repeat of each direction
+        //traverse each direction, system and repeat
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < getDirectionByIndex(i).getSize(); j++) {
                 for (int k = 0; k < getSystemByIndexes(i, j).getSize(); k++) {
@@ -369,7 +388,7 @@ public class Test {
             // basic mean check
             basicMeanCheck = basicMeanCheck && getDirectionByIndex(2 * i).getBasicStats().getMeanMin() > thresholds[i]
                     && getDirectionByIndex(2 * i + 1).getBasicStats().getMeanMin() > thresholds[i];
-            
+
             outlierMeanCheck = outlierMeanCheck && getDirectionByIndex(2 * i).getNoOutlierStats().getMeanMin() > thresholds[i]
                     && getDirectionByIndex(2 * i + 1).getNoOutlierStats().getMeanMin() > thresholds[i];
             // basic min check
@@ -404,7 +423,7 @@ public class Test {
                 lane2LaneCorr = getDirectionByIndex(2 * i).getLane2LaneCorr() > lane2LaneCorrThresholds && getDirectionByIndex(2 * i + 1).getLane2LaneCorr() > lane2LaneCorrThresholds;
             }
         }
-        
+
         for (int i = 0; i < size; i++) {
             // sigma mean check
             basicSigmaMeanCheck = basicSigmaMeanCheck && getDirectionByIndex(i).getBasicStats().getSigmaMean() < sigmaThreshold;
@@ -419,12 +438,11 @@ public class Test {
         }
         // window correlation check
         if (getDirectionByIndex(0).getSize() * getSystemByIndexes(0, 0).getSize() > 1) {
-//            for (int i = 0; i + 1 < size / 2; i++) {
             for (int i = 0; i < size / 4; i++) {
                 winCorr = winCorr && pearsons.correlation(getPairedDirectionByIndex(2 * i).getAllMarginMean(), getPairedDirectionByIndex(2 * i + 1).getAllMarginMean()) > corrThreshold;
             }
         }
-        
+
         //Get detail scores
         // mean check 1
         if (!basicMeanCheck && !outlierMeanCheck) {
@@ -603,7 +621,7 @@ public class Test {
     /**
      * Get certain repeat in direction pair according to indexes
      *
-     * * @param directionIndex direction pair index
+     * @param directionIndex direction pair index
      * @param systemIndex system index
      * @param repeatIndex repeat index
      * @return SystemRepeat object
@@ -632,6 +650,7 @@ public class Test {
 
     /**
      * Get health score.
+     *
      * @return health score
      */
     public double getHealth() {
@@ -640,48 +659,99 @@ public class Test {
 
     /**
      * Get trust score.
+     *
      * @return trust score
      */
     public double getTrust() {
         return trust;
     }
 
+    /**
+     * Get health detail scores.
+     *
+     * @return a map of health detail scores
+     */
     public Map<String, Double> getHealthDetail() {
         return healthDetail;
     }
 
+    /**
+     * Get trust detail scores.
+     *
+     * @return a map of trust detail scores
+     */
     public Map<String, Double> getTrustDetail() {
         return trustDetail;
     }
 
+    /**
+     * Get output messages.
+     *
+     * @return warning messages about the test
+     */
     public String getTestMessages() {
         return messages.toString();
     }
 
+    /**
+     * Get test conclusion.
+     *
+     * @return "pass" or "fail"
+     */
     public String getConclusion() {
         return conclusion;
     }
 
+    /**
+     * Get customer ID.
+     *
+     * @return customer ID
+     */
     public String getCustomerID() {
         return customerID;
     }
 
+    /**
+     * Get product ID.
+     *
+     * @return product ID
+     */
     public String getProductID() {
         return productID;
     }
 
+    /**
+     * Get system and repeat count records.
+     *
+     * @return a map of all systems and repeat counts
+     */
     public Map<String, Integer> getSystems_repeats() {
         return systems_repeats;
     }
 
+    /**
+     * Get Intel eye chart min value benchmarks.
+     *
+     * @return an array of Intel min value benchmarks
+     */
     public double[] getEyeChartIntelMinBenchmark() {
         return eyeChartIntelMinBenchmark;
     }
 
+    /**
+     * Get Intel eye chart mean value benchmarks.
+     *
+     * @return an array of Intel mean value benchmarks
+     */
     public double[] getEyeChartIntelMeanBenchmark() {
         return eyeChartIntelMeanBenchmark;
     }
 
+    /**
+     * Get a string representation of a test.
+     *
+     * @return information of a test including statistics
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
