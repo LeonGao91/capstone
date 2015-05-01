@@ -169,6 +169,44 @@
             </div>
 
              <div class="row">
+<<<<<<< HEAD
+=======
+                
+
+                    <table class="table info-table">
+                        <thead>
+                            <tr>
+                                
+                                <th>SystemID</th>
+                                <th>Repeat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>XPS 13</td>
+                                <td>5</td>
+                            </tr>                      
+                             <tr>
+                                <td>XPS 14</td>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <td>XPS 15</td>
+                                <td>5</td>
+                            </tr> 
+                            <tr>
+                                <td>XPS 16</td>
+                                <td>5</td>
+                            </tr> 
+                            <tr>
+                                <td>XPS17</td>
+                                <td>5</td>
+                            </tr> 
+                        </tbody>
+                    </table>
+
+                
+>>>>>>> origin/master
 
             </div>
         </div>
