@@ -203,7 +203,7 @@ public class TestProduct {
             StringBuilder sb = new StringBuilder();
             for(TestBrief test : tests) {
                 sb.append("{ x:")
-                        .append(test.getHealth()).append(", ").append(" y:").append(test.getTrust()).append("},");
+                        .append(test.getTrust()).append(", ").append(" y:").append(test.getHealth()).append("},");
             }
             sb.setLength(sb.length() - 1);
             return sb.toString();

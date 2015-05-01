@@ -75,4 +75,14 @@ public class TestSummary {
         public Set<Map.Entry<String, TestProduct>> getElements() {
             return products.entrySet();
         }
+
+        /**
+         * 
+         * @return list of products
+         */
+        public Set<String> getProducts() {
+            return products.keySet();
+        }
+        
+        
 }
