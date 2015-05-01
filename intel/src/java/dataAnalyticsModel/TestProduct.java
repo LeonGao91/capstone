@@ -195,4 +195,17 @@ public class TestProduct {
             sb.setLength(sb.length() - 1);
             return sb.toString();
         }
+        
+        /**
+         * Get time series data as a string
+         */
+        public String getCombinationData() throws ParseException {
+            StringBuilder sb = new StringBuilder();
+            for(TestBrief test : tests) {
+                sb.append("{ x:")
+                        .append(test.getHealth()).append(", ").append(" y:").append(test.getTrust()).append("},");
+            }
+            sb.setLength(sb.length() - 1);
+            return sb.toString();
+        }
 }

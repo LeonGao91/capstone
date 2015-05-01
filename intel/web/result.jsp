@@ -4,6 +4,7 @@
     Author     : leon
 --%>
 
+<%@page import="java.util.Arrays"%>
 <%@page import="java.util.LinkedList"%>
 <%@page import="java.util.Date"%>
 <%@page import="java.text.SimpleDateFormat"%>
@@ -159,83 +160,19 @@
                             out.print("<span id='passfail' class='label label-danger' style='font-size:15px'>FAIL!</span>");
                         }
                     %>
-                    
-                <span class="label label-warning basic" style="margin-right: 10%">
-                    3 REPEATS</span>
-                <span class="label label-info basic" style="margin-right: 1%">5 SYSTEMS</span>
         </div>
         
-        <!-- newly added block-->
+        <!-- newly added block
         <div class="panel panel-primary main_panel" style="margin-top: 2%">
             <div class="panel-heading">
                 <h3 class="panel-title" align="center">Basic Information</h3>
             </div>
 
              <div class="row">
-                <div class="col-md-6 center-block">
-
-                    <table class="table info-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>SystemID</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>XPS 13</td>
-                            </tr>                      
-                             <tr>
-                                <th scope="row">2</th>
-                                <td>XPS 14</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">3</th>
-                                <td>XPS 15</td>
-                            </tr> 
-                            <tr>
-                                <th scope="row">4</th>
-                                <td>XPS 16</td>
-                            </tr> 
-                            <tr>
-                                <th scope="row">5</th>
-                                <td>XPS17</td>
-                            </tr> 
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="col-md-6 center-block">
-
-                    <table class="table info-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>RepeatID</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>xxx</td>
-                            </tr>                      
-                             <tr>
-                                <th scope="row">2</th>
-                                <td>xxx</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">3</th>
-                                <td>xxx</td>
-                            </tr> 
-        
-                        </tbody>
-                    </table>
-                </div>
 
             </div>
         </div>
-        
+        -->
         <!-- newly added block ended-->
 
         <div class="panel panel-primary main_panel" style="margin-top: 2%">
@@ -449,12 +386,13 @@
         function drawCombination(){
 	var data = [
 		{
-			label: 'Trust, Health',
-			strokeColor: '#337ab7',
-			data: [
-				{ x: 32, y: 91 }, { x: 55, y: 80 }, { x: 50, y: 88 },
-				{ x: 80, y: 80 }, { x: 86, y: 90 }, { x: 95, y: 90 }
-			]
+                    label: 'Trust, Health',
+                    strokeColor: '#337ab7',
+                    data: [
+                        <%
+                            out.print(product.getCombinationData());
+                        %>
+                    ]
 		},
 		{
       			label: '', //fix the y-scale from 50-100
@@ -480,6 +418,17 @@
 	
 	//read and write eye chart
 	function drawEye(){
+                <%
+                    EyeChart tx = null, rx = null;
+                    if(detail.getEyes().containsKey("tx".toLowerCase())) {
+                        tx = detail.getEyes().get("tx".toLowerCase());
+                    }
+                    if(detail.getEyes().containsKey("rx".toLowerCase())) {
+                        tx = detail.getEyes().get("rx".toLowerCase());
+                    }
+                    double[] nil = new double[]{0, 0, 0, 0};
+                    double[] res = new double[4];
+                %>
 		var ctx1 = document.getElementById("eyeChartRead").getContext("2d");
                 var ctx2 = document.getElementById("eyeChartWrite").getContext("2d");
 	
@@ -488,24 +437,94 @@
                 labels: ["TxVoltage", "TxTiming", "TxVoltage", "TxTiming"],
                 datasets: [
                 {
-                    label: "Average",
+                    label: "MIN",
                     fillColor: "rgba(51, 122, 183,0.3)",
                     strokeColor: "rgba(51, 122, 183,1)",
                     pointColor: "rgba(51, 122, 183,1)",
                     pointStrokeColor: "#fff",
                     pointHighlightFill: "#fff",
                     pointHighlightStroke: "rgba(51, 122, 183,1)",
-                    data: [10,9,10,12]
+                    data: 
+                    <%
+                            if(tx == null) {
+                                out.print(Arrays.toString(nil));
+                            }
+                            else {
+                                double[] r = tx.getMin();
+                                res[0] = r[2];
+                                res[1] = r[1];
+                                res[2] = r[3];
+                                res[3] = r[0];
+                                out.print(Arrays.toString(res));
+                            }
+                    %>
                 },
                 {
-                    label: "Minimum",
+                    label: "MEAN",
                     fillColor: "rgba(237,29,65,0.2)",
                     strokeColor: "rgba(237,29,65,0.6)",
                     pointColor: "rgba(237,29,65,0.6)",
                     pointStrokeColor: "#fff",
                     pointHighlightFill: "#fff",
                     pointHighlightStroke: "rgba(237,29,65,0.6)",
-                    data: [7,6,7,10]
+                    data: <%
+                            if(tx == null) {
+                                out.print(Arrays.toString(nil));
+                            }
+                            else {
+                                double[] r = tx.getMean();
+                                res[0] = r[2];
+                                res[1] = r[1];
+                                res[2] = r[3];
+                                res[3] = r[0];
+                                out.print(Arrays.toString(res));
+                            }
+                    %>
+                },
+                {
+                    label: "INTEL_MIN",
+                    fillColor: "none",
+                    strokeColor: "rgba(51, 122, 183,1)",
+                    pointColor: "rgba(51, 122, 183,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "none",
+                    pointHighlightStroke: "rgba(51, 122, 183,1)",
+                    data: 
+                    <%
+                            if(tx == null) {
+                                out.print(Arrays.toString(nil));
+                            }
+                            else {
+                                double[] r = tx.getIntel_min();
+                                res[0] = r[2];
+                                res[1] = r[1];
+                                res[2] = r[3];
+                                res[3] = r[0];
+                                out.print(Arrays.toString(res));
+                            }
+                    %>
+                },
+                {
+                    label: "INTEL_MEAN",
+                    fillColor: "none",
+                    strokeColor: "rgba(237,29,65,0.6)",
+                    pointColor: "rgba(237,29,65,0.6)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "none",
+                    pointHighlightStroke: "rgba(237,29,65,0.6)",
+                    data: <%
+                            if(tx == null) {
+                                out.print(Arrays.toString(nil));
+                            }
+                            else {
+                                double[] r = tx.getIntel_mean();
+                                res[0] = r[2];
+                                res[1] = r[1];
+                                res[2] = r[3];
+                                res[3] = r[0];
+                                out.print(Arrays.toString(res));
+                            }
+                    %>
                 }
                 ]
                 };
@@ -513,24 +532,94 @@
                 labels: ["RxVoltage", "RxTiming", "RxVoltage", "RxTiming"],
                 datasets: [
                 {
-                    label: "Average",
+                    label: "MIN",
                     fillColor: "rgba(51, 122, 183,0.3)",
                     strokeColor: "rgba(51, 122, 183,1)",
                     pointColor: "rgba(51, 122, 183,1)",
                     pointStrokeColor: "#fff",
                     pointHighlightFill: "#fff",
                     pointHighlightStroke: "rgba(51, 122, 183,1)",
-                    data: [9,10,12,11]
+                    data: 
+                    <%
+                            if(rx == null) {
+                                out.print(Arrays.toString(nil));
+                            }
+                            else {
+                                double[] r = rx.getMin();
+                                res[0] = r[2];
+                                res[1] = r[1];
+                                res[2] = r[3];
+                                res[3] = r[0];
+                                out.print(Arrays.toString(res));
+                            }
+                    %>
                 },
                 {
-                    label: "Minimum",
+                    label: "MEAN",
                     fillColor: "rgba(237,29,65,0.2)",
                     strokeColor: "rgba(237,29,65,0.6)",
                     pointColor: "rgba(237,29,65,0.6)",
                     pointStrokeColor: "#fff",
                     pointHighlightFill: "#fff",
                     pointHighlightStroke: "rgba(237,29,65,0.6)",
-                    data: [6,8,10,7]
+                    data: <%
+                            if(rx == null) {
+                                out.print(Arrays.toString(nil));
+                            }
+                            else {
+                                double[] r = rx.getMean();
+                                res[0] = r[2];
+                                res[1] = r[1];
+                                res[2] = r[3];
+                                res[3] = r[0];
+                                out.print(Arrays.toString(res));
+                            }
+                    %>
+                },
+                {
+                    label: "INTEL_MIN",
+                    fillColor: "none",
+                    strokeColor: "rgba(51, 122, 183,1)",
+                    pointColor: "rgba(51, 122, 183,1)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "none",
+                    pointHighlightStroke: "rgba(51, 122, 183,1)",
+                    data: 
+                    <%
+                            if(rx == null) {
+                                out.print(Arrays.toString(nil));
+                            }
+                            else {
+                                double[] r = rx.getIntel_min();
+                                res[0] = r[2];
+                                res[1] = r[1];
+                                res[2] = r[3];
+                                res[3] = r[0];
+                                out.print(Arrays.toString(res));
+                            }
+                    %>
+                },
+                {
+                    label: "INTEL_MEAN",
+                    fillColor: "none",
+                    strokeColor: "rgba(237,29,65,0.6)",
+                    pointColor: "rgba(237,29,65,0.6)",
+                    pointStrokeColor: "#fff",
+                    pointHighlightFill: "none",
+                    pointHighlightStroke: "rgba(237,29,65,0.6)",
+                    data: <%
+                            if(rx == null) {
+                                out.print(Arrays.toString(nil));
+                            }
+                            else {
+                                double[] r = rx.getIntel_mean();
+                                res[0] = r[2];
+                                res[1] = r[1];
+                                res[2] = r[3];
+                                res[3] = r[0];
+                                out.print(Arrays.toString(res));
+                            }
+                    %>
                 }
                 ]
                 };

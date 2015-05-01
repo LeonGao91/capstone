@@ -1,7 +1,6 @@
 
 package service;
 
-import javax.jws.Oneway;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebResult;
@@ -27,18 +26,6 @@ public interface FileUploadService {
 
     /**
      * 
-     * @param path
-     */
-    @WebMethod
-    @Oneway
-    @RequestWrapper(localName = "uploadFile", targetNamespace = "http://service/", className = "service.UploadFile")
-    @Action(input = "http://service/FileUploadService/uploadFile")
-    public void uploadFile(
-        @WebParam(name = "path", targetNamespace = "")
-        String path);
-
-    /**
-     * 
      * @param file
      * @param customerID
      * @return
@@ -57,7 +44,7 @@ public interface FileUploadService {
 
     /**
      * 
-     * @param file
+     * @param customerID
      * @return
      *     returns java.lang.String
      */
@@ -67,7 +54,7 @@ public interface FileUploadService {
     @ResponseWrapper(localName = "getSummaryResponse", targetNamespace = "http://service/", className = "service.GetSummaryResponse")
     @Action(input = "http://service/FileUploadService/getSummaryRequest", output = "http://service/FileUploadService/getSummaryResponse")
     public String getSummary(
-        @WebParam(name = "file", targetNamespace = "")
-        String file);
+        @WebParam(name = "customerID", targetNamespace = "")
+        String customerID);
 
 }

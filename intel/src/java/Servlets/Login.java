@@ -33,7 +33,7 @@ import service.FileUploadService_Service;
  */
 @WebServlet(name = "login", urlPatterns = {"/userLogin"})
 public class Login extends HttpServlet {
-    @WebServiceRef(wsdlLocation = "WEB-INF/wsdl/128.237.207.25_8080/FileUploadService/FileUploadService.wsdl")
+    @WebServiceRef(wsdlLocation = "WEB-INF/wsdl/128.2.144.153_8080/FileUploadService/FileUploadService.wsdl")
     private FileUploadService_Service service;
 
     private TestSummary summary;
@@ -89,11 +89,11 @@ public class Login extends HttpServlet {
 //        return xml;
 //    }
 
-    private String getSummary(java.lang.String file) {
+    private String getSummary(java.lang.String customerID) {
         // Note that the injected javax.xml.ws.Service reference as well as port objects are not thread safe.
         // If the calling of port operations may lead to race condition some synchronization is required.
         service.FileUploadService port = service.getFileUploadServicePort();
-        return port.getSummary(file);
+        return port.getSummary(customerID);
     }
 
 }

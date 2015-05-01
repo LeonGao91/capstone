@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jax-ws xmlns="http://www.netbeans.org/ns/jax-ws/1">
   <services>
-    <service name="DataWebService">
-      <implementation-class>Service.DataWebService</implementation-class>
-    </service>
   </services>
   <clients>
     <client name="FileUploadService">
-      <wsdl-url>http://128.237.207.25:8080/FileUploadService/FileUploadService?WSDL</wsdl-url>
-      <local-wsdl-file>128.237.207.25_8080/FileUploadService/FileUploadService.wsdl</local-wsdl-file>
+      <wsdl-url>http://128.2.144.153:8080/FileUploadService/FileUploadService?WSDL</wsdl-url>
+      <local-wsdl-file>128.2.144.153_8080/FileUploadService/FileUploadService.wsdl</local-wsdl-file>
       <package-name>service</package-name>
       <catalog-file>catalog.xml</catalog-file>
       <wsimport-options>
@@ -26,7 +23,7 @@
         </wsimport-option>
         <wsimport-option>
           <wsimport-option-name>wsdlLocation</wsimport-option-name>
-          <wsimport-option-value>http://128.237.207.25:8080/FileUploadService/FileUploadService?WSDL</wsimport-option-value>
+          <wsimport-option-value>http://128.2.144.153:8080/FileUploadService/FileUploadService?WSDL</wsimport-option-value>
         </wsimport-option>
         <wsimport-option>
           <wsimport-option-name>xnocompile</wsimport-option-name>

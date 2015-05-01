@@ -10,23 +10,6 @@
                 JAX-WS WSGEN SECTION
                 ===================
             -->
-    <target name="wsgen-init" depends="init, -do-compile">
-        <mkdir dir="${build.generated.sources.dir}/jax-ws/resources/"/>
-        <mkdir dir="${build.classes.dir}"/>
-        <mkdir dir="${build.classes.dir}/META-INF"/>
-        <property name="j2ee.platform.wsgen.classpath" value="${libs.jaxws21.classpath}"/>
-        <taskdef name="wsgen" classname="com.sun.tools.ws.ant.WsGen">
-            <classpath path="${java.home}/../lib/tools.jar:${build.classes.dir}:${j2ee.platform.wsgen.classpath}:${javac.classpath}"/>
-        </taskdef>
-    </target>
-    <target name="wsgen-DataWebService" depends="wsgen-init">
-        <copy todir="${build.classes.dir}/META-INF">
-            <fileset dir="${webinf.dir}" includes="wsit-Service.DataWebService.xml"/>
-        </copy>
-        <wsgen sourcedestdir="${build.generated.sources.dir}/jax-ws" resourcedestdir="${build.generated.sources.dir}/jax-ws/resources/" destdir="${build.generated.sources.dir}/jax-ws" verbose="true" keep="true" genwsdl="true" sei="Service.DataWebService" xendorsed="true">
-            <classpath path="${java.home}/../lib/tools.jar:${build.classes.dir}:${j2ee.platform.wsgen.classpath}:${javac.classpath}"/>
-        </wsgen>
-    </target>
     <!--
                 ===================
                 JAX-WS WSIMPORT SECTION
@@ -45,8 +28,8 @@
     </target>
     <target name="wsimport-client-FileUploadService" depends="wsimport-init">
         <mkdir dir="${build.generated.dir}/jax-wsCache/FileUploadService"/>
-        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/FileUploadService" destdir="${build.generated.dir}/jax-wsCache/FileUploadService" wsdl="${basedir}/${conf-dir}xml-resources/web-service-references/FileUploadService/wsdl/128.237.207.25_8080/FileUploadService/FileUploadService.wsdl" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://128.237.207.25:8080/FileUploadService/FileUploadService?WSDL" xnocompile="true" xendorsed="true">
-            <depends file="${basedir}/${conf-dir}xml-resources/web-service-references/FileUploadService/wsdl/128.237.207.25_8080/FileUploadService/FileUploadService.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/FileUploadService" destdir="${build.generated.dir}/jax-wsCache/FileUploadService" wsdl="${basedir}/${conf-dir}xml-resources/web-service-references/FileUploadService/wsdl/128.2.144.153_8080/FileUploadService/FileUploadService.wsdl" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://128.2.144.153:8080/FileUploadService/FileUploadService?WSDL" xnocompile="true" xendorsed="true">
+            <depends file="${basedir}/${conf-dir}xml-resources/web-service-references/FileUploadService/wsdl/128.2.144.153_8080/FileUploadService/FileUploadService.wsdl"/>
             <produces dir="${build.generated.dir}/jax-wsCache/FileUploadService"/>
         </wsimport>
         <copy todir="${build.generated.sources.dir}/jax-ws">

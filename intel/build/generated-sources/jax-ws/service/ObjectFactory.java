@@ -28,21 +28,12 @@ public class ObjectFactory {
     private final static QName _GetSummary_QNAME = new QName("http://service/", "getSummary");
     private final static QName _GetDetail_QNAME = new QName("http://service/", "getDetail");
     private final static QName _GetDetailResponse_QNAME = new QName("http://service/", "getDetailResponse");
-    private final static QName _UploadFile_QNAME = new QName("http://service/", "uploadFile");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: service
      * 
      */
     public ObjectFactory() {
-    }
-
-    /**
-     * Create an instance of {@link UploadFile }
-     * 
-     */
-    public UploadFile createUploadFile() {
-        return new UploadFile();
     }
 
     /**
@@ -111,15 +102,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://service/", name = "getDetailResponse")
     public JAXBElement<GetDetailResponse> createGetDetailResponse(GetDetailResponse value) {
         return new JAXBElement<GetDetailResponse>(_GetDetailResponse_QNAME, GetDetailResponse.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link UploadFile }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://service/", name = "uploadFile")
-    public JAXBElement<UploadFile> createUploadFile(UploadFile value) {
-        return new JAXBElement<UploadFile>(_UploadFile_QNAME, UploadFile.class, null, value);
     }
 
 }

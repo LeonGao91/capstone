@@ -17,7 +17,7 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "FileUploadService", targetNamespace = "http://service/", wsdlLocation = "http://128.237.207.25:8080/FileUploadService/FileUploadService?WSDL")
+@WebServiceClient(name = "FileUploadService", targetNamespace = "http://service/", wsdlLocation = "http://128.2.144.153:8080/FileUploadService/FileUploadService?WSDL")
 public class FileUploadService_Service
     extends Service
 {
@@ -30,7 +30,7 @@ public class FileUploadService_Service
         URL url = null;
         WebServiceException e = null;
         try {
-            url = new URL("http://128.237.207.25:8080/FileUploadService/FileUploadService?WSDL");
+            url = new URL("http://128.2.144.153:8080/FileUploadService/FileUploadService?WSDL");
         } catch (MalformedURLException ex) {
             e = new WebServiceException(ex);
         }

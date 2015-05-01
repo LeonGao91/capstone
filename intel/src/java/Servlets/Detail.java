@@ -29,9 +29,9 @@ import service.FileUploadService_Service;
  */
 @WebServlet(name = "Detail", urlPatterns = {"/Detail"})
 public class Detail extends HttpServlet {
-    @WebServiceRef(wsdlLocation = "WEB-INF/wsdl/128.237.207.25_8080/FileUploadService/FileUploadService.wsdl")
+    @WebServiceRef(wsdlLocation = "WEB-INF/wsdl/128.2.144.153_8080/FileUploadService/FileUploadService.wsdl")
     private FileUploadService_Service service;
-
+    
     private TestDetail detail;
     private XStream xstream = new XStream(new DomDriver());
 
