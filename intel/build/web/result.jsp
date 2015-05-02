@@ -90,6 +90,32 @@
 
             chart.draw(data, options);
         }
+        
+//        google.load("visualization", "1", {packages:["corechart"]});
+//        google.setOnLoadCallback(drawVisualization);
+//
+//        function drawVisualization() {
+//          var data = google.visualization.arrayToDataTable([
+//            ['Test Date', 'Bolivia', 'Ecuador', 'Madagascar', 'Papua New Guinea', 'Rwanda', 'Average'],
+//            ['2004/05',  165,      938,         522,             998,           450,      614.6],
+//            ['2005/06',  135,      1120,        599,             1268,          288,      682],
+//            ['2006/07',  157,      1167,        587,             807,           397,      623],
+//            ['2007/08',  139,      1110,        615,             968,           215,      609.4],
+//            ['2008/09',  136,      691,         629,             1026,          366,      569.6]
+//          ]);
+//
+//          var options = {
+//            title : 'Monthly Coffee Production by Country',
+//            vAxis: {title: "Cups"},
+//            hAxis: {title: "Month"},
+//            seriesType: "bars",
+//            series: {5: {type: "line"}}
+//          };
+//
+//          var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
+//          chart.draw(data, options);
+//        }
+
     </script>
     <body>
         <div class="navigation-bar">
@@ -125,41 +151,41 @@
             </nav>
         </div>
         <div id="title-wraper">
-                <button id="title" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <h3 id="title_head">
-                        <%  
-                            String name = (String) session.getAttribute("productName");
-                            SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
-                            Date d = date.parse(brief.getTest_date());
-                            date.applyPattern("HH:mm:ss - MM/dd/yyyy");
-                            out.print(name + " - " + date.format(d));
-                        %>
-                    <span class="caret"></span> </h3>
-                </button>
-                <ul id="test-menu" class="dropdown-menu" role="menu">
-                    <% 
-                        LinkedList<TestBrief> tests = product.getTests();
-                        for(int i = 0; i < tests.size(); i++) {
-                            TestBrief test = tests.get(i);
-                            date = new SimpleDateFormat("yyyyMMddHHmmss");
-                            d = date.parse(test.getTest_date());
-                            date.applyPattern("HH:mm:ss - MM/dd/yyyy");
-                            out.print("<li><form action='Detail?file=" 
-                                + test.getResult_file()
-                                + "&product=" + name
-                                + "&test=" + i
-                                + "' method='post'><button class='list-button' type='submit'><h4>" + date.format(d) + "</h4></button></form></li>");
-                        }
+            <button id="title" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <h3 id="title_head">
+                    <%  
+                        String name = (String) session.getAttribute("productName");
+                        SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
+                        Date d = date.parse(brief.getTest_date());
+                        date.applyPattern("HH:mm:ss - MM/dd/yyyy");
+                        out.print(name + " - " + date.format(d));
                     %>
-                </ul>
-                    <%
-                        if(brief.getPass_fail().equals("pass")){
-                            out.print("<span id='passfail' class='label label-success' style='font-size:15px'>PASS!</span>");
-                        }
-                        else {
-                            out.print("<span id='passfail' class='label label-danger' style='font-size:15px'>FAIL!</span>");
-                        }
-                    %>
+                <span class="caret"></span> </h3>
+            </button>
+            <ul id="test-menu" class="dropdown-menu" role="menu">
+                <% 
+                    LinkedList<TestBrief> tests = product.getTests();
+                    for(int i = 0; i < tests.size(); i++) {
+                        TestBrief test = tests.get(i);
+                        date = new SimpleDateFormat("yyyyMMddHHmmss");
+                        d = date.parse(test.getTest_date());
+                        date.applyPattern("HH:mm:ss - MM/dd/yyyy");
+                        out.print("<li><form action='Detail?file=" 
+                            + test.getResult_file()
+                            + "&product=" + name
+                            + "&test=" + i
+                            + "' method='post'><button class='list-button' type='submit'><h4>" + date.format(d) + "</h4></button></form></li>");
+                    }
+                %>
+            </ul>
+                <%
+                    if(brief.getPass_fail().equals("pass")){
+                        out.print("<span id='passfail' class='label label-success' style='font-size:15px'>PASS!</span>");
+                    }
+                    else {
+                        out.print("<span id='passfail' class='label label-danger' style='font-size:15px'>FAIL!</span>");
+                    }
+                %>
         </div>
         
         <!-- newly added block
@@ -179,8 +205,8 @@
                 <h3 class="panel-title" align="center">Scores</h3>
             </div>
             <div class="row">
-                <div id="trust" class="gauge"></div>
                 <div id="health" class="gauge"></div>
+                <div id="trust" class="gauge"></div>
             </div>
              <div class="row">
                 <div class="col-md-6 center-block">
@@ -275,7 +301,6 @@
                     <li id="changeEye"><a><h4>Eye Chart  </h4></a></li>
                     <li id="changeCombination"><a><h4>Combination Chart </h4></a></li>
                     <li id="changeIncrement" style="display:none"><a><h4>Health/Trust Chart </h4></a></li>
-                    
                 </ul>
             </div>
             
@@ -300,6 +325,7 @@
             
             </div><!--charts-->
         </div>
+        <div id="chart_div" style="width: 900px; height: 500px;"></div>
     </body>
     <script>
     $(document).ready(function() {
@@ -324,64 +350,6 @@
           startAnimationTime : 2000
         });
         	
-	//read and write eye chart
-	function drawEye(){
-		var ctx1 = document.getElementById("eyeChart").getContext("2d");
-	
-
-                var data1 = {
-                labels: ["TxVoltage", "TxTiming", "TxVoltage", "TxTiming"],
-                datasets: [
-                {
-                    label: "Average",
-                    fillColor: "rgba(51, 122, 183,0.3)",
-                    strokeColor: "rgba(51, 122, 183,1)",
-                    pointColor: "rgba(51, 122, 183,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(51, 122, 183,1)",
-                    data: [10,9,10,12]
-                },
-                {
-                    label: "Minimum",
-                    fillColor: "rgba(237,29,65,0.2)",
-                    strokeColor: "rgba(237,29,65,0.6)",
-                    pointColor: "rgba(237,29,65,0.6)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(237,29,65,0.6)",
-                    data: [7,6,7,10]
-                },
-                {
-                    label: "Average",
-                    fillColor: "rgba(51, 122, 183,0.3)",
-                    strokeColor: "rgba(51, 122, 183,1)",
-                    pointColor: "rgba(51, 122, 183,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(51, 122, 183,1)",
-                    data: [10,9,10,12]
-                },
-                {
-                    label: "Minimum",
-                    fillColor: "rgba(237,29,65,0.2)",
-                    strokeColor: "rgba(237,29,65,0.6)",
-                    pointColor: "rgba(237,29,65,0.6)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(237,29,65,0.6)",
-                    data: [7,6,7,10]
-                }
-                ]
-                };
-                var option = {
-                    //Number - Point label font size in pixels
-                    pointLabelFontSize : 12,
-                };
-		
-                var read = new Chart(ctx1).Radar(data1,option);
-                var write = new Chart(ctx2).Radar(data2,option);
-	}
         function drawCombination(){
 	var data = [
 		{
@@ -433,7 +401,7 @@
 	
 
                 var data1 = {
-                labels: ["TxVoltage", "TxTiming", "TxVoltage", "TxTiming"],
+                labels: ["Voltage (high)", "Timing (right)", "Voltage (low)", "Timing (left)"],
                 datasets: [
                 {
                     label: "MIN",
@@ -528,7 +496,7 @@
                 ]
                 };
                 var data2 = {
-                labels: ["RxVoltage", "RxTiming", "RxVoltage", "RxTiming"],
+                labels: ["Voltage (high)", "Timing (right)", "Voltage (low)", "Timing"],
                 datasets: [
                 {
                     label: "MIN",
@@ -634,7 +602,7 @@
 
 	//switch the chart
 	$("#changeEye").click(function(){
-		$("<div class='row' id='eyeChart'><div class='col-md-6 center-block'><div class='eyeTitle'>Read</div><canvas id='eyeChartRead' class='center-block'></canvas></div><div class='col-md-6 center-block'><div class='eyeTitle'>Write</div><canvas id='eyeChartWrite' class='center-block'></canvas></div></div>").appendTo("#charts");
+		$("<div class='row' id='eyeChart'><div class='col-md-6 center-block'><div class='eyeTitle'>Tx</div><canvas id='eyeChartRead' class='center-block'></canvas></div><div class='col-md-6 center-block'><div class='eyeTitle'>Rx</div><canvas id='eyeChartWrite' class='center-block'></canvas></div></div>").appendTo("#charts");
 		drawEye();
 		
 		//remove other charts
