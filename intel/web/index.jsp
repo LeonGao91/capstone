@@ -146,13 +146,16 @@
             </table>
  	</div>
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
-        <script>
+         <script>
             //expandable table
             $(document).ready(function() {
                 $('tr.expandable:even').addClass('odd');
+                $('.expandable').nextAll('tr').each( function() {
+                    if(!($(this).is('.expandable'))) $(this).hide();  //first hide all the rows which don't  belong to ".expandable"
+                });
                 $('.expandable').click(function () {
-                    var color = $(this).css("background-color");
-                    $(this).nextAll('tr').each( function() {
+                    var color = $(this).css("background-color");  //get the background color of the row being clicked
+                    $(this).nextAll('tr').each( function() { //expand rows with same product, and change the background color
                         if($(this).is('.expandable')) {
                             return false;
                         }
@@ -161,9 +164,7 @@
                     });
                 });
 
-                $('.expandable').nextAll('tr').each( function() {
-                    if(!($(this).is('.expandable'))) $(this).hide();
-                });
+                
 
             });
             
@@ -183,15 +184,15 @@
 
             $(".listItem").click(function(){
 
-                var input = $(this).html();
+                var input = $(this).html();    //get the item that is chosen
 
                 $("#mytable tr.expandable").each(function (){
-                    var text = $(this).find("td:nth-child("+columnNo+")").text();
+                    var text = $(this).find("td:nth-child("+columnNo+")").text();  //get the content of the corresponding column in each expandable row
                     if (input==="ALL"){
-                        $(this).css("display","table-row");
+                        $(this).css("display","table-row");  //display all the rows
                     }
                     else{
-                        $(this).css("display",text.indexOf(input) === -1 ? 'none' : 'table-row');
+                        $(this).css("display",text.indexOf(input) === -1 ? 'none' : 'table-row'); //check if the chosen item mathces the current row's content, if yes, show it
                     }
                 });
 
@@ -201,12 +202,17 @@
         
 
         //sort
+        $(".date").sort(function(a,b){    //defualt sorting, the most recnet rows is shown on the top
+                    return new Date($(a).html()) > new Date($(b).html());
+                }).each(function(){
+                    $("tbody").prepend($(this).parent());
+        });
 
         $("#sort").click(function(){
             var th = $(this);
-            var down = th.attr("down");
+            var down = th.attr("down");   //this varibale is to mark whether the sign is up or down,1 is down,0 is up
             if (down==="1"){ 
-                th.children().attr("class","glyphicon glyphicon-chevron-up"); 
+                th.children().attr("class","glyphicon glyphicon-chevron-up"); //change the sign
                 th.attr("down","0");
                 $(".date").sort(function(a,b){
                     return new Date($(a).html()) < new Date($(b).html());
