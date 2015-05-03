@@ -4,6 +4,7 @@
     Author     : leon
 --%>
 
+<%@page import="java.util.Map"%>
 <%@page import="java.util.Arrays"%>
 <%@page import="java.util.LinkedList"%>
 <%@page import="java.util.Date"%>
@@ -56,17 +57,20 @@
         <script src="js/library/bootstrap.min.js"></script>
         <script src="js/library/justGauge/justgage.1.0.1.min.js"></script>
         <script src="js/library/justGauge/raphael.2.1.0.min.js"></script>
-        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         <script src="js/OurJS/lineChart.js"></script>
         <script src="js/library/eye/Chart.js"></script>
         <script src="js/OurJS/result.js"></script>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         <!--combination chart-->
         <script src="js/library/Chart.Scatter.js"></script>
         
     </head>
     <script>
-        google.load('visualization', '1.1', {packages: ['line']});
+        google.load('visualization', '1.1', {packages: ['line', 'corechart']});
         google.setOnLoadCallback(drawChart);
+        google.setOnLoadCallback(drawVisualization);
+        
+        
 
         function drawChart() {
 
@@ -90,31 +94,26 @@
 
             chart.draw(data, options);
         }
-        
-//        google.load("visualization", "1", {packages:["corechart"]});
-//        google.setOnLoadCallback(drawVisualization);
-//
-//        function drawVisualization() {
-//          var data = google.visualization.arrayToDataTable([
-//            ['Test Date', 'Bolivia', 'Ecuador', 'Madagascar', 'Papua New Guinea', 'Rwanda', 'Average'],
-//            ['2004/05',  165,      938,         522,             998,           450,      614.6],
-//            ['2005/06',  135,      1120,        599,             1268,          288,      682],
-//            ['2006/07',  157,      1167,        587,             807,           397,      623],
-//            ['2007/08',  139,      1110,        615,             968,           215,      609.4],
-//            ['2008/09',  136,      691,         629,             1026,          366,      569.6]
-//          ]);
-//
-//          var options = {
-//            title : 'Monthly Coffee Production by Country',
-//            vAxis: {title: "Cups"},
-//            hAxis: {title: "Month"},
-//            seriesType: "bars",
-//            series: {5: {type: "line"}}
-//          };
-//
-//          var chart = new google.visualization.ComboChart(document.getElementById('chart_div'));
-//          chart.draw(data, options);
-//        }
+
+        function drawVisualization() {
+          var data = google.visualization.arrayToDataTable([
+              <%
+                out.print(product.getSystemRepeatData());
+              %>
+          ]);
+
+          var options = {
+            title : 'Incremental chart of the most recent 5 tests',
+            vAxis: {title: "Number of repeats"},
+            hAxis: {title: "Date"},
+            seriesType: "bars",
+            series: {5: {type: "line"}}
+          };
+
+          var chart2 = new google.visualization.ComboChart(document.getElementById('incremental_chart'));
+          chart2.draw(data, options);
+          $("#incremental_chart").hide();
+        }
 
     </script>
     <body>
@@ -211,8 +210,42 @@
              <div class="row">
                 <div class="col-md-6 center-block">
                     <!-- pop up window -->
-                   <button type="button" class="btn btn-primary center-block view-item" data-toggle="modal" data-target="#trustDetail">View</button>
+                   <button type="button" class="btn btn-primary center-block view-item" data-toggle="modal" data-target="#healthDetail">View</button>
+                    <div id="healthDetail" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                        <h4 class="modal-title" id="myLargeModalLabel">Health detail</h4>
+                                    </div>
+                                    <div class="modal-body">
 
+                                        <table class="table pop-up-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Item</th>
+                                                    <th>Score</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <c:forEach var="item" items="${sessionScope.detail.getHealth_detail_keySet()}">
+                                                    <tr>
+                                                    <td><c:out value="${item}"/></td>
+                                                    <td><c:out value="${sessionScope.detail.getHealth_detail().get(item)}"/></td>
+                                                    </tr>
+                                                </c:forEach>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                
+                 <div class="col-md-6  text-center">
+                    <button type="button" class="btn btn-primary center-block view-item" data-toggle="modal" data-target="#trustDetail">View</button>
+                        
                         <div id="trustDetail" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-lg">
                                 <div class="modal-content">
@@ -234,40 +267,6 @@
                                                     <tr>
                                                     <td><c:out value="${item}"/></td>
                                                     <td><c:out value="${sessionScope.detail.getTrust_detail().get(item)}"/></td>
-                                                    </tr>
-                                                </c:forEach>
-                                            </tbody>
-                                        </table>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                </div>
-                
-                 <div class="col-md-6  text-center">
-                    <button type="button" class="btn btn-primary center-block view-item" data-toggle="modal" data-target="#healthDetail">View</button>
-                        <div id="healthDetail" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-lg">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                        <h4 class="modal-title" id="myLargeModalLabel">Health detail</h4>
-                                    </div>
-                                    <div class="modal-body">
-
-                                        <table class="table pop-up-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Item</th>
-                                                    <th>Score</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <c:forEach var="item" items="${sessionScope.detail.getHealth_detail_keySet()}">
-                                                    <tr>
-                                                    <td><c:out value="${item}"/></td>
-                                                    <td><c:out value="${sessionScope.detail.getHealth_detail().get(item)}"/></td>
                                                     </tr>
                                                 </c:forEach>
                                             </tbody>
@@ -300,32 +299,18 @@
                 <ul id="chart-menu" class="dropdown-menu" role="menu">
                     <li id="changeEye"><a><h4>Eye Chart  </h4></a></li>
                     <li id="changeCombination"><a><h4>Combination Chart </h4></a></li>
-                    <li id="changeIncrement" style="display:none"><a><h4>Health/Trust Chart </h4></a></li>
+                    <li id="changeHealthTrust" style="display:none"><a><h4>Health/Trust Chart </h4></a></li>
+                    <li id="changeIncremental"><a><h4>Incremental Chart </h4></a></li>
                 </ul>
             </div>
             
             <div id="charts">
             <div id="linechart_material"></div>
-
-            <!--<div class="row" id="eyeChart">
-                <div class="col-md-6 center-block">
-                    <div class="eyeTitle">Read</div>
-                        <canvas id="eyeChartRead" class="center-block"></canvas>    
-                    </div>
-                    <div class="col-md-6 center-block">
-                        <div class="eyeTitle">Write</div>
-                        <canvas id="eyeChartWrite" class="center-block"></canvas>
-                    </div>
-            </div>
-
-            
-            <div id="combination">
-                <canvas id="combinationChart"></canvas>
-            </div>-->
-            
             </div><!--charts-->
+            <div id="incremental_chart" style="width: 1000px; height: 500px"></div>
+            
         </div>
-        <div id="chart_div" style="width: 900px; height: 500px;"></div>
+        
     </body>
     <script>
     $(document).ready(function() {
@@ -391,7 +376,7 @@
                         tx = detail.getEyes().get("tx".toLowerCase());
                     }
                     if(detail.getEyes().containsKey("rx".toLowerCase())) {
-                        tx = detail.getEyes().get("rx".toLowerCase());
+                        rx = detail.getEyes().get("rx".toLowerCase());
                     }
                     double[] nil = new double[]{0, 0, 0, 0};
                     double[] res = new double[4];
@@ -451,11 +436,11 @@
                 {
                     label: "INTEL_MIN",
                     fillColor: "none",
-                    strokeColor: "rgba(51, 122, 183,1)",
-                    pointColor: "rgba(51, 122, 183,1)",
+                    strokeColor: "#FAD2D9",
+                    pointColor: "#FAD2D9",
                     pointStrokeColor: "#fff",
                     pointHighlightFill: "none",
-                    pointHighlightStroke: "rgba(51, 122, 183,1)",
+                    pointHighlightStroke: "#FAD2D9",
                     data: 
                     <%
                             if(tx == null) {
@@ -474,11 +459,11 @@
                 {
                     label: "INTEL_MEAN",
                     fillColor: "none",
-                    strokeColor: "rgba(237,29,65,0.6)",
-                    pointColor: "rgba(237,29,65,0.6)",
+                    strokeColor: "#9BC2E1",
+                    pointColor: "#9BC2E1",
                     pointStrokeColor: "#fff",
                     pointHighlightFill: "none",
-                    pointHighlightStroke: "rgba(237,29,65,0.6)",
+                    pointHighlightStroke: "#9BC2E1",
                     data: <%
                             if(tx == null) {
                                 out.print(Arrays.toString(nil));
@@ -546,11 +531,11 @@
                 {
                     label: "INTEL_MIN",
                     fillColor: "none",
-                    strokeColor: "rgba(51, 122, 183,1)",
-                    pointColor: "rgba(51, 122, 183,1)",
+                    strokeColor: "#FAD2D9",
+                    pointColor: "#FAD2D9",
                     pointStrokeColor: "#fff",
                     pointHighlightFill: "none",
-                    pointHighlightStroke: "rgba(51, 122, 183,1)",
+                    pointHighlightStroke: "#FAD2D9",
                     data: 
                     <%
                             if(rx == null) {
@@ -569,11 +554,11 @@
                 {
                     label: "INTEL_MEAN",
                     fillColor: "none",
-                    strokeColor: "rgba(237,29,65,0.6)",
-                    pointColor: "rgba(237,29,65,0.6)",
+                    strokeColor: "#9BC2E1",
+                    pointColor: "#9BC2E1",
                     pointStrokeColor: "#fff",
                     pointHighlightFill: "none",
-                    pointHighlightStroke: "rgba(237,29,65,0.6)",
+                    pointHighlightStroke: "#9BC2E1",
                     data: <%
                             if(rx == null) {
                                 out.print(Arrays.toString(nil));
@@ -602,12 +587,13 @@
 
 	//switch the chart
 	$("#changeEye").click(function(){
-		$("<div class='row' id='eyeChart'><div class='col-md-6 center-block'><div class='eyeTitle'>Tx</div><canvas id='eyeChartRead' class='center-block'></canvas></div><div class='col-md-6 center-block'><div class='eyeTitle'>Rx</div><canvas id='eyeChartWrite' class='center-block'></canvas></div></div>").appendTo("#charts");
+		$("<div class='row' id='eyeChart'><img id='Legend' src='media/Legend.png'><div class='col-md-6 center-block'><div class='eyeTitle'>Tx</div><canvas id='eyeChartRead' class='center-block'></canvas></div><div class='col-md-6 center-block'><div class='eyeTitle'>Rx</div><canvas id='eyeChartWrite' class='center-block'></canvas></div></div>").appendTo("#charts");
 		drawEye();
 		
 		//remove other charts
 		$("#linechart_material").hide();
 		$("#combination").remove();
+                $("#incremental_chart").hide();
 
 		//change title
 		var title = $(this).children().children().html();
@@ -615,8 +601,9 @@
 		
 		//list control
 		$(this).hide();
-		$("#changeIncrement").show();
+		$("#changeHealthTrust").show();
 		$("#changeCombination").show();
+                $("#changeIncremental").show();
 		
 	});
 
@@ -626,21 +613,24 @@
 
 		$("#linechart_material").hide();
 		$("#eyeChart").remove();
+                $("#incremental_chart").hide();
 
 		var title = $(this).children().children().html();
 		$("#chart_header").html(title+"<span class='caret'></span>");
 
 		$(this).hide();
-		$("#changeIncrement").show();
+		$("#changeHealthTrust").show();
 		$("#changeEye").show();
+                $("#changeIncremental").show();
 	});
 	
 	
-	$("#changeIncrement").click(function(){
+	$("#changeHealthTrust").click(function(){
 		$("#linechart_material").show();
 		
 		$("#eyeChart").remove();
 		$("#combination").remove();
+                $("#incremental_chart").hide();
 
 		var title = $(this).children().children().html();
 		$("#chart_header").html(title+"<span class='caret'></span>");
@@ -648,7 +638,25 @@
 		$(this).hide();
 		$("#changeEye").show();
 		$("#changeCombination").show();
+                $("#changeIncremental").show();
 	});
+        //<div id="incremental_chart" style="width: 80%; height: 90%; display: none"></div>
+        $("#changeIncremental").click(function(){
+		$("#incremental_chart").show();
+		
+		$("#eyeChart").remove();
+		$("#combination").remove();
+                $("#linechart_material").hide();
+
+		var title = $(this).children().children().html();
+		$("#chart_header").html(title+"<span class='caret'></span>");
+
+		$(this).hide();
+		$("#changeEye").show();
+		$("#changeCombination").show();
+                $("#changeHealthTrust").show();
+	});
+        
     });
     </script>
 </html>

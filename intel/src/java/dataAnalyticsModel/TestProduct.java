@@ -21,7 +21,6 @@ public class TestProduct {
 	private String last_test_date; // last test date
 	private String pass_fail; // last test conclusion
 	private Map<String, Integer> systems_repeats; // summary of all systems and
-													// repeats
 	private LinkedList<TestBrief> tests; // all tests brief information
 
 	/**
@@ -206,6 +205,38 @@ public class TestProduct {
                         .append(test.getTrust()).append(", ").append(" y:").append(test.getHealth()).append("},");
             }
             sb.setLength(sb.length() - 1);
+            return sb.toString();
+        }
+        
+//        ['Test Date', 'Bolivia', 'Ecuador', 'Madagascar', 'Papua New Guinea', 'Rwanda', 'Average'],
+//            ['2004/05',  165,      938,         522,             998,           450,      614.6],
+//            ['2005/06',  135,      1120,        599,             1268,          288,      682],
+//            ['2006/07',  157,      1167,        587,             807,           397,      623],
+//            ['2007/08',  139,      1110,        615,             968,           215,      609.4],
+//            ['2008/09',  136,      691,         629,             1026,          366,      569.6]
+        
+        public String getSystemRepeatData() {
+            StringBuilder sb = new StringBuilder();
+            Set<String> key = systems_repeats.keySet();
+            sb.append("['Test Date',");
+            for(String s : key) {
+                sb.append("'").append(s).append("', ");
+            }
+            sb.append("'").append("Average").append("'");
+            sb.append("], ");
+            
+            for(int i = Math.max(0, tests.size() - 5); i < tests.size(); i++) {
+                TestBrief b = tests.get(i);
+                sb.append("['").append(b.getTest_date()).append("', ");
+                int sum = 0;
+                for(String s : b.getSystems_repeats().keySet()) {
+                    sb.append("").append(b.getSystems_repeats().get(s)).append(", ");
+                    sum += b.getSystems_repeats().get(s);
+                }
+                sb.append("").append(sum / systems_repeats.size()).append("");
+                sb.append("], ");
+            }
+            sb.setLength(sb.length() - 2);
             return sb.toString();
         }
 }

@@ -1,5 +1,8 @@
 package dataAnalyticsModel;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * This class represents a brief of test result. It is used to construct and
  * parse xml. Data include test health and trust scores, test date, test
@@ -14,8 +17,25 @@ public class TestBrief {
 	private String test_date; // test date
 	private double health; // health score
 	private double trust; // trust score
+        private Map<String, Integer> systems_repeats; // summary of all systems and repeats
 	private String result_file; // detailed test result file name
 
+        /**
+         * getter
+         * @return 
+         */
+        public Map<String, Integer> getSystems_repeats() {
+            return systems_repeats;
+        }
+
+        /**
+         * setter
+         * @param systems_repeats 
+         */
+        public void setSystems_repeats(Map<String, Integer> systems_repeats) {
+            this.systems_repeats = systems_repeats;
+        }
+        
 	/**
 	 * Constructor with no argument
 	 */

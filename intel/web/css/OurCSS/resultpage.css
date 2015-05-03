@@ -151,3 +151,11 @@ img#combinationpng {
     margin:3% 3% 3% 3%;
     width:90%;
 }
+
+#Legend {
+    z-index: 100;
+    position: absolute;
+    margin-left: 20px;
+    width: 100px;
+    height: 100px;
+}
