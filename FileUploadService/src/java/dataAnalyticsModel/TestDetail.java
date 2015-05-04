@@ -19,7 +19,6 @@ public class TestDetail {
     private Map<String, Double> health_detail; //a map of detailed health items scores
     private Map<String, Double> trust_detail; // a map of detailed trust items and scores
     private Map<String, EyeChart> eyes; //a map of all eye charts
-    private Map<String, Integer> systems_repeats; // summary of all systems and repeats
     private String messages; //warning messages
 
     /**
@@ -152,23 +151,7 @@ public class TestDetail {
         return eyes;
     }
 
-    /**
-     * Get systems and repeats information
-     *
-     * @return a map of all systems and number of repeats
-     */
-    public Map<String, Integer> getSystems_repeats() {
-        return systems_repeats;
-    }
 
-    /**
-     * Set summary of systems and repeats information
-     *
-     * @param systems_repeats a map of all systems and number of repeats
-     */
-    public void setSystems_repeats(Map<String, Integer> systems_repeats) {
-        this.systems_repeats = systems_repeats;
-    }
 
     /**
      * Get warning messages

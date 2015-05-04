@@ -63,7 +63,6 @@ public class ResultExporter {
         testDetail.setTrust(test.getTrust());
         testDetail.setTrust_detail(test.getTrustDetail());
         testDetail.setMessages(test.getTestMessages());
-        testDetail.setSystems_repeats(test.getSystems_repeats());
         EyeChart eyeChart;
         LinkedHashMap<String, EyeChart> eyes = new LinkedHashMap<>();
         String eyeName;
@@ -172,6 +171,7 @@ public class ResultExporter {
         testBrief.setTrust(test.getTrust());
         testBrief.setTest_date(timeStamp);
         testBrief.setResult_file(resultFileName);
+        testBrief.setSystems_repeats(test.getSystems_repeats());
         testProduct.addTest(testBrief);
         testProduct.setLast_test_date(timeStamp);
         testProduct.setPass_fail(test.getConclusion());

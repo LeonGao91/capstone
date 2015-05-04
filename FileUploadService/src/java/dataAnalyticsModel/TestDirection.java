@@ -90,25 +90,29 @@ public class TestDirection {
         SummaryStatistics ssMeanMean = new SummaryStatistics();
         SummaryStatistics ssAllMin = new SummaryStatistics();
         SummaryStatistics ssAllMean = new SummaryStatistics();
-        SummaryStatistics[] mins = new SummaryStatistics[getSystemByIndex(0).getSize()];
-        SummaryStatistics[] means = new SummaryStatistics[getSystemByIndex(0).getSize()];
+        int maxRepeat = Integer.MIN_VALUE;
+        for (int i = 0; i < size; i++) {
+            maxRepeat = getSystemByIndex(i).getSize() > maxRepeat ? getSystemByIndex(i).getSize() : maxRepeat;
+        }
+        SummaryStatistics[] mins = new SummaryStatistics[maxRepeat];
+        SummaryStatistics[] means = new SummaryStatistics[maxRepeat];
         //assign an output Stats object according to outlier indicator
         Stats outputStats = checkOutlier ? noOutlierStats : basicStats;
         Stats tempSystemStats;
         Stats tempRepeatStats;
         //get repeat noise
-        for (int i = 0; i < getSystemByIndex(0).getSize(); i++) {
+        for (int i = 0; i < maxRepeat; i++) {
             mins[i] = new SummaryStatistics();
             means[i] = new SummaryStatistics();
-        }
-        for (int i = 0; i < getSystemByIndex(0).getSize(); i++) {
             for (int j = 0; j < size; j++) {
-                tempRepeatStats = checkOutlier ? getRepeatByIndexes(j, i).getNoOutlierStats() : getRepeatByIndexes(j, i).getBasicStats();
-                if (Double.compare(tempRepeatStats.getMin(), Double.NaN) != 0) {
-                    mins[i].addValue(tempRepeatStats.getMin());
-                }
-                if (Double.compare(tempRepeatStats.getMean(), Double.NaN) != 0) {
-                    means[i].addValue(tempRepeatStats.getMean());
+                if (getSystemByIndex(j).getSize() > i) {
+                    tempRepeatStats = checkOutlier ? getRepeatByIndexes(j, i).getNoOutlierStats() : getRepeatByIndexes(j, i).getBasicStats();
+                    if (Double.compare(tempRepeatStats.getMin(), Double.NaN) != 0) {
+                        mins[i].addValue(tempRepeatStats.getMin());
+                    }
+                    if (Double.compare(tempRepeatStats.getMean(), Double.NaN) != 0) {
+                        means[i].addValue(tempRepeatStats.getMean());
+                    }
                 }
             }
         }
@@ -123,7 +127,7 @@ public class TestDirection {
         //get other stats
         for (int i = 0; i < size; i++) {
             // assign an input Stats object of each system according to outlier indicator
-            tempSystemStats = checkOutlier ? getSystemByIndex(i) .getNoOutlierStats() : getSystemByIndex(i).getBasicStats();
+            tempSystemStats = checkOutlier ? getSystemByIndex(i).getNoOutlierStats() : getSystemByIndex(i).getBasicStats();
             //exclude NA statistics from each system
             if (Double.compare(tempSystemStats.getMeanMin(), Double.NaN) != 0) {
                 ssMeanMin.addValue(tempSystemStats.getMeanMin());
@@ -178,7 +182,7 @@ public class TestDirection {
             for (int j = 0; j < tempSystem.getSize(); j++) {
                 tempRepeat = getRepeatByIndexes(i, j);
                 // threshold based outlier detection - 1
-                outliers[1] = outliers[1] || tempRepeat.findSystemOutliers(basicStats.getMean(),thresholds[0], sb);
+                outliers[1] = outliers[1] || tempRepeat.findSystemOutliers(basicStats.getMean(), thresholds[0], sb);
                 // threshold based outlier detection - 2
                 outliers[2] = outliers[2] || tempRepeat.findSystemOutliers(tempSystem.getBasicStats().getMean(), thresholds[1], sb);
                 // lane2lane outlier - 1
@@ -304,11 +308,15 @@ public class TestDirection {
      * @return a double array of all mean values across lanes
      */
     public double[] getAllMarginMean() {
-        double[] allMarginMean = new double[size * getSystemByIndex(0).getSize()];
+        int maxRepeat = Integer.MIN_VALUE;
+        for (int i = 0; i < size; i++) {
+            maxRepeat = getSystemByIndex(i).getSize() > maxRepeat ? getSystemByIndex(i).getSize() : maxRepeat;
+        }
+        double[] allMarginMean = new double[size * maxRepeat];
         //Loop to get the mean across lanes of each repeat
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < getSystemByIndex(i).getSize(); j++) {
-                allMarginMean[i * size + j] = getRepeatByIndexes(i, j).getBasicStats()
+                allMarginMean[i * maxRepeat + j] = getRepeatByIndexes(i, j).getBasicStats()
                         .getMean();
             }
         }
@@ -349,7 +357,7 @@ public class TestDirection {
                 acrossRepeat[i][j] = new SummaryStatistics();
             }
             //add margin values
-            for (int j = 0; j < getSystemByIndex(0).getSize(); j++) {
+            for (int j = 0; j < getSystemByIndex(i).getSize(); j++) {
                 tempRepeat = getRepeatByIndexes(i, j);
                 tempRepeat.addValuesAcrossLane(acrossRepeat[i]);
             }
@@ -448,6 +456,7 @@ public class TestDirection {
 
     /**
      * Get direction ID.
+     *
      * @return direction ID
      */
     public String getDirectionID() {
@@ -456,7 +465,8 @@ public class TestDirection {
 
     /**
      * Set direction ID.
-     * @param directionID direction ID 
+     *
+     * @param directionID direction ID
      */
     public void setDirectionID(String directionID) {
         this.directionID = directionID;
@@ -464,6 +474,7 @@ public class TestDirection {
 
     /**
      * Get all lane min value.
+     *
      * @return all lane min value
      */
     public double getMinAllLane() {
@@ -472,6 +483,7 @@ public class TestDirection {
 
     /**
      * Get all lane mean value.
+     *
      * @return all lane mean value
      */
     public double getMeanAllLane() {
@@ -480,6 +492,7 @@ public class TestDirection {
 
     /**
      * Get all lane median value.
+     *
      * @return all lane median value
      */
     public double getMedianAllLane() {
@@ -488,6 +501,7 @@ public class TestDirection {
 
     /**
      * Get the "by lane" index of min lane.
+     *
      * @return min lane index
      */
     public int getMinLaneNo() {

@@ -19,6 +19,7 @@ import ncsa.hdf.object.Group;
 import ncsa.hdf.object.HObject;
 import ncsa.hdf.object.h5.H5File;
 import dataAnalyticsModel.*;
+import static service.FileUploadService.properties;
 
 public class ReadHDF5File {
 
@@ -27,7 +28,7 @@ public class ReadHDF5File {
 
     static {
 //        try {
-////            addDir(FileUploadService.properties.getProperty("dyLinkPath"));
+//            addDir(FileUploadService.properties.getProperty("dyLinkPath"));
 //        } catch (IOException ex) {
 //            Logger.getLogger(ReadHDF5File.class.getName()).log(Level.SEVERE, null, ex);
 //        }
@@ -114,7 +115,7 @@ public class ReadHDF5File {
     private static void copy(FileFormat ff, FileFormat tf, Group fg, Group tg) {
         for (HObject object : fg.getMemberList()) {
             if (object instanceof Dataset) {
-                System.out.println("dataset:" + object);
+                System.out.println("dataset1:" + object);
                 Dataset dataset = (Dataset) object;
                 Datatype datatype = dataset.getDatatype();
 
@@ -126,7 +127,7 @@ public class ReadHDF5File {
                     Logger.getLogger(ReadHDF5File.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 try {
-                    System.out.println(dataset.getName());
+                    System.out.println("dataset2:" + dataset.getName());
                     toset = tf.createScalarDS(dataset.getName(), tg, totype, dims, dataset.getMaxDims(), dataset.getChunkSize(), 0, dataset.read());
                 } catch (Exception ex) {
                     Logger.getLogger(ReadHDF5File.class.getName()).log(Level.SEVERE, null, ex);
@@ -179,6 +180,7 @@ public class ReadHDF5File {
         if (new File(baseFile).exists()) {
             try {
                 baseFileFormat = fileFormat.createInstance(baseFile, FileFormat.WRITE);
+                baseFileFormat.setMaxMembers(999999999);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -194,6 +196,7 @@ public class ReadHDF5File {
         } else {
             try {
                 baseFileFormat = fileFormat.createFile(baseFile, FileFormat.FILE_CREATE_DELETE);
+                baseFileFormat.setMaxMembers(999999999);
             } catch (Exception ex) {
                 Logger.getLogger(ReadHDF5File.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -254,6 +257,7 @@ public class ReadHDF5File {
         if (new File(baseFile).exists()) {
             try {
                 baseFileFormat = fileFormat.createInstance(baseFile, FileFormat.WRITE);
+                baseFileFormat.setMaxMembers(999999999);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -269,6 +273,7 @@ public class ReadHDF5File {
         } else {
             try {
                 baseFileFormat = fileFormat.createFile(baseFile, FileFormat.FILE_CREATE_DELETE);
+                baseFileFormat.setMaxMembers(999999999);
             } catch (Exception ex) {
                 Logger.getLogger(ReadHDF5File.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -288,6 +293,10 @@ public class ReadHDF5File {
 
         //get 8 direction group
         if (baseRoot.getMemberList().size() < directions.length) {
+            
+            for (HObject o : baseRoot.getMemberList()) {
+                System.err.println(o.getName());
+            }
             for (String direction : directions) {
                 try {
                     Group dirGroup = baseFileFormat.createGroup(direction, baseRoot);
@@ -420,7 +429,7 @@ public class ReadHDF5File {
                                 Logger.getLogger(ReadHDF5File.class.getName()).log(Level.SEVERE, null, ex);
                             }
                             try {
-                                System.out.println(dataset.getName());
+                                System.out.println("copy data" + dataset.getName());
                                 toset = tf.createScalarDS(object.getName(), tgs.get(dir.getName()), totype, dims, dataset.getMaxDims(), dataset.getChunkSize(), 0, dataset.read());
                             } catch (Exception ex) {
                                 Logger.getLogger(ReadHDF5File.class.getName()).log(Level.SEVERE, null, ex);
@@ -432,15 +441,17 @@ public class ReadHDF5File {
 
         }
     }
-    
-    public static Test getResult(String datafile, String customerID, String productID) {
+
+    public static Test getResult(String datafile, String customerID, String productID, String mainFolder) {
 
         FileFormat fileFormat = FileFormat.getFileFormat(FileFormat.FILE_TYPE_HDF5);
         FileFormat singleFileFormat = null;
+        
         Group fileRoot = null;
 
         try {
             singleFileFormat = fileFormat.createInstance(datafile, FileFormat.READ);
+            singleFileFormat.setMaxMembers(999999999);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -448,113 +459,139 @@ public class ReadHDF5File {
         if (singleFileFormat != null) {
             try {
                 singleFileFormat.open();
+                
                 fileRoot = (Group) ((javax.swing.tree.DefaultMutableTreeNode) singleFileFormat.getRootNode()).getUserObject();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        Test test = getTest(fileRoot, customerID, productID);
-        
-        System.out.println(test.toString());
+        Test test = getTest(fileRoot, customerID, productID, mainFolder);
+
+        System.out.println("get result:" + test.toString());
 
         try {
             singleFileFormat.close();
         } catch (Exception ex) {
             Logger.getLogger(ReadHDF5File.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return test;
     }
-    
-    public static Test getTest(Group root, String customerID, String productID) {
+
+    public static Test getTest(Group root, String customerID, String productID, String mainFolder) {
         List<HObject> directions = root.getMemberList();
         TestDirection[] testdirections = new TestDirection[directions.size()];
-        
+
         for (int i = 0; i < directions.size(); i++) {
-            testdirections[i] = getDirection((Group)directions.get(i));
+            testdirections[i] = getDirection((Group) directions.get(i));
         }
-        
-        return new Test(testdirections, customerID, productID);
+
+        return new Test(testdirections, customerID, productID, mainFolder);
     }
-    
+
     private static TestDirection getDirection(Group direction) {
         List<HObject> systems = direction.getMemberList();
         TestSystem[] testsystems = new TestSystem[systems.size()];
-        
-        for (int i = 0; i < systems.size(); i++) {
-            testsystems[i] = getSystem((Group)systems.get(i));
+
+        try {
+            for (int i = 0; i < systems.size(); i++) {
+                testsystems[i] = getSystem((Group) systems.get(i));
+            }
+        } catch (Exception e) {
+            System.out.println(direction.getName());
         }
-        
+
         return new TestDirection(testsystems, direction.getName());
     }
-    
+
     private static TestSystem getSystem(Group system) {
         List<HObject> repeats = system.getMemberList();
         TestRepeat[] testrepeats = new TestRepeat[repeats.size()];
-        
+
         for (int i = 0; i < repeats.size(); i++) {
-            TestLane[][][] repeat = getRepeat((Group)repeats.get(i));
-            TestMarginsDDR margins = new TestMarginsDDR(repeat);
-            testrepeats[i] = new TestRepeat(margins, ((Group)repeats.get(i)).getName());
+            try {
+                TestLane[][][] repeat = getRepeat((Group) repeats.get(i));
+                TestMarginsDDR margins = new TestMarginsDDR(repeat);
+                testrepeats[i] = new TestRepeat(margins, ((Group) repeats.get(i)).getName());
+            } catch (Exception e) {
+                System.err.println("zzzzzzzzzzzzzzz" + system.getName() + "xxxx" + repeats.get(i).getName());
+            }
         }
-        
+
         return new TestSystem(testrepeats, system.getName());
     }
-    
-    
+
     public static TestLane[][][] getRepeat(Group repeatg) {
         TestLane[][][] repeat = new TestLane[repeatg.getMemberList().size()][][];
         List<HObject> channels = repeatg.getMemberList();
-        
+
         for (int i = 0; i < channels.size(); i++) {
-            repeat[i] = getChannel((Group)channels.get(i));
+            repeat[i] = getChannel((Group) channels.get(i));
         }
         
+
         return repeat;
     }
-    
+
     public static TestLane[][] getChannel(Group channelg) {
         TestLane[][] channel = new TestLane[channelg.getMemberList().size()][];
-        
+
         List<HObject> ranks = channelg.getMemberList();
-        
+
         for (int i = 0; i < ranks.size(); i++) {
             if (ranks.get(i) instanceof Group) {
-                channel[i] = getRank((Group)ranks.get(i), channelg.getName());
+                channel[i] = getRank((Group) ranks.get(i), channelg.getName());
             } else {
-                System.out.println(ranks.get(i).getName());
+                System.out.println("get channel" + ranks.get(i).getName());
             }
-            
+
         }
         
+        channelg.clear();
+
         return channel;
     }
-    
+
     public static TestLane[] getRank(Group rankg, String channelID) {
         
+
         TestLane[] rank = new TestLane[rankg.getMemberList().size()];
-        
+
         List<HObject> lanes = rankg.getMemberList();
         
+        if (rank.length != 64) {
+            System.out.println("wrong: " + channelID);
+            System.out.println("wrong: " + rankg.getName());
+            System.out.println("wrong: " + rankg.getFullName());
+            System.out.println("wrong: " + rankg.getNumberOfMembersInFile());
+            for (HObject o : lanes) {
+                System.out.println(o.getName());
+            }
+        }
+
         for (int i = 0; i < lanes.size(); i++) {
             //set value
-            rank[i] = getValue((Dataset)lanes.get(i), channelID, rankg.getName());
+            rank[i] = getValue((Dataset) lanes.get(i), channelID, rankg.getName());
         }
         
+        rankg.clear();
+
         return rank;
     }
-    
+
     public static TestLane getValue(Dataset data, String channelID, String rankID) {
         byte[] value = null;
         try {
-            value = (byte[])data.read();
+            value = (byte[]) data.read();
         } catch (Exception ex) {
             Logger.getLogger(ReadHDF5File.class.getName()).log(Level.SEVERE, null, ex);
         } catch (OutOfMemoryError ex) {
             Logger.getLogger(ReadHDF5File.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        
+
         return new TestLane(value[0], true, channelID, rankID, data.getName());
     }
 
@@ -570,6 +607,7 @@ public class ReadHDF5File {
             field.setAccessible(true);
             String[] paths = (String[]) field.get(null);
             for (int i = 0; i < paths.length; i++) {
+                System.err.println("path here:" + paths[i]);
                 if (s.equals(paths[i])) {
                     return;
                 }
@@ -584,6 +622,16 @@ public class ReadHDF5File {
         } catch (NoSuchFieldException e) {
             throw new IOException("Failed to get field handle to set library path");
         }
+    }
+    
+    public static void main(String[] args) {
+        try {
+            addDir("/Users/wangjerome/Desktop/15S/lib");
+        } catch (IOException ex) {
+            Logger.getLogger(ReadHDF5File.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Test test = ReadHDF5File.getResult("/Users/wangjerome/Desktop/foo2/5B06D4E4/135-1671-001/DRAM/data_file.h5", "5B06D4E4", "135-1671-001", "/Users/wangjerome/Desktop/foo2");
+        System.out.println(test.toString());
     }
 
 }

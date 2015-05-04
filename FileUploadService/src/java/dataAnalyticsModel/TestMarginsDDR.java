@@ -275,6 +275,7 @@ public class TestMarginsDDR extends TestMargins {
             for (int j = 0; j < rankNum; j++) {
                 for (int k = 0; k < laneNum; k++) {
                     if (getLaneByIndexes(i, j, k).getMargin() != 0) {
+                        System.out.println(i + " " + j + " " + k);
                         //one valid
                         return false;
                     }
@@ -294,7 +295,29 @@ public class TestMarginsDDR extends TestMargins {
      * @return a TestLane object
      */
     public TestLane getLaneByIndexes(int channel, int rank, int lane) {
-        return lanes[channel][rank][lane];
+//        System.out.println(channel);
+//        System.out.println(rank);
+//        System.out.println(lane);
+//        System.out.println(lanes.length);
+//        System.out.println(lanes[0].length);
+//        System.out.println(lanes[0][0].length);
+        TestLane result = null;
+        try {
+            result = lanes[channel][rank][lane];
+        } catch(Exception e) {
+            System.err.println(channel);
+            System.err.println(rank);
+            System.err.println(lane);
+            
+            System.err.println(lanes.length);
+            System.err.println(lanes[1].length);
+            System.err.println(lanes[1][1].length);
+            
+            System.err.println(e);
+            System.out.println(lanes[channel][rank][lane]);
+        }
+        
+        return result;
     }
 
     /**

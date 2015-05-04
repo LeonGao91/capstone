@@ -13,6 +13,8 @@ import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -96,8 +98,12 @@ public class FolderMonitor implements Runnable{
     }
 
     private static void uploadFile(java.lang.String path) {
-        FileUploadService service = new FileUploadService();
-        service.uploadFile(path);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(FolderMonitor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        FileUploadService.uploadFile(path);
     }
 
 

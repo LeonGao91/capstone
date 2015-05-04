@@ -81,6 +81,7 @@ public class DataAnalyticsModel {
             br2.close();
             System.out.println("Health: " + test.getHealth());
             System.out.println("Trust: " + test.getTrust());
+            
             // output results to xml files
             ResultExporter.output(test, "/home/rei/workspace/DataAnalyticsModel");
         } catch (IOException | NumberFormatException e) {

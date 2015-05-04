@@ -86,8 +86,12 @@ public class Test {
     //benchmarks
     private double[] eyeChartIntelMinBenchmark;
     private double[] eyeChartIntelMeanBenchmark;
-    private double healthBenchmark;
-    private double trustBenchmark;
+    private double passHealthBenchmark;  //xml config, default 75
+    private double passTrustBenchmark;  //xml config, default 40
+    private double failHealthBenchmark;  //xml config, default 75
+    private double failTrustBenchmark;  //xml config, default 75
+    private int maxNearWcCount;  //xml config, default 8
+
     private int validation;
     //check results
     private boolean basicMeanCheck = true;
@@ -221,8 +225,13 @@ public class Test {
                 eyeChartIntelMinBenchmark[i - 1] = Double.parseDouble(doc.getElementsByTagName("B" + i + "EyeMin").item(0).getTextContent());
                 eyeChartIntelMeanBenchmark[i - 1] = Double.parseDouble(doc.getElementsByTagName("B" + i + "EyeMean").item(0).getTextContent());
             }
-            healthBenchmark = Double.parseDouble(doc.getElementsByTagName("BH").item(0).getTextContent());
-            trustBenchmark = Double.parseDouble(doc.getElementsByTagName("BT").item(0).getTextContent());
+            passHealthBenchmark = Double.parseDouble(doc.getElementsByTagName("PH").item(0).getTextContent());
+            passTrustBenchmark = Double.parseDouble(doc.getElementsByTagName("PT").item(0).getTextContent());
+            failHealthBenchmark = Double.parseDouble(doc.getElementsByTagName("FH").item(0).getTextContent());
+            failTrustBenchmark = Double.parseDouble(doc.getElementsByTagName("FT").item(0).getTextContent());
+            
+            maxNearWcCount = Integer.parseInt(doc.getElementsByTagName("MaxWC").item(0).getTextContent());
+            
             // healthDetail
             healthDetail.put(MEANMINCHECK, Double.parseDouble(doc.getElementsByTagName("MEANMINCHECK").item(0).getTextContent()));
             healthDetail.put(MINMINCHECK, Double.parseDouble(doc.getElementsByTagName("MINMINCHECK").item(0).getTextContent()));
@@ -295,19 +304,21 @@ public class Test {
                 }
                 xml = sb.toString();
                 input.close();
+                //convert to summary object
+                testSummary = (TestSummary) xstream.fromXML(xml);
+
+                System.err.println();
+                tempMap = testSummary.getProduct(productID).getSystems_repeats();
+                //get existing system repeat count and add new system repeat count
+                for (int i = 0; i < getDirectionByIndex(0).getSize(); i++) {
+                    tempSystem = getSystemByIndexes(0, i);
+                    systemID = tempSystem.getSystemID();
+                    tempMap.put(systemID, tempSystem.getSize() + (tempMap.get(systemID) == null ? 0 : tempMap.get(systemID)));
+                }
+                systems_repeats = tempMap;
             } catch (Exception e) {
                 System.out.println("Could find file.");
             }
-            //convert to summary object
-            testSummary = (TestSummary) xstream.fromXML(xml);
-            tempMap = testSummary.getProduct(productID).getSystems_repeats();
-            //get existing system repeat count and add new system repeat count
-            for (int i = 0; i < getDirectionByIndex(0).getSize(); i++) {
-                tempSystem = getSystemByIndexes(0, i);
-                systemID = tempSystem.getSystemID();
-                tempMap.put(systemID, tempSystem.getSize() + tempMap.get(systemID));
-            }
-            systems_repeats = tempMap;
         }
     }
 
@@ -335,7 +346,7 @@ public class Test {
                 for (int j = 0; j < size; j++) {
                     for (int k = 0; k < getSystemByIndexes(j, i).getSize(); k++) {
                         laneNum = getRepeatByIndexes(j, i, k).getByLaneSize();
-                        for(int l = 0; l < laneNum; l++){
+                        for (int l = 0; l < laneNum; l++) {
                             getRepeatByIndexes(j, i, k).markOutlierByLane(l);
                         }
                     }
@@ -436,6 +447,7 @@ public class Test {
             // near worst case count
             nearWcCount = Math.max(nearWcCount, getDirectionByIndex(i).getNearWcCount());
         }
+        nearWcCount = nearWcCount > maxNearWcCount ? maxNearWcCount : nearWcCount;
         // window correlation check
         if (getDirectionByIndex(0).getSize() * getSystemByIndexes(0, 0).getSize() > 1) {
             for (int i = 0; i < size / 4; i++) {
@@ -540,17 +552,19 @@ public class Test {
         health = Util.mapSumValue(healthDetail);
         trust = Util.mapSumValue(trustDetail);
         // check health and trust scores with benchmarks
-        if (health >= healthBenchmark && trust >= trustBenchmark) {
+        if (health >= passHealthBenchmark && trust >= passTrustBenchmark) {
             conclusion = "pass";
-        } else {
+        } else if (health < failHealthBenchmark && trust > failTrustBenchmark) {
             conclusion = "fail";
-            if (health < healthBenchmark && trust < trustBenchmark) {
-                messages.insert(0, "Low health score and low trust score;");
-            } else if (health < healthBenchmark) {
-                messages.insert(0, "Low health score;");
-            } else {
-                messages.insert(0, "Low trust score;");
-            }
+        } else {
+            conclusion = "not ready";
+        }
+        if (health < passHealthBenchmark && trust < passTrustBenchmark) {
+            messages.insert(0, "Low health score and low trust score;");
+        } else if (health < passHealthBenchmark) {
+            messages.insert(0, "Low health score;");
+        } else if (trust < passTrustBenchmark) {
+            messages.insert(0, "Low trust score;");
         }
     }
 

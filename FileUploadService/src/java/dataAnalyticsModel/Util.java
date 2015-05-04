@@ -126,7 +126,7 @@ public class Util {
     public static double mapMeanValue(Map<String, Integer> map) {
         double mean = 0;
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            mean = mean + entry.getValue();
+            mean = mean + entry.getValue().doubleValue();
         }
         return mean / map.size();
     }
