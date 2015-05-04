@@ -124,11 +124,11 @@ public class Util {
      * @return mean of all values
      */
     public static double mapMeanValue(Map<String, Integer> map) {
-        double mean = 0;
+        int mean = 0;
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            mean = mean + entry.getValue().doubleValue();
+            mean = mean + entry.getValue();
         }
-        return mean / map.size();
+        return (double)mean / map.size();
     }
 
     /**
@@ -140,7 +140,7 @@ public class Util {
     public static double mapSumValue(Map<String, Double> map) {
         double sum = 0;
         for (Map.Entry<String, Double> entry : map.entrySet()) {
-            sum = sum + entry.getValue();
+            sum = sum + (Double.compare(entry.getValue(), Double.NaN) == 0 ? 0 : entry.getValue());
         }
         return sum;
     }

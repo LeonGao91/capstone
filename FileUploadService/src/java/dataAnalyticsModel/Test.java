@@ -139,7 +139,6 @@ public class Test {
         trust = 0;
         healthDetail = new LinkedHashMap<>();
         trustDetail = new LinkedHashMap<>();
-        systems_repeats = new LinkedHashMap<>();
         messages = new StringBuilder();
         pearsons = new PearsonsCorrelation();
         initialize("");
@@ -165,7 +164,6 @@ public class Test {
         trust = 0;
         healthDetail = new LinkedHashMap<>();
         trustDetail = new LinkedHashMap<>();
-        systems_repeats = new LinkedHashMap<>();
         messages = new StringBuilder();
         pearsons = new PearsonsCorrelation();
         this.customerID = customerID;
@@ -229,9 +227,9 @@ public class Test {
             passTrustBenchmark = Double.parseDouble(doc.getElementsByTagName("PT").item(0).getTextContent());
             failHealthBenchmark = Double.parseDouble(doc.getElementsByTagName("FH").item(0).getTextContent());
             failTrustBenchmark = Double.parseDouble(doc.getElementsByTagName("FT").item(0).getTextContent());
-            
+
             maxNearWcCount = Integer.parseInt(doc.getElementsByTagName("MaxWC").item(0).getTextContent());
-            
+
             // healthDetail
             healthDetail.put(MEANMINCHECK, Double.parseDouble(doc.getElementsByTagName("MEANMINCHECK").item(0).getTextContent()));
             healthDetail.put(MINMINCHECK, Double.parseDouble(doc.getElementsByTagName("MINMINCHECK").item(0).getTextContent()));
@@ -277,22 +275,17 @@ public class Test {
         String summaryFileName = "summary.xml";
         File summaryDir = new File(summaryDirName);
         File summaryFile = new File(summaryDir, summaryFileName);
-        //first time test the product, create new records
-        if (!summaryDir.exists() || !summaryFile.exists()) {
-            for (int i = 0; i < getDirectionByIndex(0).getSize(); i++) {
-                tempSystem = getSystemByIndexes(0, i);
-                systemID = tempSystem.getSystemID();
-                systems_repeats.put(systemID, tempSystem.getSize());
-            }
-        } else {
-            //not first time, add to existing records
+
+        //not first time, add to existing records
+        if (summaryDir.exists() && summaryFile.exists()) {
             TestSummary testSummary;
+            TestProduct testProduct;
             Map<String, Integer> tempMap;
             XStream xstream = new XStream(new DomDriver());
             xstream.alias("testSummary", TestSummary.class);
             xstream.alias("testProduct", TestProduct.class);
             xstream.alias("testBrief", TestBrief.class);
-            String xml = "";
+            String xml;
             //read in product test information
             try (BufferedReader input = new BufferedReader(new FileReader(summaryFile))) {
                 StringBuilder sb = new StringBuilder();
@@ -304,20 +297,32 @@ public class Test {
                 }
                 xml = sb.toString();
                 input.close();
+
                 //convert to summary object
                 testSummary = (TestSummary) xstream.fromXML(xml);
 
                 System.err.println();
-                tempMap = testSummary.getProduct(productID).getSystems_repeats();
-                //get existing system repeat count and add new system repeat count
-                for (int i = 0; i < getDirectionByIndex(0).getSize(); i++) {
-                    tempSystem = getSystemByIndexes(0, i);
-                    systemID = tempSystem.getSystemID();
-                    tempMap.put(systemID, tempSystem.getSize() + (tempMap.get(systemID) == null ? 0 : tempMap.get(systemID)));
+                testProduct = testSummary.getProduct(productID);
+                if (testProduct != null) {
+                    tempMap = testSummary.getProduct(productID).getSystems_repeats();
+                    //get existing system repeat count and add new system repeat count
+                    for (int i = 0; i < getDirectionByIndex(0).getSize(); i++) {
+                        tempSystem = getSystemByIndexes(0, i);
+                        systemID = tempSystem.getSystemID();
+                        tempMap.put(systemID, tempSystem.getSize() + (tempMap.get(systemID) == null ? 0 : tempMap.get(systemID)));
+                    }
+                    systems_repeats = tempMap;
                 }
-                systems_repeats = tempMap;
             } catch (Exception e) {
                 System.out.println("Could find file.");
+            }
+        } else {
+            //first time test the product, create new records
+            systems_repeats = new LinkedHashMap<>();
+            for (int i = 0; i < getDirectionByIndex(0).getSize(); i++) {
+                tempSystem = getSystemByIndexes(0, i);
+                systemID = tempSystem.getSystemID();
+                systems_repeats.put(systemID, tempSystem.getSize());
             }
         }
     }
@@ -541,11 +546,12 @@ public class Test {
         healthDetail.put(NEARWCCOUNT, healthDetail.get(NEARWCCOUNT) * nearWcCount);
         //check system and repeat count
         trustDetail.put(SYSTEMCOUNT, (double) systems_repeats.size());
-        trustDetail.put(REPEATCOUNT, Util.mapMeanValue(systems_repeats));
+        double averageRepeat = Util.mapMeanValue(systems_repeats);
+        trustDetail.put(REPEATCOUNT, Double.compare(averageRepeat, Double.NaN) == 0 ? 0 : averageRepeat);
         String message = "";
         for (Map.Entry<String, Integer> entry : systems_repeats.entrySet()) {
             if (entry.getValue() < validation) {
-                message = message + " needs more test;";
+                message = message + "System \"" + entry.getKey() + "\" needs more test;";
             }
         }
         messages.insert(0, message);

@@ -188,7 +188,7 @@ public class TestDirection {
                 // lane2lane outlier - 1
                 outliers[3] = outliers[3] || tempRepeat.findLaneOutliers(thresholds[2], thresholds[3], sb);
                 if (sb.length() != 0) {
-                    message = "#Lane outlier found in " + tempSystem.getSystemID() + " " + tempRepeat.getRepeatID() + ";";
+                    message = "#Lane outlier found in System \"" + tempSystem.getSystemID() + "\" Repeat \"" + tempRepeat.getRepeatID() + "\";";
                     tempMessages.append(message);
                     tempMessages.append(sb);
                     sb = new StringBuilder();
