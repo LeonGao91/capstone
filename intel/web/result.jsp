@@ -435,12 +435,12 @@
                 },
                 {
                     label: "INTEL_MIN",
-                    fillColor: "none",
-                    strokeColor: "#FAD2D9",
-                    pointColor: "#FAD2D9",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "none",
-                    pointHighlightStroke: "#FAD2D9",
+                    fillColor: "rgba(250, 210, 217, 0)",
+                    strokeColor: "rgba(250, 210, 217, 0.6)",
+                    pointColor: "rgba(250, 210, 217, 0.6)",
+                    pointStrokeColor: "rgba(250, 210, 217, 0.6)",
+                    pointHighlightFill: "rgba(250, 210, 217, 0.6)",
+                    pointHighlightStroke: "rgba(250, 210, 217, 0.6)",
                     data: 
                     <%
                             if(tx == null) {
@@ -458,12 +458,12 @@
                 },
                 {
                     label: "INTEL_MEAN",
-                    fillColor: "none",
-                    strokeColor: "#9BC2E1",
-                    pointColor: "#9BC2E1",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "none",
-                    pointHighlightStroke: "#9BC2E1",
+                    fillColor: "rgb(155,194,225,0)",
+                    strokeColor: "#9bc2e1",
+                    pointColor: "#9bc2e1",
+                    pointStrokeColor: "#9bc2e1",
+                    pointHighlightFill: "#9bc2e1",
+                    pointHighlightStroke: "#9bc2e1",
                     data: <%
                             if(tx == null) {
                                 out.print(Arrays.toString(nil));
@@ -530,12 +530,12 @@
                 },
                 {
                     label: "INTEL_MIN",
-                    fillColor: "none",
-                    strokeColor: "#FAD2D9",
-                    pointColor: "#FAD2D9",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "none",
-                    pointHighlightStroke: "#FAD2D9",
+                    fillColor: "rgba(250, 210, 217, 0)",
+                    strokeColor: "rgba(250, 210, 217, 0.6)",
+                    pointColor: "rgba(250, 210, 217, 0.6)",
+                    pointStrokeColor: "rgba(250, 210, 217, 0.6)",
+                    pointHighlightFill: "rgba(250, 210, 217, 0.6)",
+                    pointHighlightStroke: "rgba(250, 210, 217, 0.6)",
                     data: 
                     <%
                             if(rx == null) {
@@ -553,12 +553,12 @@
                 },
                 {
                     label: "INTEL_MEAN",
-                    fillColor: "none",
-                    strokeColor: "#9BC2E1",
-                    pointColor: "#9BC2E1",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "none",
-                    pointHighlightStroke: "#9BC2E1",
+                    fillColor: "rgb(155,194,225,0)",
+                    strokeColor: "#9bc2e1",
+                    pointColor: "#9bc2e1",
+                    pointStrokeColor: "#9bc2e1",
+                    pointHighlightFill: "#9bc2e1",
+                    pointHighlightStroke: "#9bc2e1",
                     data: <%
                             if(rx == null) {
                                 out.print(Arrays.toString(nil));
