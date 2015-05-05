@@ -128,7 +128,7 @@ public class Util {
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             mean = mean + entry.getValue();
         }
-        return (double)mean / map.size();
+        return (double) (mean / map.size());
     }
 
     /**

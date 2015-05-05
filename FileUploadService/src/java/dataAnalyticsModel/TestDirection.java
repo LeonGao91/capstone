@@ -74,7 +74,7 @@ public class TestDirection {
         this.directionID = directionID;
         findStats(Test.NOTCHECKOUTLIER);
         findByLaneMean();
-        System.out.println("Loading" + directionID);
+        System.out.println(">>>>> Created direction " + directionID + " with " + size + " systems");
     }
 
     /**

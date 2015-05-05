@@ -56,6 +56,7 @@ public class TestSystem {
         noOutlierStats = new Stats();
         this.systemID = systemID;
         findStats(Test.NOTCHECKOUTLIER);
+        System.out.println(">>>>> Created system " + systemID + " with " + size + " repeats");
     }
 
     /**

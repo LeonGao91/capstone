@@ -178,7 +178,7 @@ public class Test {
         findNoOutlierStats();
         //check health and trust
         basicChecks();
-        System.out.println(customerID + " " + productID);
+        System.out.println(">>>>> Created test for " + productID + " of customer " + customerID + " with " + size + " directions");
     }
 
     /**
@@ -312,6 +312,14 @@ public class Test {
                         tempMap.put(systemID, tempSystem.getSize() + (tempMap.get(systemID) == null ? 0 : tempMap.get(systemID)));
                     }
                     systems_repeats = tempMap;
+                } else {
+                    //first time test the product, create new records
+                    systems_repeats = new LinkedHashMap<>();
+                    for (int i = 0; i < getDirectionByIndex(0).getSize(); i++) {
+                        tempSystem = getSystemByIndexes(0, i);
+                        systemID = tempSystem.getSystemID();
+                        systems_repeats.put(systemID, tempSystem.getSize());
+                    }
                 }
             } catch (Exception e) {
                 System.out.println("Could find file.");
@@ -579,8 +587,47 @@ public class Test {
      */
     private void pairDirections() {
         pairedDirections = new TestDirection[size / 2];
-        for (int i = 0; i < size / 2; i++) {
-            pairedDirections[i] = getDirectionByIndex(2 * i).add(getDirectionByIndex(2 * i + 1));
+        String directionID;
+        int[] pairs = new int[8];
+        for (int i = 0; i < 8; i++) {
+            pairs[i] = -1;
+        }
+        for (int i = 0; i < size; i++) {
+            directionID = getDirectionByIndex(i).getDirectionID();
+            switch (directionID) {
+                case "rxDqLeft":
+                    pairs[0] = i;
+                    break;
+                case "rxDqRight":
+                    pairs[1] = i;
+                    break;
+                case "rxVrefHigh":
+                    pairs[2] = i;
+                    break;
+                case "rxVrefLow":
+                    pairs[3] = i;
+                    break;
+                case "txDqLeft":
+                    pairs[4] = i;
+                    break;
+                case "txDqRight":
+                    pairs[5] = i;
+                    break;
+                case "txVrefHigh":
+                    pairs[6] = i;
+                    break;
+                case "txVrefLow":
+                    pairs[7] = i;
+            }
+        }
+        int temp = 0;
+        for (int i = 0; i < 4; i++) {
+            if (pairs[2 * i] != -1 && pairs[2 * i + 1] != -1) {
+                pairedDirections[temp] = getDirectionByIndex(pairs[2 * i]).add(getDirectionByIndex(pairs[2 * i + 1]));
+                temp++;
+
+            }
+
         }
     }
 
