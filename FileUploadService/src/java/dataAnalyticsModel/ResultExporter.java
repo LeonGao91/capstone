@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+import java.text.DecimalFormat;
 
 /**
  * This class represents a tool to export test results to user test summary file
@@ -31,13 +32,14 @@ public class ResultExporter {
      * @param path output path
      */
     public static void output(Test test, String path) {
+        DecimalFormat df = new DecimalFormat("#.##");      
         //create file paths and file names
         String summaryDirName = path + "/" + test.getCustomerID();
-        System.out.println(summaryDirName);
+        System.out.println("<<<<< Summary path: " + summaryDirName);
         String summaryFileName = "summary.xml";
         File summaryDir = new File(summaryDirName);
         if (!summaryDir.exists()) {
-            System.out.println("Summary folder not found, create new one");
+            System.out.println("<<<<< Summary folder not found, create new one");
             summaryDir.mkdir();
         }
         File summaryFile = new File(summaryDir, summaryFileName);
@@ -46,12 +48,12 @@ public class ResultExporter {
         Calendar cal = Calendar.getInstance();
         String timeStamp = dateFormat.format(cal.getTime());
         String resultDirName = path + "/" + test.getCustomerID() + "/result";
-        System.out.println(resultDirName);
+        System.out.println("<<<<< Result path: " + resultDirName);
         String resultFileName = test.getProductID() + "_" + timeStamp + ".xml";
         //write to xml file
         File resultDir = new File(resultDirName);
         if (!resultDir.exists()) {
-            System.out.println("Result folder not found, create a new one");
+            System.out.println("<<<<< Result folder not found, created a new one");
             resultDir.mkdir();
         }
         File resultFile = new File(resultDir, resultFileName);
@@ -70,6 +72,8 @@ public class ResultExporter {
         double[] mean;
         TestDirection tempDirection;
         String directionID;
+        double tempMin;
+        double tempMean;
 	//read and write eye charts data
         //[0] timing left
         //[1] timing right
@@ -92,18 +96,20 @@ public class ResultExporter {
                 eyeChart.setIntel_mean(test.getEyeChartIntelMeanBenchmark());
                 eyes.put(eyeName, eyeChart);
             }
+            tempMin = Double.valueOf(df.format(tempDirection.getBasicStats().getMin()));
+            tempMean = Double.valueOf(df.format(tempDirection.getBasicStats().getMinMean()));
             if (directionID.toLowerCase().contains("left")) {
-                min[0] = tempDirection.getBasicStats().getMin();
-                mean[0] = tempDirection.getBasicStats().getMinMean();
+                min[0] = tempMin;
+                mean[0] = tempMean;
             } else if (directionID.toLowerCase().contains("right")) {
-                min[1] = tempDirection.getBasicStats().getMin();
-                mean[1] = tempDirection.getBasicStats().getMinMean();
+                min[1] = tempMin;
+                mean[1] = tempMean;
             } else if (directionID.toLowerCase().contains("high")) {
-                min[2] = tempDirection.getBasicStats().getMin();
-                mean[2] = tempDirection.getBasicStats().getMinMean();
+                min[2] = tempMin;
+                mean[2] = tempMean;
             } else if (directionID.toLowerCase().contains("low")) {
-                min[3] = tempDirection.getBasicStats().getMin();
-                mean[3] = tempDirection.getBasicStats().getMinMean();
+                min[3] = tempMin;
+                mean[3] = tempMean;
             }
         }
         testDetail.setEyes(eyes);
@@ -117,9 +123,9 @@ public class ResultExporter {
             output.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n");
             output.write(xml);
             output.close();
-            System.out.println("File has been written");
+            System.out.println("<<<<< Result file has been written");
         } catch (Exception e) {
-            System.out.println("Could not create file");
+            System.out.println("<<<<< Could not create result file");
         }
         //Output to customer summary file located in customerID/ directory.
         TestSummary testSummary;
@@ -131,7 +137,7 @@ public class ResultExporter {
         xstream.alias("testBrief", TestBrief.class);
         //read existing file if summary exists
         if (summaryFile.exists()) {
-            System.out.println("Summary exists");
+            System.out.println("<<<<< Summary exists, reading in");
             try {
                 BufferedReader input = new BufferedReader(new FileReader(summaryFile));
                 StringBuilder sb = new StringBuilder();
@@ -142,25 +148,25 @@ public class ResultExporter {
                     line = input.readLine();
                 }
                 xml = sb.toString();
-                System.out.println("read: " + xml);
+                //System.out.println("read: " + xml);
                 input.close();
             } catch (Exception e) {
-                System.out.println("Could find file");
+                System.out.println("<<<<< Could find summary file");
             }
             //convert to summary object
             testSummary = (TestSummary) xstream.fromXML(xml);
             //get product if exists
             if (testSummary.contains(test.getProductID())) {
-                System.out.println("Product exists");
+                System.out.println("<<<<< Product exists, reading in");
                 testProduct = testSummary.getProduct(test.getProductID());
             } else { 
                 //create new product if doesn't exist
-                System.out.println("Product doesnot exist");
+                System.out.println("<<<<< Product doesn't exist, created new one");
                 testProduct = new TestProduct();
             }
         } else { 
             //create new summary if doesn't exist
-            System.out.println("Summary doesnot exist");
+            System.out.println("<<<<< Summary doesn't exist, created new one");
             testSummary = new TestSummary();
             testProduct = new TestProduct();
         }
@@ -186,9 +192,9 @@ public class ResultExporter {
             output.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n");
             output.write(xml);
             output.close();
-            System.out.println("File has been written");
+            System.out.println("<<<<< Summary file has been written");
         } catch (Exception e) {
-            System.out.println("Could not create file");
+            System.out.println("<<<<< Could not create summary file");
         }
     }
 }

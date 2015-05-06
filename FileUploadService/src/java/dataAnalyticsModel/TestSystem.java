@@ -56,6 +56,7 @@ public class TestSystem {
         noOutlierStats = new Stats();
         this.systemID = systemID;
         findStats(Test.NOTCHECKOUTLIER);
+        System.out.println(">>>>> Created system " + systemID + " with " + size + " repeats");
     }
 
     /**
@@ -88,19 +89,6 @@ public class TestSystem {
         outputStats.setSigmaMean(ssMean.getStandardDeviation());
         outputStats.setMean(ssMean.getMean());
         outputStats.setMin(ssMin.getMin());
-    }
-
-    /**
-     * Check whether the whole system is invalid.
-     *
-     * @return true if all invalid, false otherwise
-     */
-    public boolean checkValidity() {
-        boolean outlier = false;
-        for (int i = 0; i < size; i++) {
-            outlier = outlier && getRepeatByIndex(i).checkValidity();
-        }
-        return outlier;
     }
 
     /**

@@ -1,10 +1,6 @@
 package dataAnalyticsModel;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -178,7 +174,7 @@ public class Test {
         findNoOutlierStats();
         //check health and trust
         basicChecks();
-        System.out.println(customerID + " " + productID);
+        System.out.println(">>>>> Created test for " + productID + " of customer " + customerID + " with " + size + " directions");
     }
 
     /**
@@ -268,62 +264,14 @@ public class Test {
         }
         //set validation benchark
         validation = 5;
-        //get historical system and repeat counts
+        //get system and repeat counts
         TestSystem tempSystem;
         String systemID;
-        String summaryDirName = path + "/" + getCustomerID();
-        String summaryFileName = "summary.xml";
-        File summaryDir = new File(summaryDirName);
-        File summaryFile = new File(summaryDir, summaryFileName);
-
-        //not first time, add to existing records
-        if (summaryDir.exists() && summaryFile.exists()) {
-            TestSummary testSummary;
-            TestProduct testProduct;
-            Map<String, Integer> tempMap;
-            XStream xstream = new XStream(new DomDriver());
-            xstream.alias("testSummary", TestSummary.class);
-            xstream.alias("testProduct", TestProduct.class);
-            xstream.alias("testBrief", TestBrief.class);
-            String xml;
-            //read in product test information
-            try (BufferedReader input = new BufferedReader(new FileReader(summaryFile))) {
-                StringBuilder sb = new StringBuilder();
-                String line = input.readLine();
-                while (line != null) {
-                    sb.append(line);
-                    sb.append(System.lineSeparator());
-                    line = input.readLine();
-                }
-                xml = sb.toString();
-                input.close();
-
-                //convert to summary object
-                testSummary = (TestSummary) xstream.fromXML(xml);
-
-                System.err.println();
-                testProduct = testSummary.getProduct(productID);
-                if (testProduct != null) {
-                    tempMap = testSummary.getProduct(productID).getSystems_repeats();
-                    //get existing system repeat count and add new system repeat count
-                    for (int i = 0; i < getDirectionByIndex(0).getSize(); i++) {
-                        tempSystem = getSystemByIndexes(0, i);
-                        systemID = tempSystem.getSystemID();
-                        tempMap.put(systemID, tempSystem.getSize() + (tempMap.get(systemID) == null ? 0 : tempMap.get(systemID)));
-                    }
-                    systems_repeats = tempMap;
-                }
-            } catch (Exception e) {
-                System.out.println("Could find file.");
-            }
-        } else {
-            //first time test the product, create new records
-            systems_repeats = new LinkedHashMap<>();
-            for (int i = 0; i < getDirectionByIndex(0).getSize(); i++) {
-                tempSystem = getSystemByIndexes(0, i);
-                systemID = tempSystem.getSystemID();
-                systems_repeats.put(systemID, tempSystem.getSize());
-            }
+        systems_repeats = new LinkedHashMap<>();
+        for (int i = 0; i < getDirectionByIndex(0).getSize(); i++) {
+            tempSystem = getSystemByIndexes(0, i);
+            systemID = tempSystem.getSystemID();
+            systems_repeats.put(systemID, tempSystem.getSize());
         }
     }
 
@@ -347,7 +295,7 @@ public class Test {
                 message = "Remeasure " + getSystemByIndexes(0, i).getSystemID() + ": all zeros;";
                 messages.append(message);
                 outliers[0] = true;
-                //mark all lane margins of outlier system as outliers
+                //mark all lane margins of outlier system in all directions as outliers
                 for (int j = 0; j < size; j++) {
                     for (int k = 0; k < getSystemByIndexes(j, i).getSize(); k++) {
                         laneNum = getRepeatByIndexes(j, i, k).getByLaneSize();
@@ -579,8 +527,47 @@ public class Test {
      */
     private void pairDirections() {
         pairedDirections = new TestDirection[size / 2];
-        for (int i = 0; i < size / 2; i++) {
-            pairedDirections[i] = getDirectionByIndex(2 * i).add(getDirectionByIndex(2 * i + 1));
+        String directionID;
+        int[] pairs = new int[8];
+        for (int i = 0; i < 8; i++) {
+            pairs[i] = -1;
+        }
+        for (int i = 0; i < size; i++) {
+            directionID = getDirectionByIndex(i).getDirectionID();
+            switch (directionID) {
+                case "rxDqLeft":
+                    pairs[0] = i;
+                    break;
+                case "rxDqRight":
+                    pairs[1] = i;
+                    break;
+                case "rxVrefHigh":
+                    pairs[2] = i;
+                    break;
+                case "rxVrefLow":
+                    pairs[3] = i;
+                    break;
+                case "txDqLeft":
+                    pairs[4] = i;
+                    break;
+                case "txDqRight":
+                    pairs[5] = i;
+                    break;
+                case "txVrefHigh":
+                    pairs[6] = i;
+                    break;
+                case "txVrefLow":
+                    pairs[7] = i;
+            }
+        }
+        int temp = 0;
+        for (int i = 0; i < 4; i++) {
+            if (pairs[2 * i] != -1 && pairs[2 * i + 1] != -1) {
+                pairedDirections[temp] = getDirectionByIndex(pairs[2 * i]).add(getDirectionByIndex(pairs[2 * i + 1]));
+                temp++;
+
+            }
+
         }
     }
 

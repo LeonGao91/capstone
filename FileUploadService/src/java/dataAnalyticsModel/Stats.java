@@ -1,5 +1,8 @@
 package dataAnalyticsModel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * This class represents all statistics might be used for different test
  * dimensions (direction, system or repeat). Use this class to get or set
@@ -16,28 +19,21 @@ package dataAnalyticsModel;
  * @version 1.0
  */
 public class Stats {
+    
+    private HashMap<String, Double> statistics;
 
-    private double mean;
-    private double min;
-    private double max;
-    private double median;
-    private double sigma; // standard deviation
-    private double meanMin; // mean of min values
-    private double sigmaMin; // standard deviation of min values
-    private double sigmaMean; // standard deviation of mean values
-    private double repeatNoise1; // mean of standard deviations of min values
-    private double repeatNoise2; // mean of standard deviations of mean values
-    private double p2pNoise1; // standard deviation of means of min values
-    private double p2pNoise2; // standard deviation of means of mean values
-    private double minMean; // min of mean values
-
+    public Stats() {
+        statistics = new HashMap<>();
+    }
+    
+    
     /**
      * Get mean value
      *
      * @return stored mean value
      */
     public double getMean() {
-        return mean;
+        return statistics.get("mean");
     }
 
     /**
@@ -46,7 +42,7 @@ public class Stats {
      * @param mean computed mean value
      */
     public void setMean(double mean) {
-        this.mean = mean;
+        statistics.put("mean", mean);
     }
 
     /**
@@ -55,7 +51,7 @@ public class Stats {
      * @return stored min value
      */
     public double getMin() {
-        return min;
+        return statistics.get("min");
     }
 
     /**
@@ -64,7 +60,7 @@ public class Stats {
      * @param min computed min value
      */
     public void setMin(double min) {
-        this.min = min;
+        statistics.put("min", min);
     }
 
     /**
@@ -73,7 +69,7 @@ public class Stats {
      * @return stored max value
      */
     public double getMax() {
-        return max;
+        return statistics.get("max");
     }
 
     /**
@@ -82,7 +78,7 @@ public class Stats {
      * @param max computed max value
      */
     public void setMax(double max) {
-        this.max = max;
+        statistics.put("max", max);
     }
 
     /**
@@ -91,7 +87,7 @@ public class Stats {
      * @return median stored value
      */
     public double getMedian() {
-        return median;
+        return statistics.get("median");
     }
 
     /**
@@ -100,7 +96,7 @@ public class Stats {
      * @param median computed median value
      */
     public void setMedian(double median) {
-        this.median = median;
+        statistics.put("median",median);
     }
 
     /**
@@ -109,7 +105,7 @@ public class Stats {
      * @return stored standard deviation
      */
     public double getSigma() {
-        return sigma;
+        return statistics.get("sigma");
     }
 
     /**
@@ -118,7 +114,7 @@ public class Stats {
      * @param sigma computed standard deviation
      */
     public void setSigma(double sigma) {
-        this.sigma = sigma;
+       statistics.put("sigma", sigma);
     }
 
     /**
@@ -127,7 +123,7 @@ public class Stats {
      * @return stored meanMin value
      */
     public double getMeanMin() {
-        return meanMin;
+        return statistics.get("meanMin");
     }
 
     /**
@@ -136,7 +132,7 @@ public class Stats {
      * @param meanMin computed meanMin value
      */
     public void setMeanMin(double meanMin) {
-        this.meanMin = meanMin;
+        statistics.put("meanMin", meanMin);
     }
 
     /**
@@ -145,7 +141,7 @@ public class Stats {
      * @return stored sigmaMin value
      */
     public double getSigmaMin() {
-        return sigmaMin;
+        return statistics.get("sigmaMin");
     }
 
     /**
@@ -154,7 +150,7 @@ public class Stats {
      * @param sigmaMin computed sigmaMin value
      */
     public void setSigmaMin(double sigmaMin) {
-        this.sigmaMin = sigmaMin;
+        statistics.put("sigmaMin", sigmaMin);
     }
 
     /**
@@ -163,7 +159,7 @@ public class Stats {
      * @return stored sigmaMean value
      */
     public double getSigmaMean() {
-        return sigmaMean;
+        return statistics.get("sigmaMean");
     }
 
     /**
@@ -172,7 +168,7 @@ public class Stats {
      * @param sigmaMean computed sigmaMean value
      */
     public void setSigmaMean(double sigmaMean) {
-        this.sigmaMean = sigmaMean;
+        statistics.put("sigmaMean", sigmaMean);
     }
 
     /**
@@ -181,7 +177,7 @@ public class Stats {
      * @return stored repeatNoise1 value
      */
     public double getRepeatNoise1() {
-        return repeatNoise1;
+        return statistics.get("repeatNoise1");
     }
 
     /**
@@ -190,7 +186,7 @@ public class Stats {
      * @param repeatNoise1 computed repeatNoise1 value
      */
     public void setRepeatNoise1(double repeatNoise1) {
-        this.repeatNoise1 = repeatNoise1;
+        statistics.put("repeatNoise1", repeatNoise1);
     }
 
     /**
@@ -199,7 +195,7 @@ public class Stats {
      * @return stored repeatNoise2 value
      */
     public double getRepeatNoise2() {
-        return repeatNoise2;
+        return statistics.get("repeatNoise2");
     }
 
     /**
@@ -208,7 +204,7 @@ public class Stats {
      * @param repeatNoise2 computed repeatNoise2 value
      */
     public void setRepeatNoise2(double repeatNoise2) {
-        this.repeatNoise2 = repeatNoise2;
+        statistics.put("repeatNoise2", repeatNoise2);
     }
 
     /**
@@ -217,7 +213,7 @@ public class Stats {
      * @return stored p2pNoise1 value
      */
     public double getP2pNoise1() {
-        return p2pNoise1;
+        return statistics.get("p2pNoise1");
     }
 
     /**
@@ -226,7 +222,7 @@ public class Stats {
      * @param p2pNoise1 computed p2pNoise1 value
      */
     public void setP2pNoise1(double p2pNoise1) {
-        this.p2pNoise1 = p2pNoise1;
+        statistics.put("p2pNoise1", p2pNoise1);
     }
 
     /**
@@ -235,7 +231,7 @@ public class Stats {
      * @return stored p2pNoise2 value
      */
     public double getP2pNoise2() {
-        return p2pNoise2;
+        return statistics.get("p2pNoise2");
     }
 
     /**
@@ -244,7 +240,7 @@ public class Stats {
      * @param p2pNoise2 computed p2pNoise2 value
      */
     public void setP2pNoise2(double p2pNoise2) {
-        this.p2pNoise2 = p2pNoise2;
+        statistics.put("p2pNoise2", p2pNoise2);
     }
 
     /**
@@ -253,7 +249,7 @@ public class Stats {
      * @return stored minMean value
      */
     public double getMinMean() {
-        return minMean;
+        return statistics.get("minMean");
     }
 
     /**
@@ -262,48 +258,23 @@ public class Stats {
      * @param minMean computed minMean value
      */
     public void setMinMean(double minMean) {
-        this.minMean = minMean;
+        statistics.put("minMean", minMean);
     }
 
+    /**
+     * Get a string representation of all statistics data.
+     *
+     * @return all statistics data
+     */
+    @Override
     public String toString() {
-        String forReturn = "";
-        if (mean != 0) {
-            forReturn = forReturn + "mean: " + mean + "\n";
+        StringBuilder forReturn = new StringBuilder();
+        String temp;
+        for (Map.Entry<String, Double> entry : statistics.entrySet()) {
+            temp = entry.getKey() + ": " + entry.getValue() + "\n";
+            forReturn.append(temp);
         }
-        if (min != 0) {
-            forReturn = forReturn + "min: " + min + "\n";
-        }
-        if (median != 0) {
-            forReturn = forReturn + "median: " + median + "\n";
-        }
-        if (sigma != 0) {
-            forReturn = forReturn + "sigma: " + sigma + "\n";
-        }
-        if (meanMin != 0) {
-            forReturn = forReturn + "meanMin: " + meanMin + "\n";
-        }
-        if (minMean != 0) {
-            forReturn = forReturn + "minMean: " + minMean + "\n";
-        }
-        if (sigmaMin != 0) {
-            forReturn = forReturn + "sigmaMin: " + sigmaMin + "\n";
-        }
-        if (sigmaMean != 0) {
-            forReturn = forReturn + "sigmaMean: " + sigmaMean + "\n";
-        }
-        if (repeatNoise1 != 0) {
-            forReturn = forReturn + "repeatNoise1: " + repeatNoise1 + "\n";
-        }
-        if (repeatNoise2 != 0) {
-            forReturn = forReturn + "repeatNoise2: " + repeatNoise2 + "\n";
-        }
-        if (p2pNoise1 != 0) {
-            forReturn = forReturn + "p2pNoise1: " + p2pNoise1 + "\n";
-        }
-        if (p2pNoise2 != 0) {
-            forReturn = forReturn + "p2pNoise2: " + p2pNoise2 + "\n";
-        }
-        return forReturn;
+        return forReturn.toString();
     }
 
 }
