@@ -127,8 +127,7 @@
                 <div class="container">
                     <div id="navbar">
                         <ul class="nav navbar-nav">
-                            <li><a href="index.jsp">Main</a></li>
-                            <li class="active"><a href="#">Result</a></li>
+                            <li class="active"><a href="index.jsp">Main</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li>
@@ -178,11 +177,14 @@
                 %>
             </ul>
                 <%
-                    if(brief.getPass_fail().equals("pass")){
+                    if(brief.getPass_fail().toLowerCase().equals("pass")){
                         out.print("<span id='passfail' class='label label-success' style='font-size:15px'>PASS!</span>");
                     }
-                    else {
+                    else if(brief.getPass_fail().toLowerCase().equals("fail")) {
                         out.print("<span id='passfail' class='label label-danger' style='font-size:15px'>FAIL!</span>");
+                    }
+                    else {
+                        out.print("<span id='passfail' class='label label-warning' style='font-size:15px'>Not Ready</span>");
                     }
                 %>
         </div>

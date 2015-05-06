@@ -53,14 +53,19 @@ public class Detail extends HttpServlet {
         TestSummary summary = (TestSummary) request.getSession().getAttribute("summary");
         xstream.alias("testDetail", TestDetail.class);
         xstream.alias("eyeChart", EyeChart.class);
-        detail = (TestDetail) xstream.fromXML(getDetail((String) request.getSession().getAttribute("folders"), file));
+        try {
+            detail = (TestDetail) xstream.fromXML(getDetail((String) request.getSession().getAttribute("folders"), file));
+        }
+        catch (Exception e) {
+            detail = null;
+        }
         request.getSession().setAttribute("detail", detail);
         request.getSession().setAttribute("currentProduct", summary.getProduct(product));
         request.getSession().setAttribute("currentTest", summary.getProduct(product).getTests().get(testNum));
         System.out.println(product);
         request.getSession().setAttribute("productName", product);
         response.sendRedirect("result.jsp");
-
+        
     }
 
 //    private String getDetail(String file) {

@@ -63,9 +63,15 @@ public class Login extends HttpServlet {
             xstream.alias("testSummary", TestSummary.class);
             xstream.alias("testProduct", TestProduct.class);
             xstream.alias("testBrief", TestBrief.class);
-            summary = (TestSummary) xstream.fromXML(getSummary(t.getFolder(userName)));
+            try {
+                summary = (TestSummary) xstream.fromXML(getSummary(t.getFolder(userName)));
+            }
+            catch (Exception e) {
+                System.out.println("no xml records");
+            }
             request.getSession().setAttribute("summary", summary);
             response.sendRedirect("index.jsp");
+            
         }
         else {
             //Send the user back to Login page with message

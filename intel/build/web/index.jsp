@@ -38,7 +38,6 @@
                     <div id="navbar">
                         <ul class="nav navbar-nav">
                             <li class="active"><a href="">Main</a></li>
-                            <li><a href="result.jsp">Result</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
                             <li>
@@ -72,6 +71,7 @@
                                     <c:forEach var="item" items="${sessionScope.summary.getProducts()}">
                                         <li role="presentation"><a role="menuitem" tabindex="-1"  class="listItem"><c:out value="${item}"/></a></li>
                                     </c:forEach>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1"  class="listItem">All</a></li>
                                 </ul>
                             </div>
                         </th>
@@ -109,8 +109,10 @@
                                 out.print("<td>" + date.format(d) + "</td>");
                                 if (product.getPass_fail().equals("pass")) {
                                     out.print("<td><span class='label label-success'>" + product.getPass_fail().toUpperCase() + "</span></td>");
-                                } else {
+                                } else if(product.getPass_fail().toLowerCase().equals("fail")) {
                                     out.print("<td><span class='label label-danger'>" + product.getPass_fail().toUpperCase() + "</span></td>");
+                                } else {
+                                    out.print("<td><span class='label label-warning'>" + product.getPass_fail().toUpperCase() + "</span></td>");
                                 }
                                 out.print("<td><form action='Detail?file=" 
                                             + product.getLastTest()
@@ -127,10 +129,12 @@
                                     d = date.parse(brief.getTest_date());
                                     date.applyPattern("HH:mm:ss - MM/dd/yyyy");
                                     out.print("<td>" + date.format(d) + "</td>");
-                                    if (brief.getPass_fail().equals("pass")) {
+                                    if (brief.getPass_fail().toLowerCase().equals("pass")) {
                                         out.print("<td><span class='label label-success'>" + brief.getPass_fail().toUpperCase() + "</span></td>");
-                                    } else {
+                                    } else if(brief.getPass_fail().toLowerCase().equals("fail")) {
                                         out.print("<td><span class='label label-danger'>" + brief.getPass_fail().toUpperCase() + "</span></td>");
+                                    } else {
+                                        out.print("<td><span class='label label-warning'>" + brief.getPass_fail().toUpperCase() + "</span></td>");
                                     }
                                     out.print("<td><form action='Detail?file=" 
                                             + brief.getResult_file()
