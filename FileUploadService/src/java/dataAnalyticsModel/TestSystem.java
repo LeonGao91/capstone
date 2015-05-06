@@ -92,19 +92,6 @@ public class TestSystem {
     }
 
     /**
-     * Check whether the whole system is invalid.
-     *
-     * @return true if all invalid, false otherwise
-     */
-    public boolean checkValidity() {
-        boolean outlier = false;
-        for (int i = 0; i < size; i++) {
-            outlier = outlier && getRepeatByIndex(i).checkValidity();
-        }
-        return outlier;
-    }
-
-    /**
      * Get number of repeats of the test
      *
      * @return number of repeats

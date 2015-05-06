@@ -54,7 +54,7 @@ public class TestMarginsDDR extends TestMargins {
         byLaneSize = channelNum * rankNum * laneNum;
         acrossLanesStats = new Stats();
         acrossLanesNoOutlierStats = new Stats();
-        findAcrossLaneStats(Test.NOTCHECKOUTLIER);
+        findStats(Test.NOTCHECKOUTLIER);
     }
 
     /**
@@ -63,7 +63,7 @@ public class TestMarginsDDR extends TestMargins {
      * @param checkOutlier if true, exclude outliers, if false, include outliers
      */
     @Override
-    public final void findAcrossLaneStats(boolean checkOutlier) {
+    public final void findStats(boolean checkOutlier) {
         //match output objects
         Stats outputStats = checkOutlier ? acrossLanesNoOutlierStats : acrossLanesStats;
         double means[][] = checkOutlier ? acrossLaneNoOutlierMeans : acrossLaneMeans;
@@ -105,7 +105,7 @@ public class TestMarginsDDR extends TestMargins {
      * @return true if outlier found, false otherwise
      */
     @Override
-    public boolean checkSystemOutliers(double benchmark, double threshold, StringBuilder messages) {
+    public boolean findSystemOutliers(double benchmark, double threshold, StringBuilder messages) {
         String message = "";
         for (int i = 0; i < channelNum; i++) {
             for (int j = 0; j < rankNum; j++) {
@@ -134,7 +134,7 @@ public class TestMarginsDDR extends TestMargins {
      * @return true if outlier found, false otherwise
      */
     @Override
-    public boolean checkLaneOutliers(double meanThreshold, double medianThreshold, StringBuilder messages) {
+    public boolean findLaneOutliers(double meanThreshold, double medianThreshold, StringBuilder messages) {
         String message = "";
         boolean meanOutlier;
         boolean medianOutlier;

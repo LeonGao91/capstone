@@ -29,7 +29,7 @@ public abstract class TestMargins {
      *
      * @return a Stats object
      */
-    public Stats getAcrossLanesStats() {
+    public Stats getStats() {
         return acrossLanesStats;
     }
 
@@ -38,7 +38,7 @@ public abstract class TestMargins {
      *
      * @return a Stats object
      */
-    public Stats getAcrossNoOutlierLaneStats() {
+    public Stats getNoOutlierStats() {
         return acrossLanesNoOutlierStats;
     }
 
@@ -65,7 +65,7 @@ public abstract class TestMargins {
      *
      * @param checkOutlier if true, exclude outliers, if false, include outliers
      */
-    public abstract void findAcrossLaneStats(boolean checkOutlier);
+    public abstract void findStats(boolean checkOutlier);
 
     /**
      * Check outliers based on system threshold.
@@ -75,7 +75,7 @@ public abstract class TestMargins {
      * @param messages StringBuilder to output outlier messages
      * @return true if outlier found, false otherwise
      */
-    public abstract boolean checkSystemOutliers(double benchmark, double threshold, StringBuilder messages);
+    public abstract boolean findSystemOutliers(double benchmark, double threshold, StringBuilder messages);
 
     /**
      * Check outliers based on lane statistics threshold.
@@ -85,7 +85,7 @@ public abstract class TestMargins {
      * @param messages StringBuilder to output outlier messages
      * @return true if outlier found, false otherwise
      */
-    public abstract boolean checkLaneOutliers(double meanThreshold, double medianThreshold, StringBuilder messages);
+    public abstract boolean findLaneOutliers(double meanThreshold, double medianThreshold, StringBuilder messages);
 
     /**
      * Add margins to corresponding SummaryStatistics object in "by lane"

@@ -35,8 +35,7 @@ public class TestRepeat {
      */
     public TestRepeat(TestMargins margins) {
         this.margins = margins;
-        basicStats = margins.getAcrossLanesStats();
-        noOutlierStats = margins.getAcrossNoOutlierLaneStats();
+        basicStats = margins.getStats();
         byLaneNumber = margins.getByLaneSize();
         acrossLaneNumber = margins.getAcrossLaneSize();
         repeatID = "";
@@ -51,8 +50,7 @@ public class TestRepeat {
      */
     public TestRepeat(TestMargins margins, String repeatID) {
         this.margins = margins;
-        basicStats = margins.getAcrossLanesStats();
-        noOutlierStats = margins.getAcrossNoOutlierLaneStats();
+        basicStats = margins.getStats();
         byLaneNumber = margins.getByLaneSize();
         acrossLaneNumber = margins.getAcrossLaneSize();
         this.repeatID = repeatID;
@@ -85,7 +83,7 @@ public class TestRepeat {
      * @return true if outlier found, false otherwise
      */
     public boolean findSystemOutliers(double benchmark, double threshold, StringBuilder messages) {
-        return margins.checkSystemOutliers(benchmark, threshold, messages);
+        return margins.findSystemOutliers(benchmark, threshold, messages);
     }
 
     /**
@@ -97,7 +95,7 @@ public class TestRepeat {
      * @return true if outlier found, false otherwise
      */
     public boolean findLaneOutliers(double meanThreshold, double medianThreshold, StringBuilder messages) {
-        return margins.checkLaneOutliers(meanThreshold, medianThreshold, messages);
+        return margins.findLaneOutliers(meanThreshold, medianThreshold, messages);
     }
 
     /**
@@ -174,7 +172,8 @@ public class TestRepeat {
      * @param checkOutlier if true, exclude outliers, if false, include outliers
      */
     public void findStats(boolean checkOutlier) {
-        margins.findAcrossLaneStats(checkOutlier);
+        margins.findStats(checkOutlier);
+        noOutlierStats = margins.getNoOutlierStats();
     }
 
     /**
