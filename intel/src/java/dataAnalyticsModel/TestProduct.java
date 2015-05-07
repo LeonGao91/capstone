@@ -187,7 +187,7 @@ public class TestProduct {
             for(TestBrief test : tests) {
                 SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
                 Date d = date.parse(test.getTest_date());
-                date.applyPattern("HH:mm:ss - MM/dd/yyyy");
+                date.applyPattern("HH:mm:ss-MM/dd/yyyy");
                 sb.append("['").append(date.format(d)).append("', ")
                         .append(test.getHealth()).append(", ").append(test.getTrust()).append("],");
             }
@@ -207,15 +207,8 @@ public class TestProduct {
             sb.setLength(sb.length() - 1);
             return sb.toString();
         }
-        
-//        ['Test Date', 'Bolivia', 'Ecuador', 'Madagascar', 'Papua New Guinea', 'Rwanda', 'Average'],
-//            ['2004/05',  165,      938,         522,             998,           450,      614.6],
-//            ['2005/06',  135,      1120,        599,             1268,          288,      682],
-//            ['2006/07',  157,      1167,        587,             807,           397,      623],
-//            ['2007/08',  139,      1110,        615,             968,           215,      609.4],
-//            ['2008/09',  136,      691,         629,             1026,          366,      569.6]
-        
-        public String getSystemRepeatData() {
+
+        public String getSystemRepeatData() throws ParseException {
             StringBuilder sb = new StringBuilder();
             Set<String> key = systems_repeats.keySet();
             sb.append("['Test Date',");
@@ -227,10 +220,15 @@ public class TestProduct {
             
             for(int i = Math.max(0, tests.size() - 5); i < tests.size(); i++) {
                 TestBrief b = tests.get(i);
-                sb.append("['").append(b.getTest_date()).append("', ");
+                SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
+                Date d = date.parse(b.getTest_date());
+                date.applyPattern("HH:mm:ss-MM/dd/yyyy");
+                sb.append("['").append(date.format(d).replaceFirst("-", "-")).append("', ");
                 int sum = 0;
-                for(String s : b.getSystems_repeats().keySet()) {
-                    sb.append("").append(b.getSystems_repeats().get(s)).append(", ");
+                for(String s : key) {
+                    sb.append("").append(
+                            b.getSystems_repeats().containsKey(s) ? b.getSystems_repeats().get(s) : 0
+                            ).append(", ");
                     sum += b.getSystems_repeats().get(s);
                 }
                 sb.append("").append(sum / systems_repeats.size()).append("");

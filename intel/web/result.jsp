@@ -107,7 +107,11 @@
             vAxis: {title: "Number of repeats"},
             hAxis: {title: "Date"},
             seriesType: "bars",
-            series: {5: {type: "line"}}
+            series: {
+                <%
+                    out.print(product.getSystems_repeats().size());
+                %>
+                : {type: "line"}}
           };
 
           var chart2 = new google.visualization.ComboChart(document.getElementById('incremental_chart'));
@@ -273,7 +277,6 @@
                                                 </c:forEach>
                                             </tbody>
                                         </table>
-
                                     </div>
                                 </div>
                             </div>
@@ -437,7 +440,7 @@
                 },
                 {
                     label: "INTEL_MIN",
-                    fillColor: "rgba(250, 210, 217, 0)",
+                    fillColor: "rgba(255, 255, 255, 0)",
                     strokeColor: "rgba(250, 210, 217, 0.6)",
                     pointColor: "rgba(250, 210, 217, 0.6)",
                     pointStrokeColor: "rgba(250, 210, 217, 0.6)",
@@ -460,7 +463,7 @@
                 },
                 {
                     label: "INTEL_MEAN",
-                    fillColor: "rgb(155,194,225,0)",
+                    fillColor: "rgba(255, 255, 255, 0)",
                     strokeColor: "#9bc2e1",
                     pointColor: "#9bc2e1",
                     pointStrokeColor: "#9bc2e1",
@@ -483,7 +486,7 @@
                 ]
                 };
                 var data2 = {
-                labels: ["Voltage (high)", "Timing (right)", "Voltage (low)", "Timing"],
+                labels: ["Voltage (high)", "Timing (right)", "Voltage (low)", "Timing (left)"],
                 datasets: [
                 {
                     label: "MIN",
@@ -532,7 +535,7 @@
                 },
                 {
                     label: "INTEL_MIN",
-                    fillColor: "rgba(250, 210, 217, 0)",
+                    fillColor: "rgba(255, 255, 255, 0)",
                     strokeColor: "rgba(250, 210, 217, 0.6)",
                     pointColor: "rgba(250, 210, 217, 0.6)",
                     pointStrokeColor: "rgba(250, 210, 217, 0.6)",
@@ -555,7 +558,7 @@
                 },
                 {
                     label: "INTEL_MEAN",
-                    fillColor: "rgb(155,194,225,0)",
+                    fillColor: "rgba(255, 255, 255, 0)",
                     strokeColor: "#9bc2e1",
                     pointColor: "#9bc2e1",
                     pointStrokeColor: "#9bc2e1",

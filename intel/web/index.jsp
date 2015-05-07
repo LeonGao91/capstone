@@ -71,7 +71,7 @@
                                     <c:forEach var="item" items="${sessionScope.summary.getProducts()}">
                                         <li role="presentation"><a role="menuitem" tabindex="-1"  class="listItem"><c:out value="${item}"/></a></li>
                                     </c:forEach>
-                                    <li role="presentation"><a role="menuitem" tabindex="-1"  class="listItem">All</a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1"  class="listItem">ALL</a></li>
                                 </ul>
                             </div>
                         </th>
@@ -83,6 +83,7 @@
                                 <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
                                     <li role="presentation"><a role="menuitem" tabindex="-1"  class="listItem">PASS</a></li>
                                     <li role="presentation"><a role="menuitem" tabindex="-1"  class="listItem">FAIL</a></li> 
+                                    <li role="presentation"><a role="menuitem" tabindex="-1"  class="listItem">NOT READY</a></li> 
                                     <li role="presentation"><a role="menuitem" tabindex="-1"  class="listItem">ALL</a></li>  <!--remember to add "all"-->
                                 </ul>
                             </div>
@@ -106,7 +107,7 @@
                                 SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
                                 Date d = date.parse(product.getLast_test_date());
                                 date.applyPattern("HH:mm:ss - MM/dd/yyyy");
-                                out.print("<td>" + date.format(d) + "</td>");
+                                out.print("<td class=\"date\">" + date.format(d) + "</td>");
                                 if (product.getPass_fail().equals("pass")) {
                                     out.print("<td><span class='label label-success'>" + product.getPass_fail().toUpperCase() + "</span></td>");
                                 } else if(product.getPass_fail().toLowerCase().equals("fail")) {
@@ -189,7 +190,7 @@
             $(".listItem").click(function(){
 
                 var input = $(this).html();    //get the item that is chosen
-
+                
                 $("#mytable tr.expandable").each(function (){
                     var text = $(this).find("td:nth-child("+columnNo+")").text();  //get the content of the corresponding column in each expandable row
                     if (input==="ALL"){
@@ -235,48 +236,6 @@
             }
 
         })
-        /**
-                //filter
-        (function(document) {
-	'use strict';
-
-	var LightTableFilter = (function(Arr) {
-
-		var _input;
-
-		function _onInputEvent(e) {
-			_input = e.target;
-			var tables = document.getElementsByClassName(_input.getAttribute('data-table'));
-			Arr.forEach.call(tables, function(table) {
-				Arr.forEach.call(table.tBodies, function(tbody) {
-					Arr.forEach.call(tbody.rows, _filter);
-				});
-			});
-		}
-
-		function _filter(row) {
-			var text = row.textContent.toLowerCase(), val = _input.value.toLowerCase();
-			row.style.display = text.indexOf(val) === -1 ? 'none' : 'table-row';
-		}
-
-		return {
-			init: function() {
-				var inputs = document.getElementsByClassName('light-table-filter');
-				Arr.forEach.call(inputs, function(input) {
-					input.oninput = _onInputEvent;
-				});
-			}
-		};
-	})(Array.prototype);
-
-	document.addEventListener('readystatechange', function() {
-		if (document.readyState === 'complete') {
-			LightTableFilter.init();
-		}
-	});
-
-})(document);
-**/
         </script>
     </body>
 </html>
