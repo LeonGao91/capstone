@@ -82,13 +82,12 @@ public class Test {
     //benchmarks
     private double[] eyeChartIntelMinBenchmark;
     private double[] eyeChartIntelMeanBenchmark;
-    private double passHealthBenchmark;  //xml config, default 75
-    private double passTrustBenchmark;  //xml config, default 40
-    private double failHealthBenchmark;  //xml config, default 75
-    private double failTrustBenchmark;  //xml config, default 75
-    private int maxNearWcCount;  //xml config, default 8
-
-    private int validation;
+    private double passHealthBenchmark;
+    private double passTrustBenchmark;
+    private double failHealthBenchmark; 
+    private double failTrustBenchmark;
+    private int maxNearWcCount; 
+    private int desiredRepeatCount; 
     //check results
     private boolean basicMeanCheck = true;
     private boolean outlierMeanCheck = true;
@@ -225,6 +224,7 @@ public class Test {
             failTrustBenchmark = Double.parseDouble(doc.getElementsByTagName("FT").item(0).getTextContent());
 
             maxNearWcCount = Integer.parseInt(doc.getElementsByTagName("MaxWC").item(0).getTextContent());
+            desiredRepeatCount = Integer.parseInt(doc.getElementsByTagName("RepeatCount").item(0).getTextContent());
 
             // healthDetail
             healthDetail.put(MEANMINCHECK, Double.parseDouble(doc.getElementsByTagName("MEANMINCHECK").item(0).getTextContent()));
@@ -262,8 +262,6 @@ public class Test {
         for (int i = 0; i < 5; i++) {
             outliers[i] = false;
         }
-        //set validation benchark
-        validation = 5;
         //get system and repeat counts
         TestSystem tempSystem;
         String systemID;
@@ -435,14 +433,14 @@ public class Test {
         if (!basicSigmaMeanCheck && !outlierSigmaMeanCheck) {
             healthDetail.put(SIGMAMEANCHECK, 0.0);
         }
-        if (outlierMeanCheck != basicMeanCheck) {
+        if (basicSigmaMeanCheck != outlierSigmaMeanCheck) {
             trustDetail.put(SIGMAMEANCHECKTRUST, 0.0);
         }
         // sigma check (min)
         if (!basicSigmaMinCheck && !outlierSigmaMinCheck) {
             healthDetail.put(SIGMAMINCHECK, 0.0);
         }
-        if (outlierMinCheck != basicMinCheck) {
+        if (basicSigmaMinCheck != outlierSigmaMinCheck) {
             trustDetail.put(SIGMAMINCHECKTRUST, 0.0);
         }
         // sigma check 2
@@ -498,7 +496,7 @@ public class Test {
         trustDetail.put(REPEATCOUNT, Double.compare(averageRepeat, Double.NaN) == 0 ? 0 : averageRepeat);
         String message = "";
         for (Map.Entry<String, Integer> entry : systems_repeats.entrySet()) {
-            if (entry.getValue() < validation) {
+            if (entry.getValue() < desiredRepeatCount) {
                 message = message + "System \"" + entry.getKey() + "\" needs more test;";
             }
         }
