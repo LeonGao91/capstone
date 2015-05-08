@@ -223,13 +223,15 @@ public class TestProduct {
                 SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
                 Date d = date.parse(b.getTest_date());
                 date.applyPattern("HH:mm:ss-MM/dd/yyyy");
-                sb.append("['").append(date.format(d).replaceFirst("-", "-")).append("', ");
+                sb.append("['").append(date.format(d)).append("', ");
                 int sum = 0;
                 for(String s : key) {
                     sb.append("").append(
-                            b.getSystems_repeats().containsKey(s) ? b.getSystems_repeats().get(s) : 0
-                            ).append(", ");
-                    sum += b.getSystems_repeats().get(s);
+                        b.getSystems_repeats().containsKey(s) ? b.getSystems_repeats().get(s) : 0
+                        ).append(", ");
+                    if(b.getSystems_repeats().containsKey(s)) {
+                        sum += b.getSystems_repeats().get(s);
+                    }
                 }
                 sb.append("").append(sum / systems_repeats.size()).append("");
                 sb.append("], ");

@@ -9,12 +9,7 @@ package Servlets;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import dataAnalyticsModel.*;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.LinkedList;
-import java.util.Scanner;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -33,7 +28,7 @@ public class Detail extends HttpServlet {
     private FileUploadService_Service service;
     
     private TestDetail detail;
-    private XStream xstream = new XStream(new DomDriver());
+    private final XStream xstream = new XStream(new DomDriver());
 
     /**
      * Handles the HTTP <code>POST</code> method.

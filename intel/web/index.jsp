@@ -107,7 +107,7 @@
                                 SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
                                 Date d = date.parse(product.getLast_test_date());
                                 date.applyPattern("HH:mm:ss - MM/dd/yyyy");
-                                out.print("<td class=\"date\">" + date.format(d) + "</td>");
+                                out.print("<td>" + date.format(d) + "</td>");
                                 if (product.getPass_fail().equals("pass")) {
                                     out.print("<td><span class='label label-success'>" + product.getPass_fail().toUpperCase() + "</span></td>");
                                 } else if(product.getPass_fail().toLowerCase().equals("fail")) {
@@ -213,29 +213,6 @@
                     $("tbody").prepend($(this).parent());
         });
 
-        $("#sort").click(function(){
-            var th = $(this);
-            var down = th.attr("down");   //this varibale is to mark whether the sign is up or down,1 is down,0 is up
-            if (down==="1"){ 
-                th.children().attr("class","glyphicon glyphicon-chevron-up"); //change the sign
-                th.attr("down","0");
-                $(".date").sort(function(a,b){
-                    return new Date($(a).html()) < new Date($(b).html());
-                }).each(function(){
-                    $("tbody").prepend($(this).parent());
-                })
-            }
-            else{ 
-                th.children().attr("class","glyphicon glyphicon-chevron-down"); 
-                th.attr("down","1");
-                $(".date").sort(function(a,b){
-                    return new Date($(a).html()) > new Date($(b).html());
-                }).each(function(){
-                    $("tbody").prepend($(this).parent());
-                })
-            }
-
-        })
         </script>
     </body>
 </html>
