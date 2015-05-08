@@ -9,6 +9,8 @@ public class FileInformation {
     public String platformType;
     public String Interface;
     public String platformID;
+    
+    //simple file name of the uploaded data file
     public String shortFileName;
     public String timestamp;
 }

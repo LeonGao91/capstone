@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package service;
 
 import java.io.IOException;
@@ -17,59 +11,75 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * This thread is used to monitor a particular folder, if there is any file put
+ * into the folder, it will send the name of the file to FileUploadService
  *
  * @author wangjerome
  */
-public class FolderMonitor implements Runnable{
+public class FolderMonitor implements Runnable {
 
-    //fold path to monitor
+    //folder path to monitor
     private Path path;
- 
+
+    /**
+     * This class is used to build a thread which will monitor a folder,
+     * whenever a file is uploaded, it will send the name to the service
+     *
+     * @param path folder to monitor
+     */
     public FolderMonitor(Path path) {
         this.path = path;
     }
- 
-    // print the events, the affected file and send file name to service
+
+    // send the uploaded file name to FileUploadService
     private void updateFile(WatchEvent<?> event) {
+
+        // kind of file event
         WatchEvent.Kind<?> kind = event.kind();
-        
-        //create a new file
+
+        // create a new file
         if (kind.equals(StandardWatchEventKinds.ENTRY_CREATE)) {
             Path pathCreated = (Path) event.context();
             System.out.println("Entry created:" + pathCreated);
+
+            // send path name to service
+            try {
+                // wait for the whole file is already uploaded
+                Thread.sleep(2000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(FolderMonitor.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
-            //send path name to service
-            uploadFile(path + "/" + pathCreated);
-            
-        //delete a file
-        } else if (kind.equals(StandardWatchEventKinds.ENTRY_DELETE)) {
-            Path pathDeleted = (Path) event.context();
-            System.out.println("Entry deleted:" + pathDeleted);
-            
-        //modify a file
-        } else if (kind.equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
-            Path pathModified = (Path) event.context();
-            System.out.println("Entry modified:" + pathModified);
+            // send the file name to service
+            FileUploadService.uploadFile(path + "/" + pathCreated);
+
         }
     }
- 
+
+    /**
+     * start monitoring the folder, and check if there is any file event
+     */
     @Override
     public void run() {
+        
         try {
+            // register to the path to monitor if there is any new event
             WatchService watchService = path.getFileSystem().newWatchService();
             path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE,
-                    StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
- 
+                    StandardWatchEventKinds.ENTRY_MODIFY, 
+                    StandardWatchEventKinds.ENTRY_DELETE);
+
             // loop forever to watch directory
             while (true) {
                 WatchKey watchKey;
-                watchKey = watchService.take(); // this call is blocking until events are present
- 
+                // this call is blocking until events are present
+                watchKey = watchService.take(); 
+
                 // poll for file system events on the WatchKey
                 for (final WatchEvent<?> event : watchKey.pollEvents()) {
                     updateFile(event);
                 }
- 
+                
                 // if the watched directed gets deleted, get out of run method
                 if (!watchKey.reset()) {
                     System.out.println("No longer valid");
@@ -77,35 +87,16 @@ public class FolderMonitor implements Runnable{
                     watchService.close();
                     break;
                 }
+
             }
- 
+
         } catch (InterruptedException ex) {
-            System.out.println("interrupted. Goodbye");
+            System.out.println("interrupted");
             return;
         } catch (IOException ex) {
-            ex.printStackTrace();  // don't do this in production code. Use a loggin framework
+            ex.printStackTrace();
             return;
         }
     }
-    
-    
-    public static void main(String[] args) throws InterruptedException {
-        Path pathToWatch = FileSystems.getDefault().getPath("/Users/wangjerome/Desktop/foo");
-        FolderMonitor dirWatcher = new FolderMonitor(pathToWatch);
-        Thread dirWatcherThread = new Thread(dirWatcher);
-        dirWatcherThread.start();
- 
-    }
 
-    private static void uploadFile(java.lang.String path) {
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(FolderMonitor.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        FileUploadService.uploadFile(path);
-    }
-
-
-    
 }

@@ -5,20 +5,11 @@
         <group>
             <file>file:/Users/wangjerome/Desktop/15S/capstone/FileUploadService/src/java/service/PlatformInformation.java</file>
             <file>file:/Users/wangjerome/Desktop/15S/capstone/FileUploadService/src/java/service/CheckTimeThread.java</file>
-            <file>file:/Users/wangjerome/Desktop/15S/capstone/FileUploadService/src/java/dataAnalyticsModel/TestSystem.java</file>
-            <file>file:/Users/wangjerome/Desktop/15S/capstone/FileUploadService/src/java/dataAnalyticsModel/TestDetail.java</file>
-            <file>file:/Users/wangjerome/Desktop/15S/capstone/FileUploadService/src/java/dataAnalyticsModel/TestMarginsDDR.java</file>
-            <file>file:/Users/wangjerome/Desktop/15S/capstone/FileUploadService/src/java/service/FolderMonitor.java</file>
-            <file>file:/Users/wangjerome/Desktop/15S/capstone/FileUploadService/src/java/dataAnalyticsModel/TestProduct.java</file>
-            <file>file:/Users/wangjerome/Desktop/15S/capstone/FileUploadService/src/java/dataAnalyticsModel/TestDirection.java</file>
-            <file>file:/Users/wangjerome/Desktop/15S/capstone/FileUploadService/src/java/dataAnalyticsModel/DataAnalyticsModel.java</file>
-            <file>file:/Users/wangjerome/Desktop/15S/capstone/FileUploadService/src/java/dataAnalyticsModel/Util.java</file>
-            <file>file:/Users/wangjerome/Desktop/15S/capstone/FileUploadService/src/java/service/FileInformation.java</file>
             <file>file:/Users/wangjerome/Desktop/15S/capstone/FileUploadService/web/WEB-INF/setup.properties</file>
+            <file>file:/Users/wangjerome/Desktop/15S/capstone/FileUploadService/src/java/service/FileInformation.java</file>
             <file>file:/Users/wangjerome/Desktop/15S/capstone/FileUploadService/src/java/dataAnalyticsModel/Test.java</file>
+            <file>file:/Users/wangjerome/Desktop/15S/capstone/FileUploadService/src/java/service/FolderMonitor.java</file>
             <file>file:/Users/wangjerome/Desktop/15S/capstone/FileUploadService/src/java/service/ReadHDF5File.java</file>
-            <file>file:/Users/wangjerome/Desktop/15S/capstone/FileUploadService/src/java/dataAnalyticsModel/TestBrief.java</file>
-            <file>file:/Users/wangjerome/Desktop/15S/capstone/FileUploadService/src/java/dataAnalyticsModel/ResultExporter.java</file>
         </group>
     </open-files>
 </project-private>

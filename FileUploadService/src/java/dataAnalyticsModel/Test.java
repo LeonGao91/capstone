@@ -398,6 +398,7 @@ public class Test {
             // near worst case count
             nearWcCount = Math.max(nearWcCount, getDirectionByIndex(i).getNearWcCount());
         }
+        
         nearWcCount = nearWcCount > maxNearWcCount ? maxNearWcCount : nearWcCount;
         // window correlation check
         if (getDirectionByIndex(0).getSize() * getSystemByIndexes(0, 0).getSize() > 1) {
